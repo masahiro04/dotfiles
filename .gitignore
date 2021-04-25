@@ -1,0 +1,4 @@
+*.netrwhist
+
+.config/*
+!nvim
