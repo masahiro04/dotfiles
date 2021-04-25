@@ -1,10 +1,14 @@
+# 小杉さんの設定
+export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
+
+
+
 # rubyの設定
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
+#export PATH="$HOME/.rbenv/bin:$PATH"
+# eval "$(rbenv init -)"
 
 
 alias ide="~/.ide.sh"
-
 
 # git設定
 autoload -Uz vcs_info
@@ -17,10 +21,7 @@ zstyle ':vcs_info:*' actionformats '[%b|%a]'
 PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
 precmd(){ vcs_info }
 
-
-
 # nvim
-alias vi='nvim'
 alias vim='nvim'
 
 # Settings for fzf
@@ -28,11 +29,6 @@ export PATH="$PATH:$HOME/.fzf/bin"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_DEFAULT_OPTS='--height 30% --border'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
-
-# railsのcredentials用の設定
-export EDITOR="vi"
 
 # pythonの設定
 export PYENV_ROOT="$HOME/.pyenv"
@@ -75,8 +71,13 @@ export PATH="$PATH:$GOPATH/bin"
 # dockerのため
 export PATH="$PATH:/usr/local/bin"
 
-# ctags
 
+# rbenv
+[[ -d ~/.rbenv  ]] && \
+  export PATH=${HOME}/.rbenv/bin:${PATH} && \
+  eval "$(rbenv init -)"
+
+# ctags
 alias ctags_ruby='ctags --langmap=RUBY:.rb --exclude="*.js" --exclude=".git*" --exclude="*.sql" --exclude="node_modules*" -R .'
 
 

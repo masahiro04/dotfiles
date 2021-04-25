@@ -1,4 +1,4 @@
 *.netrwhist
 
-.config/*
+.config/coc/extensions/node_modules
 !nvim
