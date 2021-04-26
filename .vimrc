@@ -25,7 +25,7 @@ set clipboard=unnamed
 set belloff=all
 
 " 行番号系
-" set number
+set number
 
 " タイトル系
 set title
@@ -206,3 +206,4 @@ nnoremap <silent> , :bprev<CR>
 nnoremap <silent> . :bnext<CR>
 " bdで現在のバッファを削除
 nnoremap bd :bd<CR>
+let g:airline_theme = 'papercolor'
