@@ -27,7 +27,9 @@ alias vim='nvim'
 # Settings for fzf
 export PATH="$PATH:$HOME/.fzf/bin"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 30% --border'
+
+export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --inline-info --preview 'head -100 {}'"
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # pythonの設定
