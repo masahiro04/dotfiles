@@ -14,7 +14,7 @@ source install.sh
 
 ### 基本コマンド
 ```
-<C-t> tree
+<C-e> tree
 <C-p> ファイル検索
 <C-g> 文字検索
 
