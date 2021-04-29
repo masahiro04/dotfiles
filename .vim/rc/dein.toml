@@ -28,10 +28,10 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'scrooloose/nerdtree'
+repo = 'preservim/nerdtree'
 hook_add = '''
   let NERDTreeShowHidden=1
-    nnoremap <silent><C-a> :NERDTreeFind<CR>:vertical res 30<CR>
+    nnoremap <C-t> :NERDTreeToggle<CR>
 '''
 
 [[plugins]]
