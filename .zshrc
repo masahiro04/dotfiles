@@ -64,6 +64,7 @@ export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 
 # go
+export GOPATH=$HOME/go
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
@@ -73,6 +74,8 @@ export PATH="$PATH:$GOPATH/bin"
 # dockerのため
 export PATH="$PATH:/usr/local/bin"
 
+# terraform
+export PATH="$HOME/.tfenv/bin:$PATH"
 
 # rbenv
 [[ -d ~/.rbenv  ]] && \

@@ -4,5 +4,16 @@
   "emmet.showAbbreviationSuggestions": true,
   "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
-  "solargraph.commandPath": "~/.rbenv/shims/solargraph"
+  "solargraph.commandPath": "~/.rbenv/shims/solargraph",
+  "languageserver": {
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "disableWorkspaceFolders": true,
+      "filetypes": ["go"]
+    }
+  },
+  "tsserver.tsdk": ".yarn/sdks/typescript/lib",
+  "eslint.packageManager": "yarn",
+  "eslint.nodePath": ".yarn/sdks"
 }

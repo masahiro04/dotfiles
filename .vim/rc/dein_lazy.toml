@@ -26,6 +26,10 @@ repo = 'maxmellon/vim-jsx-pretty'
 on_ft = ['javascript', 'javascript.jsx']
 
 [[plugins]]
+repo = 'leafgarland/typescript-vim'
+on_ft = ['typescript', 'typescript.tsx']
+
+[[plugins]]
 repo = 'elzr/vim-json'
 on_ft = ['json']
 
