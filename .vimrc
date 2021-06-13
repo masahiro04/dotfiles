@@ -66,6 +66,7 @@ inoremap ( ()<LEFT>
 " クオーテーションの補完
 inoremap ' ''<LEFT>
 inoremap " ""<LEFT>
+inoremap ` ``<LEFT>
 
 " 画面分割系
 nnoremap sj <C-w>j
