@@ -10,7 +10,7 @@ set encoding=utf8
 scriptencoding utf8
 set fileencoding=utf-8
 set termencoding=utf8
-set fileencodings=utf-8,ucs-boms,euc-jp,ep932
+set fileencodings=utf-8,sjis,ucs-boms,euc-jp,ep932
 set fileformats=unix,dos,mac
 set ambiwidth=double
 set nobomb
