@@ -42,6 +42,9 @@ set shiftwidth=2
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 
+" ctags
+set tags=.tags;~
+
 " 挿入モードでバックスペース削除を有効
 set backspace=indent,eol,start
 
