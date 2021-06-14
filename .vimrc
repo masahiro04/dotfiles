@@ -66,6 +66,11 @@ inoremap { {}<LEFT>
 inoremap [ []<LEFT>
 inoremap ( ()<LEFT>
 
+" 括弧の後でエンターを押しても自動で改行＋スペース入れる設定
+inoremap {<Enter> {}<Left><CR><ESC><S-o>
+inoremap [<Enter> []<Left><CR><ESC><S-o>
+inoremap (<Enter> ()<Left><CR><ESC><S-o>
+
 " クオーテーションの補完
 inoremap ' ''<LEFT>
 inoremap " ""<LEFT>
