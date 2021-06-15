@@ -45,6 +45,28 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 " ctags
 set tags=.tags;~
 
+function! s:execute_ctags() abort
+  " 探すタグファイル名
+  let tag_name = '.tags'
+  " ディレクトリを遡り、タグファイルを探し、パス取得
+  let tags_path = findfile(tag_name, '.;')
+  " タグファイルパスが見つからなかった場合
+  if tags_path ==# ''
+    return
+  endif
+
+  " タグファイルのディレクトリパスを取得
+  " `:p:h`の部分は、:h filename-modifiersで確認
+  let tags_dirpath = fnamemodify(tags_path, ':p:h')
+  " 見つかったタグファイルのディレクトリに移動して、ctagsをバックグラウンド実行（エラー出力破棄）
+  execute 'silent !cd' tags_dirpath '&& ctags -R -f' tag_name '2> /dev/null &'
+endfunction
+
+augroup ctags
+  autocmd!
+  autocmd BufWritePost * call s:execute_ctags()
+augroup END
+
 " 挿入モードでバックスペース削除を有効
 set backspace=indent,eol,start
 
@@ -65,6 +87,7 @@ nnoremap x "_x
 inoremap { {}<LEFT>
 inoremap [ []<LEFT>
 inoremap ( ()<LEFT>
+inoremap < <><LEFT>
 
 " 括弧の後でエンターを押しても自動で改行＋スペース入れる設定
 inoremap {<Enter> {}<Left><CR><ESC><S-o>
