@@ -18,7 +18,11 @@ zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
-PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
+# PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
+# プロンプトカスタマイズ
+PROMPT='
+[%B%F{red}%n@%m%f%b:%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f
+%F{yellow}$%f '
 precmd(){ vcs_info }
 
 # nvim
@@ -84,6 +88,5 @@ export PATH="$HOME/.tfenv/bin:$PATH"
 
 # ctags
 alias ctags_ruby='ctags --langmap=RUBY:.rb --exclude="*.js" --exclude=".git*" --exclude="*.sql" --exclude="node_modules*" -R .'
-
 
 "~/.zshrc" 71L, 1740B
