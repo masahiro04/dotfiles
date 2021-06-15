@@ -59,6 +59,9 @@ hook_add = '''
     vnoremap ? :'<,'>TComment<CR>
 '''
 
+[[plugins]]
+repo = 'tpope/vim-surround'
+
 # fzf
 [[plugins]]
 repo = 'junegunn/fzf'
