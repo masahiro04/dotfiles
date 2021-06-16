@@ -60,7 +60,20 @@ hook_add = '''
 '''
 
 [[plugins]]
+repo = 'luochen1990/rainbow'
+hook_add = '''
+    let g:rainbow_active = 1
+'''
+
+[[plugins]]
+repo = 'altercation/vim-colors-solarized'
+
+[[plugins]]
 repo = 'tpope/vim-surround'
+
+[[plugins]]
+repo = 'sebdah/vim-delve'
+
 
 # fzf
 [[plugins]]

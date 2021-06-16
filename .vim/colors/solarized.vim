@@ -16,7 +16,7 @@
 "
 " See the homepage above for screenshots and details.
 "
-" ---------------------------------------------------------------------
+" --------------------------------------------------------------------
 " OPTIONS:
 " ---------------------------------------------------------------------
 " See the "solarized.txt" help file included with this colorscheme (in the 
@@ -1114,4 +1114,4 @@ autocmd ColorScheme * if g:colors_name != "solarized" | silent! aunmenu Solarize
 " THE SOFTWARE.
 "
 " vim:foldmethod=marker:foldlevel=0
-"}}}
+"}}}-

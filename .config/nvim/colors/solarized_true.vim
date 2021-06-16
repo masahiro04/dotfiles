@@ -16,7 +16,7 @@
 " is a fixed colorscheme for neovim/vim which running in truecolor supported
 " terminal.
 "
-" --------------------------------------------------------------------
+" ---------------------------------------------------------------------
 " OPTIONS:
 " ---------------------------------------------------------------------
 " Font styles:
@@ -945,4 +945,4 @@ autocmd GUIEnter * if (has('gui_running')) | exe "colorscheme " . g:colors_name 
 " THE SOFTWARE.
 "
 " vim: set foldmethod=marker foldlevel=0:
-"}}}-
+"}}}

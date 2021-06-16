@@ -45,6 +45,9 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 " ctags
 set tags=.tags;~
 
+" 保存時に自動で生成
+let g:auto_ctags = 1
+
 function! s:execute_ctags() abort
   " 探すタグファイル名
   let tag_name = '.tags'
@@ -140,6 +143,8 @@ endif
 "-------------------------------------------------------------------------------
 " Color scheme
 "-------------------------------------------------------------------------------
+let g:solarized_termcolors=256
+syntax enable
 set background=dark
 colorscheme solarized
 
