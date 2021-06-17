@@ -1,4 +1,12 @@
+# 小杉さんの設定
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
+
+
+
+# rubyの設定
+#export PATH="$HOME/.rbenv/bin:$PATH"
+# eval "$(rbenv init -)"
+
 
 alias ide="~/.ide.sh"
 
@@ -10,6 +18,7 @@ zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
+# PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
 # プロンプトカスタマイズ
 PROMPT='
 [%B%F{red}%n@%m%f%b:%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f
@@ -80,3 +89,4 @@ export PATH="$HOME/.tfenv/bin:$PATH"
 # ctags
 # alias ctags_ruby='ctags --langmap=RUBY:.rb --exclude="*.js" --exclude=".git*" --exclude="*.sql" --exclude="node_modules*" -R .'
 
+# "~/.zshrc" 71L, 1740B
