@@ -1,6 +1,9 @@
 *.netrwhist
 
 .config/coc/extensions/node_modules
+.config/configstore
+.config/flutter
+.config/coc/extensions/coc-go-data
 
 !nvim
 tags
