@@ -15,6 +15,7 @@ for f in .??*; do
     [ "$f" = ".gitmodules" ] && continue
 
     # シンボリックリンクを貼る
-    ln -snfv ${PWD}/"$f" ~/
+    #ln -s $HOME/dotfiles/$f $HOME/$f
+    ln -snfv ${PWD}"/$f" ~/
 done
 

@@ -1,13 +1,6 @@
 # 小杉さんの設定
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
-
-
-# rubyの設定
-#export PATH="$HOME/.rbenv/bin:$PATH"
-# eval "$(rbenv init -)"
-
-
 alias ide="~/.ide.sh"
 
 # git設定
@@ -27,6 +20,9 @@ precmd(){ vcs_info }
 
 # nvim
 alias vim='nvim'
+
+# M1の場合はこちららしい
+export PATH="/opt/homebrew/bin:$PATH"
 
 # Settings for fzf
 export PATH="$PATH:$HOME/.fzf/bin"
@@ -82,11 +78,15 @@ export PATH="$PATH:/usr/local/bin"
 export PATH="$HOME/.tfenv/bin:$PATH"
 
 # rbenv
-[[ -d ~/.rbenv  ]] && \
-  export PATH=${HOME}/.rbenv/bin:${PATH} && \
-  eval "$(rbenv init -)"
+# [[ -d ~/.rbenv  ]] && \
+#   export PATH=${HOME}/.rbenv/bin:${PATH} && \
+#   eval "$(rbenv init -)"
+#
 
-# ctags
-# alias ctags_ruby='ctags --langmap=RUBY:.rb --exclude="*.js" --exclude=".git*" --exclude="*.sql" --exclude="node_modules*" -R .'
+export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 
-# "~/.zshrc" 71L, 1740B
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+
+eval "$(rbenv init -)"
+
+

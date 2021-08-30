@@ -1,0 +1,1 @@
+/Users/masahirookubo/dotfiles/.vim
