@@ -74,6 +74,10 @@ repo = 'tpope/vim-surround'
 [[plugins]]
 repo = 'sebdah/vim-delve'
 
+# prettierを導入
+[[plugins]]
+repo  = 'prettier/vim-prettier'
+build = 'npm install'
 
 # fzf
 [[plugins]]

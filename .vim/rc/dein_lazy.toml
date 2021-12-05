@@ -40,6 +40,22 @@ repo = 'thosakwe/vim-flutter'
 repo = 'elzr/vim-json'
 on_ft = ['json']
 
+# prettierの導入。必要な言語は都度導入
+[[plugins]]
+repo     = 'prettier/vim-prettier'
+build    = 'npm install'
+on_ft    = ['javascript', 'typescript', 'css', 'scss', 'json', 'markdown']
+hook_source = '''
+  " @format??????????????????????????????
+  let g:prettier#autoformat = 0
+
+  " Prettier????????quickfix??????
+  let g:prettier#quickfix_enabled = 0
+
+  autocmd BufWritePre *.js,*.ts,*.css,*.scss,*.json,*.md PrettierAsync
+'''
+
+
 [[plugins]]
 repo = 'fatih/vim-go'
 on_ft = ['go']

@@ -18,6 +18,8 @@ PROMPT='
 %F{yellow}$%f '
 precmd(){ vcs_info }
 
+# # startshipを起動
+# eval "$(starship init bash)"
 # nvim
 alias vim='nvim'
 
@@ -61,7 +63,7 @@ export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
 export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 
 # flutter
-export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
+# export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 
 # go
 export GOPATH=$HOME/go

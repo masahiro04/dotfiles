@@ -36,7 +36,10 @@ a <
 
 ### Vim起動後コマンド
 ```
-:Gblame git blameを起動
+# git blameを起動
+:Gblame
+# prettierでフォーマット修正
+:Prettier
 sv 垂直にタグ作成
 ss 水平にタグ作成
 sh 左に移動
