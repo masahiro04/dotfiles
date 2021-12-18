@@ -237,10 +237,12 @@ endfunction
 "-------------------------------------------------------------------------------
 " airline
 "-------------------------------------------------------------------------------
-" , キーで次タブのバッファを表示
-nnoremap <silent> r :bprev<CR>
-" . キーで前タブのバッファを表示
-nnoremap <silent> t :bnext<CR>
+"次タブのバッファを表示
+nnoremap <silent> bp :bprev<CR>
+"前タブのバッファを表示
+nnoremap <silent> bn :bnext<CR>
+"直前バッファを表示
+nnoremap <silent> bb :b#<CR>
 " bdで現在のバッファを削除
-nnoremap bd :bd<CR>
+nnoremap bd :bdelete<CR>
 let g:airline_theme = 'papercolor'

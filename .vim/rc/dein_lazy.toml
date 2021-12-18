@@ -44,15 +44,15 @@ on_ft = ['json']
 [[plugins]]
 repo     = 'prettier/vim-prettier'
 build    = 'npm install'
-on_ft    = ['javascript', 'typescript', 'css', 'scss', 'json', 'markdown']
+on_ft    = ['javascript', 'typescript', 'ruby', 'python', 'css', 'scss', 'json', 'markdown']
 hook_source = '''
-  " @format??????????????????????????????
+  " @formatアノテーションを持ったファイルの自動フォーマットを無効にする
   let g:prettier#autoformat = 0
 
-  " Prettier????????quickfix??????
+  " Prettierのパースエラーをquickfixに表示しない
   let g:prettier#quickfix_enabled = 0
 
-  autocmd BufWritePre *.js,*.ts,*.css,*.scss,*.json,*.md PrettierAsync
+  autocmd BufWritePre *.js,*.ts,*.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
 '''
 
 
