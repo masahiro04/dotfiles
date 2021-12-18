@@ -204,9 +204,11 @@ fun! FzfOmniFiles()
   endif
 endfun
 
-nnoremap <C-b> :Buffers<CR>
-nnoremap <C-g> :Rg<CR>
-nnoremap <C-p> :call FzfOmniFiles()<CR>
+nnoremap fb :Buffers<CR>
+nnoremap fg :Rg<CR>
+" nnoremap <C-p> :call FzfOmniFiles()<CR>
+nnoremap ff :Files<CR>
+nnoremap fc :Commits<CR>
 
 set rtp+=/usr/local/opt/fzf
 "-------------------------------------------------------------------------------
