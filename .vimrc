@@ -42,8 +42,8 @@ set shiftwidth=2
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 
-" ctags
-set tags=.tags;~
+" tagファイルの指定
+" set tags=~/.tags
 
 " 保存時に自動で生成
 let g:auto_ctags = 1
@@ -87,10 +87,12 @@ vnoremap x "_x
 nnoremap x "_x
 
 " 括弧の補完
-inoremap { {}<LEFT>
-inoremap [ []<LEFT>
-inoremap ( ()<LEFT>
-inoremap < <><LEFT>
+imap { {}<LEFT>
+imap [ []<LEFT>
+" inoremap ( ()<LEFT>
+imap ( ()<LEFT>
+" あまり使わないので、追加
+" inoremap < <><LEFT>
 
 " 括弧の後でエンターを押しても自動で改行＋スペース入れる設定
 inoremap {<Enter> {}<Left><CR><ESC><S-o>
