@@ -176,8 +176,8 @@ if dein#load_state(s:dein_dir)
   call dein#load_toml(g:dein_toml,      {'lazy': 0})
   call dein#load_toml(g:dein_lazy_toml, {'lazy': 1})
 
-  call dein#add('junegunn/fzf', { 'do': 'fzf#install()', 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
+  " call dein#add('junegunn/fzf', { 'do': 'fzf#install()', 'build': './install --all', 'merged': 0 })
+  " call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
 
   " Required:
   call dein#end()
@@ -197,14 +197,14 @@ endif
 "-------------------------------------------------------------------------------
 " FZF
 "-------------------------------------------------------------------------------
-fun! FzfOmniFiles()
-  let is_git = system('git status')
-  if v:shell_error
-    call fzf#run(fzf#wrap({'source': 'find . -type d -name .git -prune -o ! -name .DS_Store', 'sink': 'e'}))
-  else
-    call fzf#run(fzf#wrap({'source': 'git ls-files', 'sink': 'e'}))
-  endif
-endfun
+" fun! FzfOmniFiles()
+"   let is_git = system('git status')
+"   if v:shell_error
+"     call fzf#run(fzf#wrap({'source': 'find . -type d -name .git -prune -o ! -name .DS_Store', 'sink': 'e'}))
+"   else
+"     call fzf#run(fzf#wrap({'source': 'git ls-files', 'sink': 'e'}))
+"   endif
+" endfun
 
 nnoremap fb :Buffers<CR>
 nnoremap fg :Rg<CR>
@@ -249,4 +249,3 @@ nnoremap <silent> bn :bnext<CR>
 nnoremap <silent> bb :b#<CR>
 " bdで現在のバッファを削除
 nnoremap bd :bdelete<CR>
-let g:airline_theme = 'papercolor'

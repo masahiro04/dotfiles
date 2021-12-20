@@ -34,18 +34,22 @@ hook_add = '''
     nnoremap <C-e> :NERDTreeToggle<CR>
 '''
 
+# 画面下部の情報表示
 [[plugins]]
 repo = 'vim-airline/vim-airline'
+
 
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
 depends = 'vim-airline'
 hook_add = '''
-    let g:airline_theme = 'onedark'
+    let g:airline_theme = 'wombat'
+    let g:airline#extensions#hunks#enabled = 0
+    let g:airline#extensions#branch#enabled = 1
     let g:airline#extensions#tabline#enabled = 1
     let g:airline#extensions#tabline#buffer_idx_mode = 1
-    let g:airline#extensions#tabline#fnamemod = ':t'
 '''
+    # let g:airline#extensions#tabline#fnamemod = ':t'
 
 [[plugins]]
 repo = "airblade/vim-gitgutter"
