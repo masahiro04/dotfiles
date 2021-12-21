@@ -56,37 +56,41 @@ hook_add = '''
 [[plugins]]
 repo = "airblade/vim-gitgutter"
 
+# Gitに関するコマンドを使うことが可能。超便利
 [[plugins]]
 repo = "tpope/vim-fugitive"
 
+# ファイルに応じてコメントを可能にしてくれる
 [[plugins]]
 repo = 'tomtom/tcomment_vim'
 hook_add = '''
     vnoremap ? :'<,'>TComment<CR>
 '''
 
+# 括弧に色をつけてわかりやすくしてくれる。だいじ
 [[plugins]]
 repo = 'luochen1990/rainbow'
 hook_add = '''
     let g:rainbow_active = 1
 '''
 
+# solarizedのカラースキーマ
 [[plugins]]
 repo = 'altercation/vim-colors-solarized'
 
+# 簡単に括弧やクオテーションで囲める。超重要
 [[plugins]]
 repo = 'tpope/vim-surround'
 
+# Goのデバッガ。あんまり使ってないかも
 [[plugins]]
 repo = 'sebdah/vim-delve'
 
-# prettierを導入
+# コード整形。使える言語限られているので、利用のタイミングは割と限定的
 [[plugins]]
 repo  = 'prettier/vim-prettier'
 build = 'npm install'
 
 # fzf
-[[plugins]]
-repo = 'junegunn/fzf'
-hook_post_update = './install --all'
-merged = 0
+# hook_post_update = './install --all'
+# merged = 0
