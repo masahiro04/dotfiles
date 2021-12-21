@@ -11,6 +11,17 @@ fi
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
 alias ide="~/.ide.sh"
+alias psglstart="brew services start postgresql"
+alias psglstop="brew services stop postgresql"
+
+alias ctags="ctags -R -f .tags"
+alias rs="rails s"
+alias rc="rails c"
+alias rsp="bundle exec rspec"
+alias rw="bin/webpack-dev-server"
+
+alias dcu="docker-compose up"
+alias dcb="docker-compose build --no-cache"
 
 # git設定
 autoload -Uz vcs_info
