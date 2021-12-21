@@ -1,6 +1,8 @@
+# NeoVimのプラグインマネージャー。これないとやばい
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
+# Lint エンジン。サイドバーの矢印とコメントでチェックしてくれる
 [[plugins]]
 repo = 'w0rp/ale'
 
@@ -27,6 +29,25 @@ hook_add = '''
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
 '''
+
+# ファイル検索。regexからファイル名までいけるので必須
+[[plugins]]
+repo = 'junegunn/fzf'
+hook_post_update = './install --all'
+merged = 0
+
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+depends = 'fzf'
+hook_add = '''
+  nnoremap fb :Buffers<CR>
+  nnoremap fg :Rg<CR>
+  nnoremap <C-p> :call FzfOmniFiles()<CR>
+  nnoremap ff :Files<CR>
+  nnoremap fc :Commits<CR>
+  set rtp+=/usr/local/opt/fzf
+'''
+  # set rtp+=~/.fzf
 
 # ファイラ. プロジェクトのファイル一覧の操作が可能
 [[plugins]]
@@ -91,6 +112,3 @@ repo = 'sebdah/vim-delve'
 repo  = 'prettier/vim-prettier'
 build = 'npm install'
 
-# fzf
-# hook_post_update = './install --all'
-# merged = 0

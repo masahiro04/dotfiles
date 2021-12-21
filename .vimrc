@@ -206,13 +206,9 @@ endif
 "   endif
 " endfun
 
-nnoremap fb :Buffers<CR>
-nnoremap fg :Rg<CR>
-" nnoremap <C-p> :call FzfOmniFiles()<CR>
-nnoremap ff :Files<CR>
-nnoremap fc :Commits<CR>
 
-set rtp+=/usr/local/opt/fzf
+
+" set rtp+=/usr/local/opt/fzf
 "-------------------------------------------------------------------------------
 " coc 
 "-------------------------------------------------------------------------------

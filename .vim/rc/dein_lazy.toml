@@ -1,11 +1,17 @@
+# dein.tomlだけに記述でも問題ないが、起動時に必ず必要ではないファイルを遅延読み込みさせ、
+# 起動を早くすることができるようにしている。なので、主に言語に関するやつとかはこっちに記載。多分
+
+# tomlのsyntax
 [[plugins]]
 repo = 'cespare/vim-toml'
 on_ft = ['toml']
 
+# rubyのsyntac
 [[plugins]]
 repo = 'vim-ruby/vim-ruby'
 on_ft = ['ruby']
 
+# railsのsyntax
 [[plugins]]
 repo = 'tpope/vim-rails'
 on_ft = ['ruby']
