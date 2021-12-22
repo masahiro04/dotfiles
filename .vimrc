@@ -91,6 +91,8 @@ imap { {}<LEFT>
 imap [ []<LEFT>
 " inoremap ( ()<LEFT>
 imap ( ()<LEFT>
+" htmlタグを自動で閉じるためのやつ
+" imap ,/ </<C-X><C-O>
 " あまり使わないので、追加
 " inoremap < <><LEFT>
 
@@ -111,7 +113,6 @@ nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 nnoremap ss :<C-u>sp<CR><C-w>j
 nnoremap sv :<C-u>vs<CR><C-w>l
-
 
 " jj
 inoremap <silent> jj <ESC>

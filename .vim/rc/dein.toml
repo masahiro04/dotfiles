@@ -129,3 +129,7 @@ repo = 'sebdah/vim-delve'
 repo  = 'prettier/vim-prettier'
 build = 'npm install'
 
+# インデントを見やすくする
+[[plugins]]
+repo = 'nathanaelkane/vim-indent-guides'
+
