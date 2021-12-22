@@ -16,12 +16,16 @@ on_ft = ['ruby']
 repo = 'tpope/vim-rails'
 on_ft = ['ruby']
 
+# [[plugins]]
+# repo = 'alpaca-tc/vim-endwise.git'
+# on_ft = ['ruby']
+# hook_add = '''
+#   let g:endwise_no_mappings=1
+# '''
+
 [[plugins]]
-repo = 'alpaca-tc/vim-endwise.git'
+repo = 'tpope/vim-endwise'
 on_ft = ['ruby']
-hook_add = '''
-  let g:endwise_no_mappings=1
-'''
 
 [[plugins]]
 repo = 'pangloss/vim-javascript',
