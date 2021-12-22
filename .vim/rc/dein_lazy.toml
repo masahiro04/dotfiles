@@ -16,12 +16,6 @@ on_ft = ['ruby']
 repo = 'tpope/vim-rails'
 on_ft = ['ruby']
 
-# [[plugins]]
-# repo = 'alpaca-tc/vim-endwise.git'
-# on_ft = ['ruby']
-# hook_add = '''
-#   let g:endwise_no_mappings=1
-# '''
 
 [[plugins]]
 repo = 'tpope/vim-endwise'
@@ -38,6 +32,7 @@ on_ft = ['javascript', 'javascript.jsx']
 [[plugins]]
 repo = 'leafgarland/typescript-vim'
 on_ft = ['typescript', 'typescript.tsx']
+
 
 [[plugins]]
 repo = 'dart-lang/dart-vim-plugin'

@@ -1,7 +1,6 @@
 {
   "suggest.keepCompleteopt": false,
   "coc.preferences.formatOnType": true,
-  "emmet.showAbbreviationSuggestions": true,
   "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
   "solargraph.commandPath": "~/.rbenv/shims/solargraph",
@@ -13,7 +12,8 @@
       "filetypes": ["go"]
     }
   },
-  "tsserver.tsdk": ".yarn/sdks/typescript/lib",
   "eslint.packageManager": "yarn",
-  "eslint.nodePath": ".yarn/sdks"
+  "eslint.nodePath": ".yarn/sdks",
+  "javascript.suggest.autoImports": true,
+  "typescript.suggest.autoImports": true
 }
