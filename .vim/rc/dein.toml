@@ -133,3 +133,6 @@ build = 'npm install'
 [[plugins]]
 repo = 'nathanaelkane/vim-indent-guides'
 
+[[plugins]]
+repo = 'jiangmiao/auto-pairs'
+

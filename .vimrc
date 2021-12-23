@@ -42,6 +42,10 @@ set shiftwidth=2
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 
+
+" Git mergeの際にこれがないと編集できないぽい
+set modifiable
+
 " tagファイルの指定
 " set tags=~/.tags
 
@@ -87,25 +91,25 @@ vnoremap x "_x
 nnoremap x "_x
 
 " 括弧の補完
-imap { {}<LEFT>
-imap [ []<LEFT>
-" inoremap ( ()<LEFT>
-imap ( ()<LEFT>
+" imap { {}<LEFT>
+" imap [ []<LEFT>
+" " inoremap ( ()<LEFT>
+" imap ( ()<LEFT>
 " htmlタグを自動で閉じるためのやつ
 " imap ,/ </<C-X><C-O>
 " あまり使わないので、追加
 " inoremap < <><LEFT>
 
 " 括弧の後でエンターを押しても自動で改行＋スペース入れる設定
-inoremap {<Enter> {}<Left><CR><ESC><S-o>
-inoremap [<Enter> []<Left><CR><ESC><S-o>
-inoremap (<Enter> ()<Left><CR><ESC><S-o>
+" inoremap {<Enter> {}<Left><CR><ESC><S-o>
+" inoremap [<Enter> []<Left><CR><ESC><S-o>
+" inoremap (<Enter> ()<Left><CR><ESC><S-o>
 
 " クオーテーションの補完
-inoremap ' ''<LEFT>
-inoremap " ""<LEFT>
-inoremap ` ``<LEFT>
-
+" inoremap ' ''<LEFT>
+" inoremap " ""<LEFT>
+" inoremap ` ``<LEFT>
+"
 " 画面分割系
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
