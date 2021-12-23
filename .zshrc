@@ -10,16 +10,24 @@ fi
 # 小杉さんの設定
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
+# pane分割
 alias ide="~/.ide.sh"
+alias t="tmux"
+alias tk="tmux kill-server"
+# dockerとlocalのpsgl行き来するため
 alias psglstart="brew services start postgresql"
 alias psglstop="brew services stop postgresql"
 
 alias ctags="ctags -R -f .tags"
+
+# rails系コマンド
+alias bi="bundle install"
 alias rs="rails s"
 alias rc="rails c"
 alias rsp="bundle exec rspec"
 alias rw="bin/webpack-dev-server"
 
+# docker系コマンド
 alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
 
