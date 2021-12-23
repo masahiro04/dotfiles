@@ -90,26 +90,6 @@ set hlsearch
 vnoremap x "_x
 nnoremap x "_x
 
-" 括弧の補完
-" imap { {}<LEFT>
-" imap [ []<LEFT>
-" " inoremap ( ()<LEFT>
-" imap ( ()<LEFT>
-" htmlタグを自動で閉じるためのやつ
-" imap ,/ </<C-X><C-O>
-" あまり使わないので、追加
-" inoremap < <><LEFT>
-
-" 括弧の後でエンターを押しても自動で改行＋スペース入れる設定
-" inoremap {<Enter> {}<Left><CR><ESC><S-o>
-" inoremap [<Enter> []<Left><CR><ESC><S-o>
-" inoremap (<Enter> ()<Left><CR><ESC><S-o>
-
-" クオーテーションの補完
-" inoremap ' ''<LEFT>
-" inoremap " ""<LEFT>
-" inoremap ` ``<LEFT>
-"
 " 画面分割系
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
@@ -142,10 +122,6 @@ if &term =~ "screen"
   autocmd BufEnter * if bufname("") !~ "^?[A-Za-z0-9?]*://" | silent! exe '!echo -n "\ek[`hostname`:`basename $PWD`/`basename %`]\e\\"' | endif
   autocmd VimLeave * silent!  exe '!echo -n "\ek[`hostname`:`basename $PWD`]\e\\"'
 endif
-
-"-------------------------------------------------------------------------------
-" Other plugins
-"-------------------------------------------------------------------------------
 
 "-------------------------------------------------------------------------------
 " Color scheme
@@ -181,9 +157,6 @@ if dein#load_state(s:dein_dir)
   call dein#load_toml(g:dein_toml,      {'lazy': 0})
   call dein#load_toml(g:dein_lazy_toml, {'lazy': 1})
 
-  " call dein#add('junegunn/fzf', { 'do': 'fzf#install()', 'build': './install --all', 'merged': 0 })
-  " call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
-
   " Required:
   call dein#end()
   call dein#save_state()
@@ -197,40 +170,6 @@ syntax enable
 if dein#check_install()
   call dein#install()
 endif
-
-
-"-------------------------------------------------------------------------------
-" FZF
-"-------------------------------------------------------------------------------
-" fun! FzfOmniFiles()
-"   let is_git = system('git status')
-"   if v:shell_error
-"     call fzf#run(fzf#wrap({'source': 'find . -type d -name .git -prune -o ! -name .DS_Store', 'sink': 'e'}))
-"   else
-"     call fzf#run(fzf#wrap({'source': 'git ls-files', 'sink': 'e'}))
-"   endif
-" endfun
-
-
-
-" set rtp+=/usr/local/opt/fzf
-"-------------------------------------------------------------------------------
-" coc 
-"-------------------------------------------------------------------------------
-" Extensions
-"
-"
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-"
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
-
 
 "-------------------------------------------------------------------------------
 " airline
