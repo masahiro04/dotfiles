@@ -27,6 +27,13 @@ alias rc="rails c"
 alias rsp="bundle exec rspec"
 alias rw="bin/webpack-dev-server"
 
+# yarn/npmコマンド
+alias ys="yarn start"
+alias yi="yarn install"
+alias nr="npm run start"
+alias ni="npm install"
+
+
 # docker系コマンド
 alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
