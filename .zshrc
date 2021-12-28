@@ -14,6 +14,10 @@ export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 alias ide="~/.ide.sh"
 alias t="tmux"
 alias tk="tmux kill-server"
+
+alias gc="git checkout"
+alias gp="git push"
+
 # dockerとlocalのpsgl行き来するため
 alias psglstart="brew services start postgresql"
 alias psglstop="brew services stop postgresql"
@@ -32,7 +36,6 @@ alias ys="yarn start"
 alias yi="yarn install"
 alias nr="npm run start"
 alias ni="npm install"
-
 
 # docker系コマンド
 alias dcu="docker-compose up"
@@ -113,12 +116,6 @@ export PATH="$PATH:/usr/local/bin"
 
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
-
-# rbenv
-# [[ -d ~/.rbenv  ]] && \
-#   export PATH=${HOME}/.rbenv/bin:${PATH} && \
-#   eval "$(rbenv init -)"
-#
 
 export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 
