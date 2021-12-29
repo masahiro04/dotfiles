@@ -142,7 +142,7 @@ let g:dein#install_github_api_token = 'GITHUB_API_TOKEN'
 
 " プラグインリストを収めた TOML ファイル
 " 予め TOML ファイル（後述）を用意しておく
-let g:rc_dir         = expand('~/.vim/rc')
+let g:rc_dir         = expand('~/.config/plugins')
 let g:dein_toml      = g:rc_dir . '/dein.toml'
 let g:dein_lazy_toml = g:rc_dir . '/dein_lazy.toml'
 

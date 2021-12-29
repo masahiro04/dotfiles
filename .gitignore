@@ -2,9 +2,8 @@
 
 .config/coc/extensions/node_modules
 .config/configstore
-.config/flutter
+.config/iterm2
 .config/coc/extensions/*
 
 !nvim
-tags
-.idea
+

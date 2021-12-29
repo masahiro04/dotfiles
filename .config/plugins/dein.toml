@@ -147,3 +147,10 @@ repo = 'nathanaelkane/vim-indent-guides'
 [[plugins]]
 repo = 'jiangmiao/auto-pairs'
 
+# 巣にぺっとk
+[[plugins]]
+repo ='SirVer/ultisnips'
+hook_add = '''
+   let g:UltiSnipsSnippetDirectories=[$HOME.'/./UltiSnips']
+   let g:UltiSnipsExpandTrigger="<Down>"
+ '''
