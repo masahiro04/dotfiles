@@ -1,0 +1,44 @@
+snippet tlog "log something"
+console.log(${1:Content});
+endsnippet
+
+snippet tfun "create a function"
+const ${1:name} = (): ${2:Type} => {
+}
+endsnippet
+
+snippet tefun "create a exported function"
+export const ${1:name} = (): ${2:Type} => {
+}
+endsnippet
+
+snippet tif "create a condition"
+if (${1:condition}) {
+}
+endsnippet
+
+snippet tin "create an interface"
+interface ${1:Name} {
+}
+endsnippet
+
+snippet tein "create an exported interface"
+export interface ${1:Name} {
+}
+endsnippet
+
+# react系
+snippet rc "create a react component"
+const ${1:AppName} = (${2:Props}): JSX.Element => {
+}
+endsnippet
+
+snippet rec "create a exported react component"
+export const ${1:AppName} = (${2:Props}): JSX.Element => {
+}
+endsnippet
+
+snippet rcp "create a plain react component"
+const ${1:AppName} = (${2:Props}): JSX.Element => (
+)
+endsnippet

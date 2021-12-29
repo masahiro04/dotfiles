@@ -151,6 +151,8 @@ repo = 'jiangmiao/auto-pairs'
 [[plugins]]
 repo ='SirVer/ultisnips'
 hook_add = '''
-   let g:UltiSnipsSnippetDirectories=[$HOME.'/./UltiSnips']
-   let g:UltiSnipsExpandTrigger="<Down>"
+   let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/UltiSnips']
+   let g:UltiSnipsExpandTrigger       = '<c-k>'
+   let g:UltiSnipsJumpForwardTrigger="<c-b>"
+   let g:UltiSnipsJumpBackwardTrigger="<c-z>"
  '''
