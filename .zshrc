@@ -17,6 +17,7 @@ alias tk="tmux kill-server"
 
 alias gc="git checkout"
 alias gp="git push"
+alias gf="git fetch"
 
 # dockerとlocalのpsgl行き来するため
 alias psglstart="brew services start postgresql"
@@ -122,6 +123,9 @@ export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 eval "$(rbenv init -)"
+
+# NOTE: nvim + fzf.nvimのpreviewをいい感じにするための設定
+export BAT_THEME="Dracula"
 
 # NOTE: ターミナルをいい感じする機能なので削除しないこと
 source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
