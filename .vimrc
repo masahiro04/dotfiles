@@ -14,7 +14,7 @@ set fileencodings=utf-8,sjis,ucs-boms,euc-jp,ep932
 set fileformats=unix,dos,mac
 set ambiwidth=double
 set nobomb
-set t_Co=256
+" set t_Co=256
 
 " スワップファイルの作成先を変更
 set noswapfile
@@ -41,7 +41,6 @@ set smartindent
 set shiftwidth=2
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
-
 
 " Git mergeの際にこれがないと編集できないぽい
 set modifiable
@@ -110,7 +109,7 @@ set cursorline
 " Set cursor line color on visual mode
 highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
 
-highlight LineNr       cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
+highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
 
 augroup BgHighlight
   autocmd!
@@ -126,7 +125,7 @@ endif
 "-------------------------------------------------------------------------------
 " Color scheme
 "-------------------------------------------------------------------------------
-let g:solarized_termcolors=256
+let g:solarized_termcolors=256 "ここ重要、絶対入れること、とdocumentにあった"
 syntax enable
 set background=dark
 colorscheme solarized
@@ -172,7 +171,7 @@ if dein#check_install()
 endif
 
 "-------------------------------------------------------------------------------
-" airline
+" バッファ移動
 "-------------------------------------------------------------------------------
 "次タブのバッファを表示
 nnoremap <silent> bp :bprev<CR>

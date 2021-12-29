@@ -1,3 +1,5 @@
+# NOTE: dein installのためのファイル
+
 #!/bin/sh
 # Standalone installer for Unixs
 # Original version is created by shoma2da
