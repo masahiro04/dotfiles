@@ -3,35 +3,19 @@ snippet rfr "frozen string literal"
 endsnippet
 
 # メソッド系
-snippet rcond
+snippet if
 ${1:CondStatement} ${2:Conditions}
 	${3:Body}
 end
 endsnippet
 
-snippet rmap
+snippet map
 ${1:Array}.map { |${2:Reciever}| ${3:Body} }
 endsnippet
 
-snippet reach
+snippet each
 ${1:Array}.each do |${2:Reciever}
 	${3:Body}
-end
-endsnippet
-
-# rspec系
-snippet rsit "rspec it"
-it '${1:Description}' do
-end
-endsnippet
-
-snippet rscon "rspec context"
-context '${1:Description}' do
-end
-endsnippet
-
-snippet rsdesc "rspec describe"
-describe '${1:Description}' do
 end
 endsnippet
 

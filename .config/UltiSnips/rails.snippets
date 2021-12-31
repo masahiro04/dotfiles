@@ -1,0 +1,25 @@
+snippet bc "before action"
+before_action :${1:NameOfMethod}
+endsnippet
+
+snippet pc "params create"
+def params_create
+	params.require(:${1:NameOfRecource}).permit(:${2:Parameters})
+end
+endsnippet
+
+snippet it "rspec it"
+it '${1:Description}' do
+end
+endsnippet
+
+snippet con "rspec context"
+context '${1:Description}' do
+end
+endsnippet
+
+snippet desc "rspec describe"
+describe '${1:Description}' do
+end
+endsnippet
+

@@ -89,6 +89,7 @@ set hlsearch
 vnoremap x "_x
 nnoremap x "_x
 nnoremap de "_de
+nnoremap dd "_dd
 
 " 画面分割系
 nnoremap sj <C-w>j
