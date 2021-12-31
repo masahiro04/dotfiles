@@ -1,0 +1,47 @@
+snippet struct "Struct declaration"
+type ${1:Struct} struct {
+	${2:Prop}
+}
+endsnippet
+
+snippet interface "Interface declaration"
+type ${1:Interface} interface {
+	${2:Prop}
+}
+endsnippet
+
+snippet if "If statement"
+if ${1:condition} {
+	${2:Prop}
+}
+endsnippet
+
+# functions
+snippet main "Main function"
+func main() {
+	${0:Content}
+}
+endsnippet
+
+snippet meth "Method"
+func (${1:receiver} ${2:type}) ${3:name}(${4:params})${5/(.+)/ /}${5:type} {
+	${6:Content}
+}
+endsnippet
+
+snippet func "Function"
+func ${1:name}(${2:params}) ${3:type} {
+	${4:Content}
+}
+endsnippet
+
+snippet json "JSON field"
+\`json:"${1:displayName}"\`
+endsnippet
+
+# error handling
+snippet err "Basic error handling"
+if err != nil {
+	${1:Content}
+}
+endsnippet
