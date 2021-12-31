@@ -1,5 +1,64 @@
+snippet class "create a class"
+class ${1:Model}sController < ${2:ClassToExtends}
+end
+endsnippet
+
 snippet bc "before action"
 before_action :${1:NameOfMethod}
+endsnippet
+
+snippet index "create a index method"
+def index
+	@$1s = ${1/.*/\u$0/}.all
+end
+endsnippet
+
+snippet new "create a new method"
+def new
+	@$1 = ${1/.*/\u$0/}.new
+end
+endsnippet
+
+snippet show "create a show method"
+def show; end
+endsnippet
+
+snippet edit "create a edit method"
+def edit; end
+endsnippet
+
+snippet create "create a create method"
+def create
+	@$1 = ${1/.*/\u$0/}.new(${2:Parameters})
+	if @$1.save
+		redirect_to $1_path(@$1)
+	else
+		render :new
+	end
+end
+endsnippet
+
+snippet update "create a update method"
+def update
+	if @$1.update(${2:Parameters})
+		redirect_to $1_path(@$1)
+	else
+		render :edit
+	end
+end
+endsnippet
+
+snippet destroy "create a destroy method"
+def destroy
+	@${1:Resource}.destroy
+	redirect_to $1s_path
+end
+endsnippet
+
+snippet set "find a resource"
+def set_$1
+	@$1 = ${1/.*/\u$0/}.find(params[:id])
+end
 endsnippet
 
 snippet pc "params create"
