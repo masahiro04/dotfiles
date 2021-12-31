@@ -1,0 +1,12 @@
+# TODO: ファイル名？によって決まるかもなので、erbとhamlでの対応が必要かも
+# haml
+snippet hif
+- if ${1:Array}
+	${3:Body}
+endsnippet
+
+snippet heach
+- ${1:Array}.each do |${2:Reciever}|
+	${3:Body}
+endsnippet
+

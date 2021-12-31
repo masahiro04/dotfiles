@@ -1,7 +1,19 @@
-snippet frz "frozen string literal"
-	# frozen_string_literal: true
+snippet rfr "frozen string literal"
+# frozen_string_literal: true
 endsnippet
 
+# メソッド系
+snippet rmap
+${1:Array}.map { |${2:Reciever}| ${3:Body} }
+endsnippet
+
+snippet reach
+${1:Array}.each do |${2:Reciever}
+	${3:Body}
+end
+endsnippet
+
+# rspec系
 snippet rsit "rspec it"
 it '${1:Description}' do
 end
@@ -16,3 +28,4 @@ snippet rsdesc "rspec describe"
 describe '${1:Description}' do
 end
 endsnippet
+
