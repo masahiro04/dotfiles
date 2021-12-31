@@ -85,9 +85,10 @@ set hlsearch
 "-------------------------------------------------------------------------------
 " キーバインド
 "-------------------------------------------------------------------------------
-" xで削除した時はヤンクしない
+" xやdeで削除した時はヤンクしない
 vnoremap x "_x
 nnoremap x "_x
+nnoremap de "_de
 
 " 画面分割系
 nnoremap sj <C-w>j
@@ -97,9 +98,18 @@ nnoremap sh <C-w>h
 nnoremap ss :<C-u>sp<CR><C-w>j
 nnoremap sv :<C-u>vs<CR><C-w>l
 
-" jj
+" 挿入モードからexit
 inoremap <silent> jj <ESC>
 
+" バッファ移動
+"次タブのバッファを表示
+nnoremap <silent> bp :bprev<CR>
+"前タブのバッファを表示
+nnoremap <silent> bn :bnext<CR>
+"直前バッファを表示
+nnoremap <silent> bb :b#<CR>
+" bdで現在のバッファを削除
+nnoremap bd :bdelete<CR>
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
@@ -170,14 +180,3 @@ if dein#check_install()
   call dein#install()
 endif
 
-"-------------------------------------------------------------------------------
-" バッファ移動
-"-------------------------------------------------------------------------------
-"次タブのバッファを表示
-nnoremap <silent> bp :bprev<CR>
-"前タブのバッファを表示
-nnoremap <silent> bn :bnext<CR>
-"直前バッファを表示
-nnoremap <silent> bb :b#<CR>
-" bdで現在のバッファを削除
-nnoremap bd :bdelete<CR>
