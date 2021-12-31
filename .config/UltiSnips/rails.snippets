@@ -72,7 +72,6 @@ def params_create
 end
 endsnippet
 
-
 # Rspec系
 # TODO: desc+[get/post]など汎用的なテストを追加しておきたい
 snippet it "rspec it"
@@ -89,4 +88,100 @@ snippet desc "rspec describe"
 describe '${1:Description}' do
 end
 endsnippet
+
+snippet rsindex "create index rspec"
+describe 'GET /index' do
+	context 'with valid right' do
+		it 'returns http success' do
+			get ${1:Resource}s_path
+			expect(response).to have_http_status(:ok)
+		end
+	end
+
+	context 'with invalid right' do
+		it 'redirects to root path when role is read' do
+			get $1s_path
+			expect(response).to have_http_status(:found)
+		end
+	end
+end
+endsnippet
+
+snippet rsshow "create show rspec"
+describe 'GET /show' do
+	context 'with valid right' do
+		it 'returns http success' do
+			get ${1:Resource}_path($1.id)
+			expect(response).to have_http_status(:ok)
+		end
+	end
+
+	context 'with invalid right' do
+		it 'redirects to root path' do
+			get $1_path($1.id)
+			expect(response).to have_http_status(:found)
+		end
+	end
+end
+endsnippet
+
+snippet rsnew "create new rspec"
+describe 'GET /new' do
+	context 'with valid right' do
+		it 'returns http success' do
+			get new_${1:Resource}_path
+			expect(response).to have_http_status(:ok)
+		end
+	end
+
+	context 'with invalid right' do
+		it 'redirects to root path' do
+			get new_$1_path
+			expect(response).to have_http_status(:found)
+		end
+	end
+end
+endsnippet
+
+snippet rsedit "create edit rspec"
+describe 'GET /edit' do
+	context 'with valid right' do
+		it 'returns http success' do
+			get edit_${1:Resource}_path($1.id)
+			expect(response).to have_http_status(:ok)
+		end
+	end
+
+	context 'with invalid right' do
+		it 'redirects to root path' do
+			get edit_$1_path($1.id)
+			expect(response).to have_http_status(:found)
+		end
+	end
+end
+endsnippet
+
+snippet rscreate "create ceate rspec"
+describe 'POST /create' do
+	let(:attrs) { attributes_for(:$1) }
+
+	context 'when valid parameters' do
+		it 'returns 302 status after created' do
+			post $1s_path, params: { $1: attrs }
+			expect(response).to have_http_status(:found)
+			expect(response).to redirect_to $1_path(${1/.*/\u$0/}.last.id)
+		end
+
+		it 'can create user_company and increase one record' do
+			expect {
+				post $1s_path, params: { $1: attrs }
+			}.to change(${1/.*/\u$0/}, :count).by(+1)
+		end
+	end
+
+	context 'when invalid parameters' do
+	end
+end
+endsnippet
+
 
