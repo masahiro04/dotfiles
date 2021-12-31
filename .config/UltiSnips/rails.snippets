@@ -1,3 +1,4 @@
+# controller系
 snippet class "create a class"
 class ${1:Model}sController < ${2:ClassToExtends}
 end
@@ -5,6 +6,10 @@ endsnippet
 
 snippet bc "before action"
 before_action :${1:NameOfMethod}
+endsnippet
+
+snippet bcc "before action with targets"
+before_action :${1:NameOfMethod}, only: %i[${2:Resources}]
 endsnippet
 
 snippet index "create a index method"
@@ -67,6 +72,9 @@ def params_create
 end
 endsnippet
 
+
+# Rspec系
+# TODO: desc+[get/post]など汎用的なテストを追加しておきたい
 snippet it "rspec it"
 it '${1:Description}' do
 end
