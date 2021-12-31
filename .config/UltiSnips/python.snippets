@@ -1,0 +1,93 @@
+snippet for "for loop"
+for ${1:item} in ${2:iterable}:
+	${3:${VISUAL:pass}}
+endsnippet
+
+# snippet class "class with docstrings"
+# class ${1:MyClass}(${2:object}):
+#
+# 	`!p snip.rv = triple_quotes(snip)`${3:Docstring for $1. }`!p snip.rv = triple_quotes(snip)`
+#
+# 	def __init__(self$4):
+# 		`!p snip.rv = triple_quotes(snip)`${5:TODO: to be defined.}`!p
+# snip.rv = ""
+# snip >> 2
+# args = get_args(t[4])
+# write_docstring_args(args, snip)
+# if args:
+# 	snip.rv += '\n' + snip.mkline('', indent='')
+# 	snip += '{0}'.format(triple_quotes(snip))
+# write_init_body(args, t[2], snip)
+# `
+# 		$0
+# endsnippet
+
+snippet if "If"
+if ${1:condition}:
+	${2:${VISUAL:pass}}
+endsnippet
+
+snippet ife "If / Else"
+if ${1:condition}:
+	${2:${VISUAL:pass}}
+else:
+	${3:pass}
+endsnippet
+
+snippet ifee "If / Elif / Else"
+if ${1:condition}:
+	${2:${VISUAL:pass}}
+elif ${3:condition}:
+	${4:pass}
+else:
+	${5:pass}
+endsnippet
+
+
+##########################
+# Try / Except / Finally #
+##########################
+snippet try "Try / Except"
+try:
+	${1:${VISUAL:pass}}
+except ${2:Exception} as ${3:e}:
+	${4:raise $3}
+endsnippet
+
+snippet trye "Try / Except / Else"
+try:
+	${1:${VISUAL:pass}}
+except ${2:Exception} as ${3:e}:
+	${4:raise $3}
+else:
+	${5:pass}
+endsnippet
+
+snippet tryf "Try / Except / Finally"
+try:
+	${1:${VISUAL:pass}}
+except ${2:Exception} as ${3:e}:
+	${4:raise $3}
+finally:
+	${5:pass}
+endsnippet
+
+snippet tryef "Try / Except / Else / Finally"
+try:
+	${1:${VISUAL:pass}}
+except${2: ${3:Exception} as ${4:e}}:
+	${5:raise}
+else:
+	${6:pass}
+finally:
+	${7:pass}
+endsnippet
+
+######################
+# Assertions & Tests #
+######################
+
+snippet ae "Assert equal"
+assert ${1:first} == ${2:second}
+endsnippet
+
