@@ -73,7 +73,6 @@ end
 endsnippet
 
 # Rspec系
-# TODO: desc+[get/post]など汎用的なテストを追加しておきたい
 snippet it "rspec it"
 it '${1:Description}' do
 end
@@ -184,4 +183,43 @@ describe 'POST /create' do
 end
 endsnippet
 
+snippet rsupdate "create update rspec"
+describe 'PUT /update' do
+	context 'when valid parameters' do
+		it 'returns 302 status' do
+			put ${1:Resource}_path($1.id), params: { $1: { ${2:PropKey}: ${3:PropVal} } }
+			expect(response).to have_http_status(:found)
+		end
+
+		it 'updates $2' do
+			expect {
+				put $1_path($1.id), params: { $1: { $2: $3 } }
+			}.to change { ${1/.*/\u$0/}.find($1.id).$2 }.from($1.$2).to($3)
+		end
+	end
+
+	context 'with invalid right' do
+		it 'redirects to root path when role is read' do
+			put $1_path($1.id), params: { $1: { $2: $3 } }
+			expect(response).to have_http_status(:found)
+			expect(response).to redirect_to root_path
+		end
+	end
+end
+endsnippet
+
+snippet rsdestroy "create destroy rspec"
+describe 'DELETE /destroy' do
+	context 'success' do
+		it 'reduce one record' do
+			expect { delete ${1:Resource}_path($1.id) }.to change(${1/.*/\u$0/}, :count).by(-1)
+		end
+
+		it 'redirects to $1 path' do
+			delete $1_path($1.id)
+			expect(response).to redirect_to $1s_path
+		end
+	end
+end
+endsnippet
 
