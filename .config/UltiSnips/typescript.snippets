@@ -11,11 +11,27 @@ endsnippet
 
 snippet if "create a condition"
 if (${1:condition}) {
+	${2:Body}
 }
 endsnippet
 
-snippet in "create an interface"
+snippet ife "create a condition"
+if (${1:condition}) {
+	${2:Body}
+} else {
+	${3:Body}
+}
+endsnippet
+
+snippet interface "create an interface"
 interface ${1:Name} {
+	${2:Body}
+}
+endsnippet
+
+snippet type "create an interface"
+type ${1:Name} = {
+	${2:Body}
 }
 endsnippet
 

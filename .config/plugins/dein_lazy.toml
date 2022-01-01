@@ -87,6 +87,11 @@ hook_source = '''
   autocmd BufWritePre *.js,*.ts,*.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
 '''
 
+# pythonの括弧のインデントがおかしい問題を解消してくれる
+[[plugins]]
+repo = 'Vimjas/vim-python-pep8-indent'
+on_ft = ['python']
+
 [[plugins]]
 repo = 'fatih/vim-go'
 on_ft = ['go']
