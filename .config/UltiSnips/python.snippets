@@ -14,16 +14,10 @@ def get_args(line: str):
   return args
 endglobal
 
-snippet cl
-class $1:
-	"""$2`!p
-if "\n" in t[2]:
-  snip >> 1
-  snip += '"""'
-else:
-  snip.rv = '"""'`
+snippet class
+class ${1:ClassName}:
 
-	def __init__(self, $3):`!p
+	def __init__(self, ${3:args}):`!p
 snip >> 2
 for arg in get_args(t[3]):
   snip += f"self.{arg[0]} = {arg[0]}"`$0
