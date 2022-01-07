@@ -28,7 +28,8 @@ on_ft = ['css','scss','sass']
 repo = 'vim-ruby/vim-ruby'
 on_ft = ['ruby']
 
-# railsのsyntax
+# railsのコマンド系
+# :Rails +いろんなコマンド, で割となんでもできるからめちゃ使える
 [[plugins]]
 repo = 'tpope/vim-rails'
 on_ft = ['ruby']
@@ -59,7 +60,6 @@ on_ft = ['javascript', 'javascript.jsx']
 [[plugins]]
 repo = 'leafgarland/typescript-vim'
 on_ft = ['typescript', 'typescript.tsx']
-
 
 [[plugins]]
 repo = 'dart-lang/dart-vim-plugin'

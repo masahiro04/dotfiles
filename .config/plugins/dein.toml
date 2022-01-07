@@ -48,13 +48,7 @@ hook_add = '''
   \ 'coc-json'
   \ ]
 '''
-# inoremap <silent><expr> <tab> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>"
-# inoremap <silent><expr> <TAB>
-  #       \ pumvisible() ? "\<C-n>" :
-  #       \ <SID>check_back_space() ? "\<TAB>" :
-  #       \ coc#refresh()
-  # inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-  # inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
 # ファイル検索。regexからファイル名までいけるので必須
 [[plugins]]
 repo = 'junegunn/fzf'
@@ -147,7 +141,7 @@ repo = 'nathanaelkane/vim-indent-guides'
 [[plugins]]
 repo = 'jiangmiao/auto-pairs'
 
-# 巣にぺっとk
+# snippets
 [[plugins]]
 repo ='SirVer/ultisnips'
 hook_add = '''
