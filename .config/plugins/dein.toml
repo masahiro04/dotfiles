@@ -29,6 +29,17 @@ hook_add = '''
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
 
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+      call CocActionAsync('doHover')
+    else
+      execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+  endfunction
+
   let g:coc_global_extensions = [
   \ 'coc-solargraph',
   \ 'coc-tsserver',
@@ -68,7 +79,6 @@ hook_add = '''
   let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --layout reverse --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
   set rtp+=/usr/local/opt/fzf
 '''
-  # set rtp+=~/.fzf
 
 # ファイラ. プロジェクトのファイル一覧の操作が可能
 [[plugins]]
@@ -81,7 +91,6 @@ hook_add = '''
 # 作業中のブランチやファイル名、を画面の下部と上部に表示
 [[plugins]]
 repo = 'vim-airline/vim-airline'
-
 
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
@@ -123,10 +132,6 @@ repo = 'altercation/vim-colors-solarized'
 # 簡単に括弧やクオテーションで囲める。超重要
 [[plugins]]
 repo = 'tpope/vim-surround'
-
-# Goのデバッガ。あんまり使ってないかも
-[[plugins]]
-repo = 'sebdah/vim-delve'
 
 # コード整形。使える言語限られているので、利用のタイミングは割と限定的
 [[plugins]]

@@ -67,6 +67,12 @@ on_ft = ['dart']
 
 [[plugins]]
 repo = 'thosakwe/vim-flutter'
+on_ft = ['dart']
+
+# Goのデバッガ。あんまり使ってないかも
+[[plugins]]
+repo = 'sebdah/vim-delve'
+on_ft = ['go']
 
 [[plugins]]
 repo = 'elzr/vim-json'

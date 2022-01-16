@@ -14,7 +14,6 @@ set fileencodings=utf-8,sjis,ucs-boms,euc-jp,ep932
 set fileformats=unix,dos,mac
 set ambiwidth=double
 set nobomb
-" set t_Co=256
 
 " スワップファイルの作成先を変更
 set noswapfile
@@ -46,7 +45,7 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 set modifiable
 
 " tagファイルの指定
-" set tags=~/.tags
+set tags=~/.tags
 
 " 保存時に自動で生成
 let g:auto_ctags = 1
@@ -88,10 +87,7 @@ set hlsearch
 " キーバインド
 "-------------------------------------------------------------------------------
 " xやdeで削除した時はヤンクしない
-" vnoremap x "_x
 nnoremap x "_x
-" noremap d "_d
-" nnoremap dd "_dd
 
 " 画面分割系
 nnoremap sj <C-w>j
@@ -116,8 +112,10 @@ nnoremap bd :bdelete<CR>
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
-
 set cursorline
+
+" Esc2回でハイライト消去
+nnoremap <Esc><Esc> :nohlsearch<CR><ESC>
 
 " Set cursor line color on visual mode
 highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
