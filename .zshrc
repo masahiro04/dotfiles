@@ -1,9 +1,10 @@
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
-# pane分割
+#export PROMPT="%n@%m(`uname -m`) %1~ %# o pane分割
 alias ide="~/.ide.sh"
-alias t="tmux"
+alias t="arch -arm64 tmux"
 alias tk="tmux kill-server"
+alias arm="arch -arm64 zsh"
 
 alias gc="git checkout"
 alias gp="git push"
@@ -12,6 +13,7 @@ alias gf="git fetch"
 # dockerとlocalのpsgl行き来するため
 alias psglstart="brew services start postgresql"
 alias psglstop="brew services stop postgresql"
+alias mystart="mysql.server restart"
 
 alias ctags="ctags -R -f .tags"
 
@@ -19,6 +21,10 @@ alias ctags="ctags -R -f .tags"
 alias bi="bundle install"
 alias rs="rails s"
 alias rc="rails c"
+alias rubo="bundle exec rubocop"
+alias haml="bundle exec haml-lint app/views/"
+alias best="bundle exec rails_best_practices -e node_modules"
+
 alias rsp="bundle exec rspec"
 alias rw="bin/webpack-dev-server"
 
@@ -29,8 +35,13 @@ alias nr="npm run start"
 alias ni="npm install"
 
 # docker系コマンド
+alias d="docker-compose"
 alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
+
+# heroku系コマンド
+alias hi="heroku login"
+alias hr="heroku run"
 
 # git設定
 autoload -Uz vcs_info
@@ -42,9 +53,10 @@ zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 # PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
 # プロンプトカスタマイズ
+
 PROMPT='
 [%B%F{red}%n@%m%f%b:%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f
-%F{yellow}$%f '
+%F{yellow}$%f (`uname -m`)'
 precmd(){ vcs_info }
 
 # # startshipを起動
@@ -96,15 +108,18 @@ export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 # export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 
 # go
-export GOPATH=$HOME/go
+
+# echo '# goenv setting' >> ~/.zshrc
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
 
+export GOOS=darwin
+export GOARCH=arm64
 # dockerのため
-export PATH="$PATH:/usr/local/bin"
+# export PATH="$PATH:/usr/local/bin"
 
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
