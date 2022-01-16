@@ -80,9 +80,6 @@ set ignorecase
 
 " 検索した時にハイライト
 set hlsearch
-" 編集中は消す
-" set nohls
-
 "-------------------------------------------------------------------------------
 " キーバインド
 "-------------------------------------------------------------------------------
@@ -112,11 +109,9 @@ nnoremap bd :bdelete<CR>
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
+" 横線
 set cursorline
-
-" Esc2回でハイライト消去
-nnoremap <Esc><Esc> :nohlsearch<CR><ESC>
-
+" 縦線
 " Set cursor line color on visual mode
 highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
 
