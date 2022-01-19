@@ -45,35 +45,35 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 set modifiable
 
 " tagファイルの指定
-set tags=~/.tags
+" set tags=~/.tags
 
 " 保存時に自動で生成
-let g:auto_ctags = 1
+" let g:auto_ctags = 1
 
-function! s:execute_ctags() abort
-  " 探すタグファイル名
-  let tag_name = '.tags'
-  " ディレクトリを遡り、タグファイルを探し、パス取得
-  let tags_path = findfile(tag_name, '.;')
-  " タグファイルパスが見つからなかった場合
-  if tags_path ==# ''
-    return
-  endif
+" function! s:execute_ctags() abort
+"   " 探すタグファイル名
+"   let tag_name = '.tags'
+"   " ディレクトリを遡り、タグファイルを探し、パス取得
+"   let tags_path = findfile(tag_name, '.;')
+"   " タグファイルパスが見つからなかった場合
+"   if tags_path ==# ''
+"     return
+"   endif
+"
+"   " タグファイルのディレクトリパスを取得
+"   " `:p:h`の部分は、:h filename-modifiersで確認
+"   let tags_dirpath = fnamemodify(tags_path, ':p:h')
+"   " 見つかったタグファイルのディレクトリに移動して、ctagsをバックグラウンド実行（エラー出力破棄）
+"   execute 'silent !cd' tags_dirpath '&& ctags -R -f' tag_name '2> /dev/null &'
+" endfunction
 
-  " タグファイルのディレクトリパスを取得
-  " `:p:h`の部分は、:h filename-modifiersで確認
-  let tags_dirpath = fnamemodify(tags_path, ':p:h')
-  " 見つかったタグファイルのディレクトリに移動して、ctagsをバックグラウンド実行（エラー出力破棄）
-  execute 'silent !cd' tags_dirpath '&& ctags -R -f' tag_name '2> /dev/null &'
-endfunction
-
-augroup ctags
-  autocmd!
-  autocmd BufWritePost * call s:execute_ctags()
-augroup END
+" augroup ctags
+"   autocmd!
+"   autocmd BufWritePost * call s:execute_ctags()
+" augroup END
 
 " 挿入モードでバックスペース削除を有効
-set backspace=indent,eol,start
+" set backspace=indent,eol,start
 
 " 検索するときに大文字小文字を区別しない
 set ignorecase
@@ -106,73 +106,4 @@ nnoremap <silent> bn :bnext<CR>
 nnoremap <silent> bb :b#<CR>
 " bdで現在のバッファを削除
 nnoremap bd :bdelete<CR>
-"-------------------------------------------------------------------------------
-" Cursor line
-"-------------------------------------------------------------------------------
-" 横線
-set cursorline
-" 縦線
-" Set cursor line color on visual mode
-highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
-
-highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
-
-augroup BgHighlight
-  autocmd!
-  autocmd WinEnter * set cul
-  autocmd WinLeave * set nocul
-augroup END
-
-if &term =~ "screen"
-  autocmd BufEnter * if bufname("") !~ "^?[A-Za-z0-9?]*://" | silent! exe '!echo -n "\ek[`hostname`:`basename $PWD`/`basename %`]\e\\"' | endif
-  autocmd VimLeave * silent!  exe '!echo -n "\ek[`hostname`:`basename $PWD`]\e\\"'
-endif
-
-"-------------------------------------------------------------------------------
-" Color scheme
-"-------------------------------------------------------------------------------
-let g:solarized_termcolors=256 "ここ重要、絶対入れること、とdocumentにあった"
-syntax enable
-set background=dark
-colorscheme solarized
-
-"-------------------------------------------------------------------------------
-" Dein
-"-------------------------------------------------------------------------------
-if &compatible
-  set nocompatible               " Be iMproved
-endif
-
-let s:dein_dir = expand('~/.cache/dein')
-let g:dein#install_github_api_token = 'GITHUB_API_TOKEN'
-
-" プラグインリストを収めた TOML ファイル
-" 予め TOML ファイル（後述）を用意しておく
-let g:rc_dir         = expand('~/.config/plugins')
-let g:dein_toml      = g:rc_dir . '/dein.toml'
-let g:dein_lazy_toml = g:rc_dir . '/dein_lazy.toml'
-
-" Required:
-set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
-
-" Required:
-if dein#load_state(s:dein_dir)
-  call dein#begin(s:dein_dir, [$MYVIMRC, g:dein_toml, g:dein_lazy_toml])
-
-  call dein#load_toml(g:dein_toml,      {'lazy': 0})
-  call dein#load_toml(g:dein_lazy_toml, {'lazy': 1})
-
-  " Required:
-  call dein#end()
-  call dein#save_state()
-endif
-
-" Required:
-filetype plugin indent on
-syntax enable
-
-" If you want to install not installed plugins on startup.
-if dein#check_install()
-  call dein#install()
-endif
 
