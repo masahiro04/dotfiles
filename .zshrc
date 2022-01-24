@@ -1,6 +1,33 @@
+# arm優先のための設定
+typeset -U path PATH
+path=(
+  /opt/homebrew/bin(N-/)
+  /opt/homebrew/sbin(N-/)
+  /usr/bin
+  /usr/sbin
+  /bin
+  /sbin
+  /usr/local/bin(N-/)
+  /usr/local/sbin(N-/)
+  /Library/Apple/usr/bin
+)
+
+plugins=(
+  zsh-autosuggestions
+)
+# NOTE(okubo): autosuggestionsで必要
+autoload -U compinit && compinit
+# NOTE(okubo): 色を有効化
+autoload -Uz colors && colors
+
+# NOTE(okubo): プロンプトカスタマイズ
+PROMPT='
+[%B%F{green}%n@%m%f%b %F{cyan}($(arch))%f:%F{blue}%~%f]$vcs_info_msg_0_%f'
+PROMPT+=""$'\n'"%# "
+precmd(){ vcs_info }
+
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
-#export PROMPT="%n@%m(`uname -m`) %1~ %# o pane分割
 alias ide="~/.ide.sh"
 alias t="arch -arm64 tmux"
 alias tk="tmux kill-server"
@@ -52,12 +79,7 @@ zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 # PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
-# プロンプトカスタマイズ
 
-PROMPT='
-[%B%F{red}%n@%m%f%b:%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f
-%F{yellow}$%f (`uname -m`)'
-precmd(){ vcs_info }
 
 # # startshipを起動
 # eval "$(starship init bash)"
