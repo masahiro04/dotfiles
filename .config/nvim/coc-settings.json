@@ -3,7 +3,12 @@
   "coc.preferences.formatOnType": true,
   "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
+  // Ruby
   "solargraph.commandPath": "~/.rbenv/shims/solargraph",
+  "suggest.enablePreselect": true,
+  // "codeLens.enable": true,
+  // "solargraph.useBundler": true,
+
   "languageserver": {
     "golang": {
       "command": "gopls",

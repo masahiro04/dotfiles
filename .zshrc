@@ -70,6 +70,8 @@ alias dcb="docker-compose build --no-cache"
 alias hi="heroku login"
 alias hr="heroku run"
 
+alias ctags="`brew --prefix`/bin/ctags"
+
 # git設定
 autoload -Uz vcs_info
 setopt prompt_subst
@@ -78,11 +80,7 @@ zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
-# PROMPT='%n@%m %c'\$vcs_info_msg_0_' %# '
 
-
-# # startshipを起動
-# eval "$(starship init bash)"
 # nvim
 alias vim='nvim'
 alias vi='nvim'
@@ -104,15 +102,15 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # zlib, pyenv入れる際の問題解消で挿入
-export LDFLAGS="-L/usr/local/opt/zlib/lib"
-export CPPFLAGS="-I/usr/local/opt/zlib/include"
+# export LDFLAGS="-L/usr/local/opt/zlib/lib"
+# export CPPFLAGS="-I/usr/local/opt/zlib/include"
 
 # tesserocrをinstallする際の回避策
-export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+# export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 
 # gitの設定
-PATH="/usr/local/git/bin:$PATH"
-export PATH
+# PATH="/usr/local/git/bin:$PATH"
+# export PATH
 
 # posgreの設定
 export PGDATA=/usr/local/var/postgres
@@ -130,18 +128,13 @@ export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 # export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 
 # go
-
-# echo '# goenv setting' >> ~/.zshrc
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
-
-export GOOS=darwin
-export GOARCH=arm64
-# dockerのため
-# export PATH="$PATH:/usr/local/bin"
+export GOPATH=$HOME/go;
+export PATH=$PATH:$GOPATH/bin;
 
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
