@@ -167,3 +167,6 @@ hook_add = '''
   map <Leader>k <Plug>(easymotion-k)
  '''
 
+# [[plugins]]
+# repo ='szw/vim-tags'
+
