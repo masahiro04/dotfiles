@@ -92,6 +92,7 @@ hook_add = '''
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
 
+# nerdtreeにgit情報を付与
 [[plugins]]
 repo = 'Xuyuanp/nerdtree-git-plugin'
 
