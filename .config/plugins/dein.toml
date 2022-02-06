@@ -183,3 +183,13 @@ repo = 'vim-trailing-whitespace'
 # test
 [[plugins]]
 repo = 'vim-test/vim-test'
+
+# ターミナル起動
+[[plugins]]
+repo = 'kassio/neoterm'
+hook_add = '''
+	let g:neoterm_autoinsert = 1
+	let g:neoterm_autoscroll = 1
+	" # let g:neoterm_split_on_tnew = 1
+	let g:neoterm_default_mod = "belowright"
+  '''
