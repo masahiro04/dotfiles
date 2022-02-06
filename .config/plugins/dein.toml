@@ -88,6 +88,13 @@ hook_add = '''
   nnoremap <C-e> :NERDTreeToggle<CR>
 '''
 
+# nerdtreeのfileに言語のアイコンを装飾
+[[plugins]]
+repo = 'ryanoasis/vim-devicons'
+
+[[plugins]]
+repo = 'Xuyuanp/nerdtree-git-plugin'
+
 # 作業中のブランチやファイル名、を画面の下部と上部に表示
 [[plugins]]
 repo = 'vim-airline/vim-airline'
@@ -167,6 +174,6 @@ hook_add = '''
   map <Leader>k <Plug>(easymotion-k)
  '''
 
-# [[plugins]]
-# repo ='szw/vim-tags'
+[[plugins]]
+repo = 'vim-trailing-whitespace'
 
