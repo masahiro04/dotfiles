@@ -176,6 +176,10 @@ hook_add = '''
   map <Leader>k <Plug>(easymotion-k)
  '''
 
+# whitespace検出
 [[plugins]]
 repo = 'vim-trailing-whitespace'
 
+# test
+[[plugins]]
+repo = 'vim-test/vim-test'
