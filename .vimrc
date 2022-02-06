@@ -44,9 +44,6 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 " Git mergeの際にこれがないと編集できないぽい
 set modifiable
 
-" tagファイルの指定
-" set tags=~/.tags
-" set tags=./tags
 set tags=.tags;$HOME
 " 保存時に自動で生成
 " let g:auto_ctags = 1
@@ -109,4 +106,3 @@ nnoremap <silent> bn :bnext<CR>
 nnoremap <silent> bb :b#<CR>
 " bdで現在のバッファを削除
 nnoremap bd :bdelete<CR>
-

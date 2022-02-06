@@ -119,7 +119,7 @@ repo = "airblade/vim-gitgutter"
 [[plugins]]
 repo = "tpope/vim-fugitive"
 
-# ファイルに応じてコメントを可能にしてくれる
+# 複数行のコメントいける
 [[plugins]]
 repo = 'tomtom/tcomment_vim'
 hook_add = '''
@@ -164,6 +164,7 @@ hook_add = '''
    let g:UltiSnipsJumpBackwardTrigger="<c-z>"
  '''
 
+# 特定keywordで画面移動を素早く実行
 [[plugins]]
 repo ='easymotion/vim-easymotion'
 hook_add = '''
