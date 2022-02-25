@@ -178,11 +178,19 @@ hook_add = '''
 
 # whitespace検出
 [[plugins]]
-repo = 'vim-trailing-whitespace'
+repo = 'bronson/vim-trailing-whitespace'
 
-# test
+# vim-testの画面を画面下部に出力させるために導入
+[[plugins]]
+repo = 'tpope/vim-dispatch'
+
+# test実行を簡単にする
 [[plugins]]
 repo = 'vim-test/vim-test'
+depends = ['vim-dispatch']
+hook_add = '''
+let g:test#strategy = 'dispatch'
+'''
 
 # ターミナル起動
 [[plugins]]
@@ -193,3 +201,8 @@ hook_add = '''
 	" # let g:neoterm_split_on_tnew = 1
 	let g:neoterm_default_mod = "belowright"
   '''
+# symbolを扱うファイラ？っぽいけど、使い道わからず、、、、
+# [[plugins]]
+# repo = 'liuchengxu/vista.vim'
+
+

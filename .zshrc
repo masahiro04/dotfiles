@@ -38,16 +38,21 @@ alias gp="git push"
 alias gf="git fetch"
 
 # dockerとlocalのpsgl行き来するため
-alias psglstart="brew services start postgresql"
-alias psglstop="brew services stop postgresql"
+alias pgstart="brew services start postgresql"
+alias pgstop="brew services stop postgresql"
 alias mystart="mysql.server restart"
 
-alias ctags="ctags -R -f .tags"
+# alias ctags="ctags -R -f .tags"
+# alias belongs_to="echo '--regex-ruby=/^[ \t]*belongs_to[ \t]*:([a-zA-Z0-9_]+)/\1/' >> .tags"
+# alias scope="echo '--regex-ruby=/^[ \t]*scope[ \t]*:([a-zA-Z0-9_]+)/\1/' >> .tags"
 
 # rails系コマンド
 alias bi="bundle install"
 alias rs="rails s"
 alias rc="rails c"
+alias rcr="rails db:create"
+alias rmi="rails db:migrate"
+
 alias rubo="bundle exec rubocop"
 alias haml="bundle exec haml-lint app/views/"
 alias best="bundle exec rails_best_practices -e node_modules"
@@ -62,9 +67,11 @@ alias nr="npm run start"
 alias ni="npm install"
 
 # docker系コマンド
+alias b="build"
 alias d="docker-compose"
 alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
+alias dclear="docker system prune -a"
 
 # heroku系コマンド
 alias hi="heroku login"
@@ -72,6 +79,8 @@ alias hr="heroku run"
 
 alias ctags="`brew --prefix`/bin/ctags"
 
+# node ver+17 に使う
+alias nop="export NODE_OPTIONS=--openssl-legacy-provider"
 # git設定
 autoload -Uz vcs_info
 setopt prompt_subst
