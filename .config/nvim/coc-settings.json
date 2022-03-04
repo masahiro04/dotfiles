@@ -8,13 +8,17 @@
   //"suggest.enablePreselect": true,
   //"codeLens.enable": true,
   // "solargraph.useBundler": true,
-
   "languageserver": {
     "golang": {
       "command": "gopls",
       "rootPatterns": ["go.mod"],
       "disableWorkspaceFolders": true,
       "filetypes": ["go"]
+    },
+    "kotlin": {
+        // localにlsp設置する必要ありです
+        "command": "/Users/masahirookubo/development/kotlin-language-server/server/build/install/server/bin/kotlin-language-server",
+        "filetypes": ["kotlin"]
     }
   },
   "eslint.packageManager": "yarn",

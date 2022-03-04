@@ -75,6 +75,14 @@ repo = 'sebdah/vim-delve'
 on_ft = ['go']
 
 [[plugins]]
+repo = 'udalov/kotlin-vim'
+on_ft = ['kotlin']
+
+[[plugins]]
+repo = 'keith/swift.vim'
+on_ft = ['swift']
+
+[[plugins]]
 repo = 'elzr/vim-json'
 on_ft = ['json']
 

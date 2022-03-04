@@ -56,6 +56,7 @@ hook_add = '''
   \ 'coc-sql',
   \ 'coc-pyright',
   \ 'coc-go',
+  \ 'coc-kotlin',
   \ 'coc-json'
   \ ]
 '''
@@ -205,4 +206,13 @@ hook_add = '''
 # [[plugins]]
 # repo = 'liuchengxu/vista.vim'
 
+# windowのサイズをtmuxのpaneみたいに変更可能
+[[plugins]]
+repo = 'simeji/winresizer'
+hook_add = '''
+  let g:winresizer_start_key = '<C-w>'
+'''
+
+[[plugins]]
+repo = 'iberianpig/tig-explorer.vim'
 

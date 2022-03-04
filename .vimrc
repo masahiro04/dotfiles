@@ -32,6 +32,10 @@ set title
 
 " インデント系
 filetype plugin indent on
+
+" kotlin認識しないので、こちらで対応
+autocmd BufReadPost *.kt setlocal filetype=kotlin
+
 set expandtab
 set tabstop=2
 set softtabstop=2
