@@ -33,9 +33,7 @@ alias t="arch -arm64 tmux"
 alias tk="tmux kill-server"
 alias arm="arch -arm64 zsh"
 
-alias gc="git checkout"
-alias gp="git push"
-alias gf="git fetch"
+alias g="git"
 
 # dockerとlocalのpsgl行き来するため
 alias pgstart="brew services start postgresql"
@@ -135,6 +133,7 @@ export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 
 # flutter
 # export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
+# kotlin
 
 # go
 export GOENV_ROOT="$HOME/.goenv"
