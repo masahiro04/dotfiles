@@ -169,6 +169,12 @@ snippet div. "<div> with class" w
 </div>
 endsnippet
 
+snippet div.. "<div> with className" w
+<div`!p snip.rv=' className="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""`>
+	${0:${VISUAL}}
+</div>
+endsnippet
+
 snippet dl "<dl>"
 <dl>
 	${1:Definition list}

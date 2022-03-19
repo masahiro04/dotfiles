@@ -1,9 +1,17 @@
 # HTMLの設定をextends
 extends html
 
+snippet pry
+<% binding.pry %>
+endsnippet
+
+snippet end
+<% end %>
+endsnippet
+
 snippet if
-<% ${1:CondStatement} ${2:Conditions} %>
-	${3:Body}
+<% if ${1:Conditions} %>
+	${2:Body}
 <% end %>
 endsnippet
 
@@ -17,3 +25,10 @@ snippet each
 <% end %>
 endsnippet
 
+snippet link
+<%= link_to ${1:Name}, ${2:Link} %>
+endsnippet
+
+snippet render
+<%= render '${1:Name}' %>
+endsnippet

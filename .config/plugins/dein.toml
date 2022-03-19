@@ -183,7 +183,9 @@ repo = 'bronson/vim-trailing-whitespace'
 # vim-testの画面を画面下部に出力させるために導入
 [[plugins]]
 repo = 'tpope/vim-dispatch'
-
+hook_add = '''
+let g:dispatch_quickfix_height=30
+'''
 # test実行を簡単にする
 [[plugins]]
 repo = 'vim-test/vim-test'

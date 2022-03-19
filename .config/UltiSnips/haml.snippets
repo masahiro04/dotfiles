@@ -1,12 +1,28 @@
 # TODO: ファイル名？によって決まるかもなので、erbとhamlでの対応が必要かも
 # haml
-snippet hcond
-- ${1:CondStatement} ${2:Conditions}
-	${3:Body}
+
+snippet pry
+- binding.pry
 endsnippet
 
-snippet heach
+snippet if
+- if ${1:Conditions}
+	${2:Body}
+endsnippet
+
+snippet else
+- else
+endsnippet
+
+snippet each
 - ${1:Array}.each do |${2:Reciever}|
 	${3:Body}
 endsnippet
 
+snippet link
+= link_to ${1:Name}, ${2:Link}
+endsnippet
+
+snippet render
+= render '${1:Name}'
+endsnippet

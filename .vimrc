@@ -48,35 +48,6 @@ set list listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 " Git mergeの際にこれがないと編集できないぽい
 set modifiable
 
-set tags=.tags;$HOME
-" 保存時に自動で生成
-" let g:auto_ctags = 1
-"
-" function! s:execute_ctags() abort
-"   " 探すタグファイル名
-"   let tag_name = '.tags'
-"   " ディレクトリを遡り、タグファイルを探し、パス取得
-"   let tags_path = findfile(tag_name, '.;')
-"   " タグファイルパスが見つからなかった場合
-"   if tags_path ==# ''
-"     return
-"   endif
-"
-"   " タグファイルのディレクトリパスを取得
-"   " `:p:h`の部分は、:h filename-modifiersで確認
-"   let tags_dirpath = fnamemodify(tags_path, ':p:h')
-"   " 見つかったタグファイルのディレクトリに移動して、ctagsをバックグラウンド実行（エラー出力破棄）
-"   execute 'silent !cd' tags_dirpath '&& ctags -R -f' tag_name '2> /dev/null &'
-" endfunction
-"
-" augroup ctags
-"   autocmd!
-"   autocmd BufWritePost * call s:execute_ctags()
-" augroup END
-"
-" 挿入モードでバックスペース削除を有効
-" set backspace=indent,eol,start
-
 " 検索するときに大文字小文字を区別しない
 set ignorecase
 
