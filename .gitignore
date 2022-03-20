@@ -1,6 +1,6 @@
 *.netrwhist
 
-.config/coc/extensions/node_modules
+.config/coc
 .config/configstore
 .config/iterm2
 .config/coc/extensions/*
