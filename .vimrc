@@ -81,3 +81,5 @@ nnoremap <silent> bn :bnext<CR>
 nnoremap <silent> bb :b#<CR>
 " bdで現在のバッファを削除
 nnoremap bd :bdelete<CR>
+
+set timeoutlen=200 ttimeoutlen=0
