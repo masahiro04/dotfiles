@@ -65,16 +65,10 @@ if dein#check_install()
   call dein#install()
 endif
 
-
-
-
 "-------------------------------------------------------------------------------
 " Color scheme
 "-------------------------------------------------------------------------------
-" let g:solarized_termcolors=256 "ここ重要、絶対入れること、とdocumentにあった"
-" syntax on
-" syntax enable
+" deinの後でないとpluginが効かない
+set t_Co=256
 set background=dark
-" " colorscheme solarized
-" "
-colorscheme onedark
+colorscheme PaperColor
