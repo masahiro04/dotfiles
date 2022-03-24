@@ -24,13 +24,6 @@ if &term =~ "screen"
   autocmd VimLeave * silent!  exe '!echo -n "\ek[`hostname`:`basename $PWD`]\e\\"'
 endif
 
-"-------------------------------------------------------------------------------
-" Color scheme
-"-------------------------------------------------------------------------------
-let g:solarized_termcolors=256 "ここ重要、絶対入れること、とdocumentにあった"
-syntax enable
-set background=dark
-colorscheme solarized
 
 "-------------------------------------------------------------------------------
 " Dein
@@ -71,3 +64,17 @@ syntax enable
 if dein#check_install()
   call dein#install()
 endif
+
+
+
+
+"-------------------------------------------------------------------------------
+" Color scheme
+"-------------------------------------------------------------------------------
+" let g:solarized_termcolors=256 "ここ重要、絶対入れること、とdocumentにあった"
+" syntax on
+" syntax enable
+set background=dark
+" " colorscheme solarized
+" "
+colorscheme onedark

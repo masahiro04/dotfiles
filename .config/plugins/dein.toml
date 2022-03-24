@@ -133,9 +133,12 @@ hook_add = '''
     let g:rainbow_active = 1
 '''
 
-# solarizedのカラースキーマ
 [[plugins]]
-repo = 'altercation/vim-colors-solarized'
+repo = 'joshdick/onedark.vim'
+
+# solarizedのカラースキーマ
+# [[plugins]]
+# repo = 'altercation/vim-colors-solarized'
 
 # 簡単に括弧やクオテーションで囲める。超重要
 [[plugins]]
