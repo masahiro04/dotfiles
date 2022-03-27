@@ -106,16 +106,22 @@ hook_source = '''
 repo = 'Vimjas/vim-python-pep8-indent'
 on_ft = ['python']
 
+# importだけ保存時にやってくれる
 [[plugins]]
-repo = 'fatih/vim-go'
+repo = 'mattn/vim-goimports'
 on_ft = ['go']
-hook_add = '''
-  " 保存時に必要なimportを自動的に挿入
-  let g:go_fmt_command = "goimports"
-  " LSPに任せる機能をOFFにする
-  let g:go_def_mapping_enabled = 0
-  let g:go_doc_keywordprg_enabled = 0
-'''
+
+# 機能としては非常に満足だがtoo muchなためdisableに
+# [[plugins]]
+# repo = 'fatih/vim-go'
+# on_ft = ['go']
+# hook_add = '''
+#   " 保存時に必要なimportを自動的に挿入
+#   let g:go_fmt_command = "goimports"
+#   " LSPに任せる機能をOFFにする
+#   " let g:go_def_mapping_enabled = 0
+#   " let g:go_doc_keywordprg_enabled = 0
+# '''
 
 [[plugins]]
 repo = 'zchee/deoplete-clang'
