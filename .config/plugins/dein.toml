@@ -201,6 +201,8 @@ hook_add = '''
 	let g:neoterm_autoscroll = 1
 	" # let g:neoterm_split_on_tnew = 1
 	let g:neoterm_default_mod = "belowright"
+
+  nmap <C-t> :Ttoggle<CR>
   '''
 # function等をリストして右側に出してくれる。ファイルの中の関数全部一気に見れるので非常に便利
 [[plugins]]
@@ -225,4 +227,9 @@ hook_add = '''
 
 [[plugins]]
 repo = 'iberianpig/tig-explorer.vim'
+
+# vim でshell起動。主にdlvのUIを整えるため、が目的
+[[plugins]]
+repo = 'Shougo/vimshell.vim'
+
 

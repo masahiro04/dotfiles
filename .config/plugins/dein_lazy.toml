@@ -73,7 +73,11 @@ on_ft = ['dart']
 [[plugins]]
 repo = 'sebdah/vim-delve'
 on_ft = ['go']
+hook_source = '''
+  nmap <silent> dl :DlvToggleBreakpoint<CR>
+  nmap <silent> dt :DlvTest<CR>
 
+'''
 [[plugins]]
 repo = 'udalov/kotlin-vim'
 on_ft = ['kotlin']
