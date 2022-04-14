@@ -1,7 +1,7 @@
 {
   "suggest.keepCompleteopt": false,
   "coc.preferences.formatOnType": true,
-  "pairs.enableCharacters": ["(", "[", "{", "`"],
+  // "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
   // RubyはcommandPathだけあれば良さそう
   "solargraph.commandPath": "~/.rbenv/shims/solargraph",
@@ -11,14 +11,20 @@
   "languageserver": {
     "golang": {
       "command": "gopls",
-      "rootPatterns": ["go.mod"],
-      "disableWorkspaceFolders": true,
+      // "rootPatterns": ["go.mod"],
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      // "disableWorkspaceFolders": true,
       "filetypes": ["go"]
     },
     "kotlin": {
-        // localにlsp設置する必要ありです
-        "command": "/Users/masahirookubo/development/kotlin-language-server/server/build/install/server/bin/kotlin-language-server",
-        "filetypes": ["kotlin"]
+      // localにlsp設置する必要ありです
+      "command": "/Users/masahirookubo/development/kotlin-language-server/server/build/install/server/bin/kotlin-language-server",
+      "filetypes": ["kotlin"]
+    },
+    "nim": {
+      "command": "nimlsp",
+      "filetypes": ["nim"],
+      "trace.server": "verbose"
     }
   },
   "eslint.packageManager": "yarn",

@@ -50,6 +50,15 @@ repo = 'slim-template/vim-slim'
 on_ft = ['slim']
 
 [[plugins]]
+repo = 'baabelfish/nvim-nim'
+on_ft = ['nim']
+hook_add='''
+
+let g:nvim_nim_highlighter_semantics=1
+let g:nvim_nim_enable_async=0
+'''
+
+[[plugins]]
 repo = 'pangloss/vim-javascript',
 on_ft = ['javascript', 'javascript.jsx']
 

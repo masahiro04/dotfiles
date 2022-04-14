@@ -42,6 +42,7 @@ hook_add = '''
 
   let g:coc_global_extensions = [
   \ 'coc-solargraph',
+  \ 'coc-flutter',
   \ 'coc-tsserver',
   \ 'coc-prettier',
   \ 'coc-eslint',

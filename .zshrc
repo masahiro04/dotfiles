@@ -132,7 +132,7 @@ export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
 export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 
 # flutter
-# export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
+export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 # kotlin
 
 # go
@@ -146,6 +146,11 @@ export PATH=$PATH:$GOPATH/bin;
 
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
+
+
+# nim
+export PATH=/Users/masahirookubo/.nimble/bin:$PATH
+
 
 export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 
