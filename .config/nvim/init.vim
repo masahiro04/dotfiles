@@ -1,7 +1,11 @@
 source ~/.vimrc
 
+" 認識しない系の言語はこちらで強制判別
 autocmd BufNewFile,BufRead *.tsx let b:tsx_ext_found = 1
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
+autocmd BufReadPost *.kt setlocal filetype=kotlin
+autocmd BufNewFile,BufRead *.nim, set filetype=nim
+
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
@@ -9,21 +13,20 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 set cursorline
 " 縦線
 " Set cursor line color on visual mode
-highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
+" highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
 
-highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
+" highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
 
-augroup BgHighlight
-  autocmd!
-  autocmd WinEnter * set cul
-  autocmd WinLeave * set nocul
-augroup END
+" augroup BgHighlight
+"   autocmd!
+"   autocmd WinEnter * set cul
+"   autocmd WinLeave * set nocul
+" augroup END
 
 if &term =~ "screen"
   autocmd BufEnter * if bufname("") !~ "^?[A-Za-z0-9?]*://" | silent! exe '!echo -n "\ek[`hostname`:`basename $PWD`/`basename %`]\e\\"' | endif
   autocmd VimLeave * silent!  exe '!echo -n "\ek[`hostname`:`basename $PWD`]\e\\"'
 endif
-
 
 "-------------------------------------------------------------------------------
 " Dein

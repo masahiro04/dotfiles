@@ -81,8 +81,6 @@ hook_add = '''
   set rtp+=/usr/local/opt/fzf
 '''
 
-
-
 [[plugins]]
 repo ="kristijanhusak/defx-git"
 hook_add = '''
@@ -101,16 +99,9 @@ call defx#custom#column('git', 'indicators', {
 [[plugins]]
 repo ="kristijanhusak/defx-icons"
 
-
-
-
 [[plugins]]
 repo = 'Shougo/defx.nvim'
 depends = ['defx-git', 'defx-icons']
-# hook_add = '''
-#   let NERDTreeShowHidden=1
-#   nnoremap <C-e> :Defx<CR>
-# '''
 hook_add = '''
 call defx#custom#column('icon', {
       \ 'directory_icon': '▸',
@@ -131,7 +122,6 @@ call defx#custom#option('_', {
       \ 'toggle': 1,
       \ 'buffer_name': 'exlorer',
       \ })
-
 nnoremap <C-e> :<C-u>Defx -new `expand('%:p:h')` -search=`expand('%:p')`<CR>
 autocmd FileType defx call s:defx_my_settings()
   function! s:defx_my_settings() abort
@@ -168,7 +158,6 @@ autocmd FileType defx call s:defx_my_settings()
     nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
   endfunction
 '''
-
 
 # ファイラ. プロジェクトのファイル一覧の操作が可能
 # [[plugins]]
@@ -267,7 +256,7 @@ hook_add = '''
 
 # whitespace検出
 [[plugins]]
-repo = 'bronson/vim-trailing-whitespace'
+repo='ntpeters/vim-better-whitespace'
 
 # vim-testの画面を画面下部に出力させるために導入
 [[plugins]]
@@ -329,15 +318,15 @@ hook_add='''
 nmap  --  <Plug>(choosewin)
 '''
 
-[[plugins]]
-repo = 'LeafCage/yankround.vim'
-hook_add='''
-  nmap p <Plug>(yankround-p)
-  xmap p <Plug>(yankround-p)
-  nmap P <Plug>(yankround-P)
-  nmap gp <Plug>(yankround-gp)
-  xmap gp <Plug>(yankround-gp)
-  nmap gP <Plug>(yankround-gP)
-  nmap <C-p> <Plug>(yankround-prev)
-  nmap <C-n> <Plug>(yankround-next)
-'''
+# [[plugins]]
+# repo = 'LeafCage/yankround.vim'
+# hook_add='''
+#   nmap p <Plug>(yankround-p)
+#   xmap p <Plug>(yankround-p)
+#   nmap P <Plug>(yankround-P)
+#   nmap gp <Plug>(yankround-gp)
+#   xmap gp <Plug>(yankround-gp)
+#   nmap gP <Plug>(yankround-gP)
+#   nmap <C-p> <Plug>(yankround-prev)
+#   nmap <C-n> <Plug>(yankround-next)
+# '''
