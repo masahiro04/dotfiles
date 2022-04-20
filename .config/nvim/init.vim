@@ -65,6 +65,10 @@ if dein#check_install()
   call dein#install()
 endif
 
+" vim以外でfile更新してもvim filerに反映させる
+autocmd BufWritePost * call defx#redraw()
+autocmd BufEnter * call defx#redraw()
+
 "-------------------------------------------------------------------------------
 " Color scheme
 "-------------------------------------------------------------------------------
