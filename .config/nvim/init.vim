@@ -5,6 +5,7 @@ autocmd BufNewFile,BufRead *.tsx let b:tsx_ext_found = 1
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 autocmd BufReadPost *.kt setlocal filetype=kotlin
 autocmd BufNewFile,BufRead *.nim, set filetype=nim
+autocmd BufNewFile,BufRead *.slim, set filetype=slim
 
 "-------------------------------------------------------------------------------
 " Cursor line
