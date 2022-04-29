@@ -1,6 +1,10 @@
 {
   "suggest.keepCompleteopt": false,
-  "coc.preferences.formatOnType": true,
+  // "coc.preferences.formatOnType": true,
+  // NOTE(okubo): Dartの保存時にGoみたいに整形させる
+  "coc.preferences.formatOnSaveFiletypes": [
+    "dart"
+  ],
   // "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
   // RubyはcommandPathだけあれば良さそう
@@ -27,6 +31,8 @@
       "trace.server": "verbose"
     }
   },
+  // こちら追加することでDart lspの連携うまくいく
+  "flutter.lsp.initialization.onlyAnalyzeProjectsWithOpenFiles": false,
   "eslint.packageManager": "yarn",
   "eslint.nodePath": ".yarn/sdks",
   "javascript.suggest.autoImports": true,
