@@ -15,6 +15,7 @@ path=(
 plugins=(
   zsh-autosuggestions
 )
+
 # NOTE(okubo): autosuggestionsで必要
 autoload -U compinit && compinit
 # NOTE(okubo): 色を有効化
@@ -63,6 +64,9 @@ alias ys="yarn start"
 alias yi="yarn install"
 alias nr="npm run start"
 alias ni="npm install"
+
+# flutter
+alias ff="fvm flutter"
 
 # docker系コマンド
 alias b="build"
@@ -131,8 +135,10 @@ export PATH=~/.npm-global/bin:$PATH
 export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
 export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
 
+# fvm
+export PATH="$PATH:$HOME/.pub-cache/bin"
 # flutter
-export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
+# export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 # kotlin
 
 # go
@@ -146,7 +152,6 @@ export PATH=$PATH:$GOPATH/bin;
 
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
-
 
 # nim
 export PATH=/Users/masahirookubo/.nimble/bin:$PATH
