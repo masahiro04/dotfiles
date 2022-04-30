@@ -156,6 +156,10 @@ export PATH="$HOME/.tfenv/bin:$PATH"
 # nim
 export PATH=/Users/masahirookubo/.nimble/bin:$PATH
 
+# GnuPG, ecs cli
+export PATH=$PATH:/opt/homebrew/Cellar/gnupg/2.3.6
+
+
 export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
