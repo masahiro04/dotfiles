@@ -75,6 +75,9 @@ alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
 alias dclear="docker system prune -a"
 
+# ios/android/flutter系
+alias ios="open -a Simulator"
+
 # heroku系コマンド
 alias hi="heroku login"
 alias hr="heroku run"

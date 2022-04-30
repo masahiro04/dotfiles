@@ -287,15 +287,6 @@ hook_add = '''
 [[plugins]]
 repo = 'liuchengxu/vista.vim'
 depends = ['coc.nvim', 'lightline.vim']
-hook_add = '''
-  nnoremap <C-v> :Vista coc<CR>
-  let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-  let g:vista#renderer#enable_icon = 1
-  let g:vista#renderer#icons = {
-  \   "function": "\uf794",
-  \   "variable": "\uf71b",
-  \  }
-'''
 
 # windowのサイズをtmuxのpaneみたいに変更可能
 [[plugins]]
