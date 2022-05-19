@@ -84,7 +84,10 @@ on_ft = ['dart']
 [[plugins]]
 repo = 'thosakwe/vim-flutter'
 on_ft = ['dart']
-
+hook_source = '''
+  let g:flutter_hot_reload_on_save = 1
+  let g:flutter_command = 'fvm'
+'''
 # Goのデバッガ。あんまり使ってないかも
 [[plugins]]
 repo = 'sebdah/vim-delve'

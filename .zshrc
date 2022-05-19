@@ -77,6 +77,7 @@ alias dclear="docker system prune -a"
 
 # ios/android/flutter系
 alias ios="open -a Simulator"
+alias android="~/Library/Android/sdk/tools/emulator -avd Pixel_4_API_Tiramisu"
 
 # heroku系コマンド
 alias hi="heroku login"
@@ -172,3 +173,4 @@ eval "$(rbenv init -)"
 # NOTE: nvim + fzf.nvimのpreviewをいい感じにするための設定
 export BAT_THEME="Dracula"
 
+# source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme

@@ -96,8 +96,8 @@ call defx#custom#column('git', 'indicators', {
   \ })
 '''
 
-[[plugins]]
-repo ="kristijanhusak/defx-icons"
+# [[plugins]]
+# repo ="kristijanhusak/defx-icons"
 
 [[plugins]]
 repo = 'Shougo/defx.nvim'

@@ -31,3 +31,19 @@ Widget build(BuildContext context) {
 }
 endsnippet
 
+snippet freezed
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '$1.freezed.dart';
+
+part '$1.g.dart';
+
+@freezed
+class ${1/.*/\u$0/} with _$${1/.*/\u$0/} {
+	const factory ${1/.*/\u$0/}({
+		required ${2:prop},
+	}) = _${1/.*/\u$0/};
+
+	factory ${1/.*/\u$0/}.fromJson(Map<String, dynamic> json) => _$${1/.*/\u$0/}FromJson(json);
+}
+endsnippet
