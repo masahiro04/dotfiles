@@ -101,6 +101,7 @@ hook_source = '''
 repo = 'udalov/kotlin-vim'
 on_ft = ['kotlin']
 
+# syntax highlight
 [[plugins]]
 repo = 'keith/swift.vim'
 on_ft = ['swift']
@@ -108,6 +109,12 @@ on_ft = ['swift']
 [[plugins]]
 repo = 'elzr/vim-json'
 on_ft = ['json']
+
+[[plugins]]
+repo = 'jparise/vim-graphql'
+on_ft = ['graphql', 'graphqls']
+
+
 
 # prettierの導入。必要な言語は都度導入
 [[plugins]]
