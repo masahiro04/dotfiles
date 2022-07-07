@@ -1,11 +1,11 @@
 extends html
 
 snippet log "log something"
-console.log(${1:Content});
+console.log(${1});
 endsnippet
 
 snippet warn "warn something"
-console.warn(${1:Content});
+console.warn(${1});
 endsnippet
 
 snippet fun "create a function"
@@ -14,28 +14,28 @@ const ${1:name} = (): ${2:Type} => {
 endsnippet
 
 snippet if "create a condition"
-if (${1:condition}) {
-	${2:Body}
+if (${1}) {
+	${2}
 }
 endsnippet
 
 snippet ife "create a condition"
-if (${1:condition}) {
-	${2:Body}
+if (${1}) {
+	${2}
 } else {
-	${3:Body}
+	${3}
 }
 endsnippet
 
 snippet interface "create an interface"
-interface ${1:Name} {
-	${2:Body}
+interface ${1} {
+	${2}
 }
 endsnippet
 
 snippet type "create an interface"
-type ${1:Name} = {
-	${2:Body}
+type ${1} = {
+	${2}
 }
 endsnippet
 
@@ -44,3 +44,12 @@ snippet rc "create a react component"
 const ${1:AppName} = (${2:Props}): JSX.Element => ${3}
 endsnippet
 
+snippet us
+const [${1}, ${2}] = useState<${3}>();
+endsnippet
+
+snippet ue
+useEffect(() => {
+
+}, []);
+endsnippet

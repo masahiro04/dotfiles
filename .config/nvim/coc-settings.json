@@ -2,9 +2,7 @@
   "suggest.keepCompleteopt": false,
   // "coc.preferences.formatOnType": true,
   // NOTE(okubo): Dartの保存時にGoみたいに整形させる
-  "coc.preferences.formatOnSaveFiletypes": [
-    "dart"
-  ],
+  "coc.preferences.formatOnSaveFiletypes": ["dart"],
   // "pairs.enableCharacters": ["(", "[", "{", "`"],
   "pairs.enableBackspace": true,
   // RubyはcommandPathだけあれば良さそう
@@ -30,6 +28,11 @@
       "filetypes": ["nim"],
       "trace.server": "verbose"
     }
+  },
+  "swift": {
+    "filetypes": ["swift"],
+    // "command": "/Users/masahirookubo/development/sourcekit-lsp/.build/release/sourcekit-lsp"
+    "command": "/Users/masahirookubo/development/sourcekit-lsp/.build/release/sourcekit-lsp"
   },
   // こちら追加することでDart lspの連携うまくいく
   "flutter.lsp.initialization.onlyAnalyzeProjectsWithOpenFiles": false,

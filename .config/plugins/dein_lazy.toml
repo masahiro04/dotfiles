@@ -110,11 +110,14 @@ on_ft = ['swift']
 repo = 'elzr/vim-json'
 on_ft = ['json']
 
+# jsonファイルにコメント入れるために追加
+[[plugins]]
+repo = 'neoclide/jsonc.vim'
+on_ft = ['json', 'jsonc']
+
 [[plugins]]
 repo = 'jparise/vim-graphql'
 on_ft = ['graphql', 'graphqls']
-
-
 
 # prettierの導入。必要な言語は都度導入
 [[plugins]]
