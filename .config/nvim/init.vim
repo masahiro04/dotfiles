@@ -6,7 +6,7 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 autocmd BufReadPost *.kt setlocal filetype=kotlin
 autocmd BufNewFile,BufRead *.nim, set filetype=nim
 autocmd BufNewFile,BufRead *.slim, set filetype=slim
-autocmd BufNewFile,BufRead *.swift, set filetype=swift
+" autocmd BufNewFile,BufRead *.swift, set filetype=swift
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 autocmd BufRead,BufNewFile package.json set filetype=jsonc
 "-------------------------------------------------------------------------------

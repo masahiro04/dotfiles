@@ -67,6 +67,7 @@ alias ni="npm install"
 
 # flutter
 alias ff="fvm flutter"
+alias ffr="fvm flutter run"
 
 # docker系コマンド
 alias b="build"

@@ -57,7 +57,8 @@ hook_add = '''
   \ 'coc-sql',
   \ 'coc-pyright',
   \ 'coc-go',
-  \ 'coc-json'
+  \ 'coc-json',
+  \ 'coc-sourcekit'
   \ ]
 '''
 
