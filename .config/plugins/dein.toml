@@ -160,21 +160,9 @@ autocmd FileType defx call s:defx_my_settings()
   endfunction
 '''
 
-# ファイラ. プロジェクトのファイル一覧の操作が可能
-# [[plugins]]
-# repo = 'preservim/nerdtree'
-# hook_add = '''
-#   let NERDTreeShowHidden=1
-#   nnoremap <C-e> :NERDTreeToggle<CR>
-# '''
-
-# nerdtreeのfileに言語のアイコンを装飾
-# [[plugins]]
-# repo = 'ryanoasis/vim-devicons'
-
-# nerdtreeにgit情報を付与
-# [[plugins]]
-# repo = 'Xuyuanp/nerdtree-git-plugin'
+# iconのパッケージ
+[[plugins]]
+repo = 'ryanoasis/vim-devicons'
 
 # 作業中のブランチやファイル名、を画面の下部と上部に表示
 [[plugins]]
@@ -285,9 +273,9 @@ hook_add = '''
   nmap <C-t> :Ttoggle<CR>
   '''
 # function等をリストして右側に出してくれる。ファイルの中の関数全部一気に見れるので非常に便利
-[[plugins]]
-repo = 'liuchengxu/vista.vim'
-depends = ['coc.nvim', 'lightline.vim']
+# [[plugins]]
+# repo = 'liuchengxu/vista.vim'
+# depends = ['coc.nvim', 'lightline.vim']
 
 # windowのサイズをtmuxのpaneみたいに変更可能
 [[plugins]]
@@ -302,23 +290,3 @@ repo = 'iberianpig/tig-explorer.vim'
 # vim でshell起動。主にdlvのUIを整えるため、が目的
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
-
-# 画面移動
-[[plugins]]
-repo = 't9md/vim-choosewin'
-hook_add='''
-nmap  --  <Plug>(choosewin)
-'''
-
-# [[plugins]]
-# repo = 'LeafCage/yankround.vim'
-# hook_add='''
-#   nmap p <Plug>(yankround-p)
-#   xmap p <Plug>(yankround-p)
-#   nmap P <Plug>(yankround-P)
-#   nmap gp <Plug>(yankround-gp)
-#   xmap gp <Plug>(yankround-gp)
-#   nmap gP <Plug>(yankround-gP)
-#   nmap <C-p> <Plug>(yankround-prev)
-#   nmap <C-n> <Plug>(yankround-next)
-# '''
