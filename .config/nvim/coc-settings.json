@@ -29,6 +29,7 @@
   },
   // NOTE(okubo): Dartの保存時にGoみたいに整形させる
   "coc.preferences.formatOnSaveFiletypes": ["dart"],
+  "flutter.fvm.enabled": true,
   "pairs.enableBackspace": true,
   "solargraph.commandPath": "~/.rbenv/shims/solargraph",
   // NOTE(okubo): sourcekitはデフォルトでxcodeの方が実行されているが、その際にargsが飛んでいないので、そこ入れれたらUIKit動くはず
@@ -58,7 +59,7 @@
     },
     "nim": {
       "command": "nimlsp",
-      "filetypes": ["nim"],
+      "filetypes": ["nim", "nims"],
       "trace.server": "verbose"
     }
     // TODO(okubo): なぜかこちらなくても動く
