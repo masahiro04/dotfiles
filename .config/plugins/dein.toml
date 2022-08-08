@@ -6,30 +6,94 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 
+
+[[plugins]]
+repo = 'vim-denops/denops.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+on_event = 'InsertEnter'
+depends = ['denops.vim']
+
+
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+on_event = 'InsertEnter'
+depends = ['denops.vim']
+hook_source = '''
+  call ddc#custom#patch_global('sources', ['around'])
+  call ddc#custom#patch_global('sourceOptions', {
+        \ '_': {
+        \   'matchers': ['matcher_head'],
+        \   'sorters': ['sorter_rank']},
+        \ 'around': {
+        \   'mark': 'around' },
+        \ })
+  call ddc#enable()
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-around'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+on_source = 'ddc.vim'
+
 # LSP
+# [[plugins]]
+# repo = 'neovim/nvim-lspconfig'
+# hook_add = '''
+# lua << EOF
+# local nvim_lsp = require('lspconfig')
+# local protocol = require('vim.lsp.protocol')
+#
+# local on_attach = function(client, bufnr)
+#   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+#   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+#
+#   -- Mappings.
+#   local opts = { noremap = true, silent = true }
+#
+#   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+#
+#   -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+#   -- require 'completion'.on_attach(client, bufnr)
+#   -- require('completion').on_attach(client)
+# end
+#
+# nvim_lsp.tsserver.setup {
+#   on_attach = on_attach,
+#   filetypes = { "typescript", "typescriptreact", 'typescript.tsx' }
+# }
+# EOF
+# '''
+
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
-hook_add = '''
+on_event = 'BufEnter'
+hook_source= '''
 lua << EOF
-local nvim_lsp = require('lspconfig')
-local protocol = require('vim.lsp.protocol')
-
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  -- Mappings.
-  local opts = { noremap = true, silent = true }
-
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-end
-
-nvim_lsp.tsserver.setup {
-  on_attach = on_attach,
-  filetypes = { "typescript", "typescriptreact", 'typescript.tsx' }
-}
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.on_server_ready(function(server)
+  local opts = {}
+  server:setup(opts)
+end)
 EOF
 '''
+
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+on_source = 'nvim-lspconfig'
+
 
 # Hover, definition, etc..
 [[plugins]]
@@ -55,7 +119,7 @@ nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
 repo = 'nvim-treesitter/nvim-treesitter'
 hook_add = '''
 lua << EOF
-require 'nvim-tresitter.configs'.setup {
+require 'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
     disable = {},
@@ -70,7 +134,7 @@ require 'nvim-tresitter.configs'.setup {
     "json",
     "yaml",
     "swift",
-    "kotolin",
+    "kotlin",
     "dart",
     "ruby",
     "html",
@@ -80,6 +144,7 @@ require 'nvim-tresitter.configs'.setup {
 }
 EOF
 '''
+
 
 # LSP. COC便利なので利用
 # [[plugins]]

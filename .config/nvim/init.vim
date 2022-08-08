@@ -10,6 +10,7 @@ autocmd BufNewFile,BufRead *.swift, set filetype=swift
 autocmd FileType swift setlocal omnifunc=lsp#complete
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 autocmd BufRead,BufNewFile package.json set filetype=jsonc
+" autocmd BufEnter * lua require'completion'.on_attach()
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
