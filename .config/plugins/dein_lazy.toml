@@ -77,16 +77,19 @@ on_ft = ['javascript', 'javascript.jsx']
 repo = 'leafgarland/typescript-vim'
 on_ft = ['typescript', 'typescript.tsx']
 
-[[plugins]]
-repo = 'dart-lang/dart-vim-plugin'
-on_ft = ['dart']
+# [[plugins]]
+# repo = 'dart-lang/dart-vim-plugin'
+# on_ft = ['dart']
+# hook_add = '''
+#   let g:dart_format_on_save = 1
+# '''
 
-[[plugins]]
-repo = 'iamcco/coc-flutter'
-on_ft = ['dart']
-hook_source = '''
-  let g:flutter.fvm.enabled = 1
-'''
+# [[plugins]]
+# repo = 'iamcco/coc-flutter'
+# on_ft = ['dart']
+# hook_source = '''
+#   let g:flutter.fvm.enabled = 1
+# '''
 
 # [[plugins]]
 # repo = 'thosakwe/vim-flutter'

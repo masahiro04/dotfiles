@@ -6,7 +6,7 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 
-
+##### 自動補完
 [[plugins]]
 repo = 'vim-denops/denops.vim'
 
@@ -48,35 +48,6 @@ on_source = 'ddc.vim'
 repo = 'Shougo/ddc-sorter_rank'
 on_source = 'ddc.vim'
 
-# LSP
-# [[plugins]]
-# repo = 'neovim/nvim-lspconfig'
-# hook_add = '''
-# lua << EOF
-# local nvim_lsp = require('lspconfig')
-# local protocol = require('vim.lsp.protocol')
-#
-# local on_attach = function(client, bufnr)
-#   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-#   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-#
-#   -- Mappings.
-#   local opts = { noremap = true, silent = true }
-#
-#   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-#
-#   -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-#   -- require 'completion'.on_attach(client, bufnr)
-#   -- require('completion').on_attach(client)
-# end
-#
-# nvim_lsp.tsserver.setup {
-#   on_attach = on_attach,
-#   filetypes = { "typescript", "typescriptreact", 'typescript.tsx' }
-# }
-# EOF
-# '''
-
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
@@ -90,6 +61,7 @@ end)
 EOF
 '''
 
+# lspのinstallを楽にしてくれる
 [[plugins]]
 repo = 'williamboman/nvim-lsp-installer'
 on_source = 'nvim-lspconfig'
@@ -99,8 +71,8 @@ on_source = 'nvim-lspconfig'
 repo = 'glepnir/lspsaga.nvim'
 hook_add = '''
 lua << EOF
-  local saga = require('lspsaga')
-  saga.init_lsp_saga()
+local saga = require('lspsaga')
+saga.init_lsp_saga()
 EOF
 
 nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
@@ -206,7 +178,6 @@ repo = 'nvim-lua/popup.nvim'
 
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
-
 
 
 [[plugins]]
