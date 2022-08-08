@@ -6,61 +6,136 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 
-# LSP. COC便利なので利用
+# LSP
 [[plugins]]
-repo = 'neoclide/coc.nvim'
-rev = 'release'
-build = '''
-  git checkout release
-'''
+repo = 'neovim/nvim-lspconfig'
 hook_add = '''
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? coc#_select_confirm() :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> gr <Plug>(coc-references)
+lua << EOF
+local nvim_lsp = require('lspconfig')
+local protocol = require('vim.lsp.protocol')
 
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
-    else
-      execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
-  endfunction
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-  let g:coc_global_extensions = [
-  \ 'coc-solargraph',
-  \ 'coc-flutter',
-  \ 'coc-tsserver',
-  \ 'coc-prettier',
-  \ 'coc-eslint',
-  \ 'coc-git',
-  \ 'coc-markdownlint',
-  \ 'coc-pairs',
-  \ 'coc-prettier',
-  \ 'coc-yaml',
-  \ 'coc-java',
-  \ 'coc-css',
-  \ 'coc-html',
-  \ 'coc-sql',
-  \ 'coc-pyright',
-  \ 'coc-go',
-  \ 'coc-json',
-  \ 'coc-sourcekit'
-  \ ]
+  -- Mappings.
+  local opts = { noremap = true, silent = true }
+
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+end
+
+nvim_lsp.tsserver.setup {
+  on_attach = on_attach,
+  filetypes = { "typescript", "typescriptreact", 'typescript.tsx' }
+}
+EOF
 '''
+
+# Hover, definition, etc..
+[[plugins]]
+repo = 'glepnir/lspsaga.nvim'
+hook_add = '''
+lua << EOF
+local saga = require('lspsaga')
+saga.init_lsp_saga()
+EOF
+
+nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+
+'''
+
+# syntax highter
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+hook_add = '''
+lua << EOF
+require 'nvim-tresitter.configs'.setup {
+  highlight = {
+    enable = true,
+    disable = {},
+  },
+  indent = {
+    enable = false,
+    disable = {},
+  },
+  ensure_installed = {
+    "tsx",
+    "toml",
+    "json",
+    "yaml",
+    "swift",
+    "kotolin",
+    "dart",
+    "ruby",
+    "html",
+    "css",
+    "scss"
+  }
+}
+EOF
+'''
+
+# LSP. COC便利なので利用
+# [[plugins]]
+# repo = 'neoclide/coc.nvim'
+# rev = 'release'
+# build = '''
+#   git checkout release
+# '''
+# hook_add = '''
+#   inoremap <silent><expr> <TAB>
+#         \ pumvisible() ? coc#_select_confirm() :
+#         \ <SID>check_back_space() ? "\<TAB>" :
+#         \ coc#refresh()
+#   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+#   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+#   function! s:check_back_space() abort
+#     let col = col('.') - 1
+#     return !col || getline('.')[col - 1]  =~# '\s'
+#   endfunction
+#   nmap <silent> gd <Plug>(coc-definition)
+#   nmap <silent> gy <Plug>(coc-type-definition)
+#   nmap <silent> gi <Plug>(coc-implementation)
+#   nmap <silent> gr <Plug>(coc-references)
+#
+#   nnoremap <silent> K :call <SID>show_documentation()<CR>
+#   function! s:show_documentation()
+#     if (index(['vim','help'], &filetype) >= 0)
+#       execute 'h '.expand('<cword>')
+#     elseif (coc#rpc#ready())
+#       call CocActionAsync('doHover')
+#     else
+#       execute '!' . &keywordprg . " " . expand('<cword>')
+#     endif
+#   endfunction
+#
+#   let g:coc_global_extensions = [
+#   \ 'coc-solargraph',
+#   \ 'coc-flutter',
+#   \ 'coc-tsserver',
+#   \ 'coc-prettier',
+#   \ 'coc-eslint',
+#   \ 'coc-git',
+#   \ 'coc-markdownlint',
+#   \ 'coc-pairs',
+#   \ 'coc-prettier',
+#   \ 'coc-yaml',
+#   \ 'coc-java',
+#   \ 'coc-css',
+#   \ 'coc-html',
+#   \ 'coc-sql',
+#   \ 'coc-pyright',
+#   \ 'coc-go',
+#   \ 'coc-json',
+#   \ 'coc-sourcekit'
+#   \ ]
+# '''
 
 [[plugins]]
 repo = 'nvim-lua/popup.nvim'
@@ -87,7 +162,7 @@ require('telescope').setup {
 }
 
 EOF
-  nnoremap ff <cmd>Telescope find_files<cr>
+  nnoremap ff <cmd>Telescope find_files hidden=true<cr>
   nnoremap fg <cmd>Telescope live_grep<cr>
   nnoremap fb <cmd>Telescope buffers<cr>
   nnoremap fh <cmd>Telescope help_tags<cr>
@@ -100,10 +175,10 @@ EOF
 
 
 # ファイル検索。regexからファイル名までいけるので必須
-[[plugins]]
-repo = 'junegunn/fzf'
-hook_post_update = './install --all'
-merged = 0
+# [[plugins]]
+# repo = 'junegunn/fzf'
+# hook_post_update = './install --all'
+# merged = 0
 
 # [[plugins]]
 # repo = 'junegunn/fzf.vim'
@@ -119,6 +194,7 @@ merged = 0
 #   set rtp+=/usr/local/opt/fzf
 # '''
 
+# telescopeで表示するアイコン
 [[plugins]]
 repo ="kyazdani42/nvim-web-devicons"
 

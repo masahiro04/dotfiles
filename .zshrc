@@ -105,12 +105,12 @@ alias vi='nvim'
 export PATH="/opt/homebrew/bin:$PATH"
 
 # Settings for fzf
-export PATH="$PATH:$HOME/.fzf/bin"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-
-export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --inline-info --preview 'head -100 {}'"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# export PATH="$PATH:$HOME/.fzf/bin"
+# export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+#
+# export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --inline-info --preview 'head -100 {}'"
+#
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # pythonの設定
 export PYENV_ROOT="$HOME/.pyenv"
