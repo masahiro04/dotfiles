@@ -62,8 +62,8 @@ hook_add = '''
   \ ]
 '''
 
-# [[plugins]]
-# repo = 'nvim-lua/popup.nvim'
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
 
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
@@ -73,7 +73,16 @@ repo = 'nvim-telescope/telescope.nvim'
 depends = ['plenary.nvim']
 hook_add = '''
 lua << EOF
-  require('telescope').setup()
+local actions= require('telescope.actions')
+require('telescope').setup {
+  defaults = {
+    mappings = {
+      n= {
+        ["q"] = actions.close
+      }
+    }
+  }
+}
 
 EOF
   nnoremap ff <cmd>Telescope find_files<cr>
