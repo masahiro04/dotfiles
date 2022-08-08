@@ -94,14 +94,13 @@ EOF
 repo = 'williamboman/nvim-lsp-installer'
 on_source = 'nvim-lspconfig'
 
-
 # Hover, definition, etc..
 [[plugins]]
 repo = 'glepnir/lspsaga.nvim'
 hook_add = '''
 lua << EOF
-local saga = require('lspsaga')
-saga.init_lsp_saga()
+  local saga = require('lspsaga')
+  saga.init_lsp_saga()
 EOF
 
 nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
