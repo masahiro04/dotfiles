@@ -62,25 +62,48 @@ hook_add = '''
   \ ]
 '''
 
+# [[plugins]]
+# repo = 'nvim-lua/popup.nvim'
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
+repo = 'nvim-telescope/telescope.nvim'
+depends = ['plenary.nvim']
+hook_add = '''
+lua << EOF
+  require('telescope').setup()
+
+EOF
+  nnoremap ff <cmd>Telescope find_files<cr>
+  nnoremap fg <cmd>Telescope live_grep<cr>
+  nnoremap fb <cmd>Telescope buffers<cr>
+  nnoremap fh <cmd>Telescope help_tags<cr>
+'''
+# nnoremap ff <cmd>Telescope find_files<cr>
+
+
+
 # ファイル検索。regexからファイル名までいけるので必須
 [[plugins]]
 repo = 'junegunn/fzf'
 hook_post_update = './install --all'
 merged = 0
 
-[[plugins]]
-repo = 'junegunn/fzf.vim'
-depends = 'fzf'
-hook_add = '''
-  nnoremap fb :Buffers<CR>
-  nnoremap fg :Rg<CR>
-  nnoremap ff :Files<CR>
-  nnoremap fc :Commits<CR>
-
-  let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
-  let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --layout reverse --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
-  set rtp+=/usr/local/opt/fzf
-'''
+# [[plugins]]
+# repo = 'junegunn/fzf.vim'
+# depends = 'fzf'
+# hook_add = '''
+#   nnoremap fb :Buffers<CR>
+#   nnoremap fg :Rg<CR>
+#   nnoremap ff :Files<CR>
+#   nnoremap fc :Commits<CR>
+#
+#   let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
+#   let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --layout reverse --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+#   set rtp+=/usr/local/opt/fzf
+# '''
 
 [[plugins]]
 repo ="kristijanhusak/defx-git"
@@ -273,9 +296,9 @@ hook_add = '''
   nmap <C-t> :Ttoggle<CR>
   '''
 # function等をリストして右側に出してくれる。ファイルの中の関数全部一気に見れるので非常に便利
-# [[plugins]]
-# repo = 'liuchengxu/vista.vim'
-# depends = ['coc.nvim', 'lightline.vim']
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+depends = ['coc.nvim', 'lightline.vim']
 
 # windowのサイズをtmuxのpaneみたいに変更可能
 [[plugins]]

@@ -158,6 +158,9 @@ export PATH=$PATH:$GOPATH/bin;
 # terraform
 export PATH="$HOME/.tfenv/bin:$PATH"
 
+# swift設定
+export TOOLCHAINS=swift
+
 # nim
 export PATH=/Users/masahirookubo/.nimble/bin:$PATH
 
@@ -172,6 +175,6 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 eval "$(rbenv init -)"
 
 # NOTE: nvim + fzf.nvimのpreviewをいい感じにするための設定
-export BAT_THEME="Dracula"
+# export BAT_THEME="Dracula"
 
 # source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
