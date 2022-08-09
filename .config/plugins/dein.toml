@@ -17,29 +17,47 @@ repo = 'Shougo/ddc.vim'
 on_event = 'InsertEnter'
 depends = ['denops.vim']
 hook_source = '''
-  call ddc#custom#patch_global('sources', ['nvim-lsp'])
+  call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
   call ddc#custom#patch_global('sourceOptions', {
+        \ '_': {
+        \   'minAutoCompleteLength': 1 },
         \ 'nvim-lsp': {
-        \   'mark': 'L',
+        \   'mark': 'LSP',
+        \   'matchers': ['matcher_head'],
         \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
+        \ 'around': {
+        \   'mark': 'A' },
         \ })
   call ddc#custom#patch_global('sourceParams', {
         \ 'nvim-lsp': { 'kindLabels': { 'Class': 'c' } },
         \ })
+
+inoremap <silent><expr> <TAB>
+\ ddc#map#pum_visible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
+
   call ddc#enable()
+
 '''
 
+  # inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
+  # inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
 
 
 
+# nvim lsp configとの連携
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
 on_source = 'ddc.vim'
-
+# 近くにあるwordを拾ってくれる
 [[plugins]]
 repo = 'Shougo/ddc-around'
 on_source = 'ddc.vim'
-
+# 入力中の単語補完
 [[plugins]]
 repo = 'Shougo/ddc-matcher_head'
 on_source = 'ddc.vim'
@@ -47,6 +65,25 @@ on_source = 'ddc.vim'
 [[plugins]]
 repo = 'Shougo/ddc-sorter_rank'
 on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+on_source = 'ddc.vim'
+
+# 補完の詳細なソースのpopupが表示される
+[[plugins]]
+ repo = 'matsui54/denops-popup-preview.vim'
+ on_source = 'ddc.vim'
+ hook_source = '''
+ call popup_preview#enable()
+'''
+# 入力時にhelpが出る
+[[plugins]]
+ repo = 'matsui54/denops-signature_help'
+ on_source = 'ddc.vim'
+ hook_source = '''
+ call signature_help#enable()
+'''
 
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
