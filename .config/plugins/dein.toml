@@ -6,11 +6,6 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 
-# TODO(okubo): dduに切り替えたいが、LSP接続が難しいので一旦断念
-# ##### 自動補完
-# [[plugins]]
-# repo = 'vim-denops/denops.vim'
-
 # syntax highter
 [[plugins]]
 repo = 'nvim-treesitter/nvim-treesitter'
@@ -180,17 +175,19 @@ EOF
 # # nvim cmp source for buffer words
 [[plugins]]
 repo = 'hrsh7th/cmp-buffer'
-# # nvim-cmp source for neovim's built in LSP
+
+# nvim-cmp source for neovim's built in LSP
 [[plugins]]
 repo = 'hrsh7th/cmp-nvim-lsp'
-#
-# # nvim-cmpで必須
-# # [[plugins]]
-# # repo = 'SirVer/ultisnips'
+
+# signature helpを入力時に表示
+[[plugins]]
+repo = 'hrsh7th/cmp-nvim-lsp-signature-help'
+
+# nvim-cmpで必須
 [[plugins]]
 repo = 'quangnguyen30192/cmp-nvim-ultisnips'
-#
-#
+
 # # completion
 [[plugins]]
 repo = 'hrsh7th/nvim-cmp'
@@ -221,6 +218,7 @@ cmp.setup({
     { name = 'nvim_lsp' },
     { name = 'ultisnips' },
     { name = 'buffer' },
+    { name = 'nvim_lsp_signature_help' }
   })
 })
 EOF
@@ -229,8 +227,7 @@ set completeopt=menuone,noinsert,noselect
 highlight! default link CmpItemKind CmpItemMenuDefault
 '''
 
-
-
+# telescopeの依存
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
 

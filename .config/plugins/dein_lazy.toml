@@ -302,7 +302,7 @@ hook_source = '''
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
 on_ft = [
-  'typescript', 'typescript.tsx', 'dart'
+  'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss'
 ]
 hook_source= '''
 lua << EOF
