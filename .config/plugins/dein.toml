@@ -12,133 +12,6 @@ repo = 'w0rp/ale'
 repo = 'vim-denops/denops.vim'
 #
 #
-[[plugins]]
-repo = 'Shougo/ddc.vim'
-on_event = 'InsertEnter'
-depends = ['denops.vim']
-hook_source = '''
-  call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
-  call ddc#custom#patch_global('sourceOptions', {
-        \ '_': {
-        \   'minAutoCompleteLength': 1 },
-        \ 'nvim-lsp': {
-        \   'mark': 'LSP',
-        \   'matchers': ['matcher_head'],
-        \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
-        \ 'around': {
-        \   'mark': 'A' },
-        \ })
-  call ddc#custom#patch_global('sourceParams', {
-        \ 'nvim-lsp': { 'kindLabels': { 'Class': 'c' } },
-        \ })
-
-inoremap <silent><expr> <TAB>
-\ ddc#map#pum_visible() ? '<C-n>' :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ '<TAB>' : ddc#map#manual_complete()
-
-" <S-TAB>: completion back.
-inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
-
-  call ddc#enable()
-
-'''
-
-  # inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
-  # inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
-
-
-
-# nvim lsp configとの連携
-[[plugins]]
-repo = 'Shougo/ddc-nvim-lsp'
-on_source = 'ddc.vim'
-# 近くにあるwordを拾ってくれる
-[[plugins]]
-repo = 'Shougo/ddc-around'
-on_source = 'ddc.vim'
-# 入力中の単語補完
-[[plugins]]
-repo = 'Shougo/ddc-matcher_head'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-sorter_rank'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/pum.vim'
-on_source = 'ddc.vim'
-
-# 補完の詳細なソースのpopupが表示される
-[[plugins]]
- repo = 'matsui54/denops-popup-preview.vim'
- on_source = 'ddc.vim'
- hook_source = '''
- call popup_preview#enable()
-'''
-# 入力時にhelpが出る
-[[plugins]]
- repo = 'matsui54/denops-signature_help'
- on_source = 'ddc.vim'
- hook_source = '''
- call signature_help#enable()
-'''
-
-[[plugins]]
-repo = 'neovim/nvim-lspconfig'
-on_event = 'BufEnter'
-hook_source= '''
-lua << EOF
-local nvim_lsp = require('lspconfig')
-local protocol = require'vim.lsp.protocol'
-
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  --buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-
-end
-
-nvim_lsp.tsserver.setup {
-  on_attach = on_attach,
-  filetypes = {"javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"};
-}
-EOF
-'''
-#
-# # lspのinstallを楽にしてくれる
-# [[plugins]]
-# repo = 'williamboman/nvim-lsp-installer'
-# on_source = 'nvim-lspconfig'
-#
-# # Hover, definition, etc..
-[[plugins]]
-repo = 'glepnir/lspsaga.nvim'
-hook_add = '''
-lua << EOF
-local saga = require('lspsaga')
-saga.init_lsp_saga()
-EOF
-
-nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
-nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
-"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
-inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
-nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
-nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
-'''
 
 # [[plugins]]
 # repo = 'hrsh7th/nbim-compe'
@@ -272,6 +145,92 @@ EOF
 #   \ 'coc-sourcekit'
 #   \ ]
 # '''
+
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = 'BufEnter'
+# hook_source= '''
+# lua << EOF
+#  local nvim_lsp = require('lspconfig')
+#  local on_attach = function (client, bufnr)
+#  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+#  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+#
+#   local opts = { noremap=true, silent=true }
+#    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+#   end
+#
+#  local lsp_installer = require('nvim-lsp-installer')
+#  lsp_installer.on_server_ready(function(server)
+#    local opts = {}
+#    opts.on_attach = on_attach
+#    server:setup(opts)
+#    vim.cmd [[ do User LspAttachBuffers ]]
+#  end)
+# EOF
+# '''
+hook_source= '''
+lua << EOF
+local nvim_lsp = require('lspconfig')
+local protocol = require'vim.lsp.protocol'
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+
+end
+ local lsp_installer = require('nvim-lsp-installer')
+ lsp_installer.on_server_ready(function(server)
+   local opts = {}
+   opts.on_attach = on_attach
+   server:setup(opts)
+   vim.cmd [[ do User LspAttachBuffers ]]
+ end)
+EOF
+'''
+#
+# # lspのinstallを楽にしてくれる
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+on_source = 'nvim-lspconfig'
+
+
+
+
+
+
+
+[[plugins]]
+repo = 'glepnir/lspsaga.nvim'
+on_source = 'nvim-lspconfig'
+hook_add = '''
+lua << EOF
+  local saga = require('lspsaga')
+  saga.init_lsp_saga()
+EOF
+
+nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+'''
+
+
 
 [[plugins]]
 repo = 'nvim-lua/popup.nvim'
