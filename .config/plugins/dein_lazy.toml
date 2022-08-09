@@ -233,14 +233,9 @@ inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
 set completeopt+=noinsert
 call ddc#enable()
 
+
 '''
 
-  # call ddc#enable()
-  #
-  # inoremap <silent><expr> <TAB> ddc#map#manual_complete()
-  #
-  # " <S-TAB>: completion back.
-  # inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
 
   # inoremap <silent><expr> <TAB> ddc#map#complete()
   # inoremap <expr><S-TAB> ddc#map#pum_visible() ? "\<C-p>" : "\<C-h>"
