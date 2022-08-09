@@ -6,84 +6,80 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 
-##### 自動補完
-[[plugins]]
-repo = 'vim-denops/denops.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc.vim'
-on_event = 'InsertEnter'
-depends = ['denops.vim']
-
-
-[[plugins]]
-repo = 'Shougo/ddc.vim'
-on_event = 'InsertEnter'
-depends = ['denops.vim']
-hook_source = '''
-  call ddc#custom#patch_global('sources', ['around'])
-  call ddc#custom#patch_global('sourceOptions', {
-        \ '_': {
-        \   'matchers': ['matcher_head'],
-        \   'sorters': ['sorter_rank']},
-        \ 'around': {
-        \   'mark': 'around' },
-        \ })
-  call ddc#enable()
-'''
-
-[[plugins]]
-repo = 'Shougo/ddc-nvim-lsp'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-around'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-matcher_head'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-sorter_rank'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'neovim/nvim-lspconfig'
-on_event = 'BufEnter'
-hook_source= '''
-lua << EOF
-local lsp_installer = require("nvim-lsp-installer")
-lsp_installer.on_server_ready(function(server)
-  local opts = {}
-  server:setup(opts)
-end)
-EOF
-'''
-
-# lspのinstallを楽にしてくれる
-[[plugins]]
-repo = 'williamboman/nvim-lsp-installer'
-on_source = 'nvim-lspconfig'
-
-# Hover, definition, etc..
-[[plugins]]
-repo = 'glepnir/lspsaga.nvim'
-hook_add = '''
-lua << EOF
-local saga = require('lspsaga')
-saga.init_lsp_saga()
-EOF
-
-nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
-nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
-"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
-inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
-nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
-nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
-
-'''
+# TODO(okubo): dduに切り替えたいが、LSP接続が難しいので一旦断念
+# ##### 自動補完
+# [[plugins]]
+# repo = 'vim-denops/denops.vim'
+#
+#
+# [[plugins]]
+# repo = 'Shougo/ddc.vim'
+# on_event = 'InsertEnter'
+# depends = ['denops.vim']
+# hook_source = '''
+#   call ddc#custom#patch_global('sources', ['around'])
+#   call ddc#custom#patch_global('sourceOptions', {
+#         \ '_': {
+#         \   'matchers': ['matcher_head'],
+#         \   'sorters': ['sorter_rank']},
+#         \ 'around': {
+#         \   'mark': 'around' },
+#         \ })
+#   call ddc#enable()
+# '''
+#
+# [[plugins]]
+# repo = 'Shougo/ddc-nvim-lsp'
+# on_source = 'ddc.vim'
+#
+# [[plugins]]
+# repo = 'Shougo/ddc-around'
+# on_source = 'ddc.vim'
+#
+# [[plugins]]
+# repo = 'Shougo/ddc-matcher_head'
+# on_source = 'ddc.vim'
+#
+# [[plugins]]
+# repo = 'Shougo/ddc-sorter_rank'
+# on_source = 'ddc.vim'
+#
+# [[plugins]]
+# repo = 'neovim/nvim-lspconfig'
+# on_event = 'BufEnter'
+# hook_source= '''
+# lua << EOF
+# local lsp_installer = require("nvim-lsp-installer")
+# lsp_installer.on_server_ready(function(server)
+#   local opts = {}
+#   server:setup(opts)
+# end)
+# EOF
+# '''
+#
+# # lspのinstallを楽にしてくれる
+# [[plugins]]
+# repo = 'williamboman/nvim-lsp-installer'
+# on_source = 'nvim-lspconfig'
+#
+# # Hover, definition, etc..
+# [[plugins]]
+# repo = 'glepnir/lspsaga.nvim'
+# hook_add = '''
+# lua << EOF
+# local saga = require('lspsaga')
+# saga.init_lsp_saga()
+# EOF
+#
+# nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+# nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+# "nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+# inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+# nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+# nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+# nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+#
+# '''
 
 # syntax highter
 [[plugins]]
@@ -116,62 +112,61 @@ require 'nvim-treesitter.configs'.setup {
 EOF
 '''
 
-
 # LSP. COC便利なので利用
-# [[plugins]]
-# repo = 'neoclide/coc.nvim'
-# rev = 'release'
-# build = '''
-#   git checkout release
-# '''
-# hook_add = '''
-#   inoremap <silent><expr> <TAB>
-#         \ pumvisible() ? coc#_select_confirm() :
-#         \ <SID>check_back_space() ? "\<TAB>" :
-#         \ coc#refresh()
-#   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-#   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-#   function! s:check_back_space() abort
-#     let col = col('.') - 1
-#     return !col || getline('.')[col - 1]  =~# '\s'
-#   endfunction
-#   nmap <silent> gd <Plug>(coc-definition)
-#   nmap <silent> gy <Plug>(coc-type-definition)
-#   nmap <silent> gi <Plug>(coc-implementation)
-#   nmap <silent> gr <Plug>(coc-references)
-#
-#   nnoremap <silent> K :call <SID>show_documentation()<CR>
-#   function! s:show_documentation()
-#     if (index(['vim','help'], &filetype) >= 0)
-#       execute 'h '.expand('<cword>')
-#     elseif (coc#rpc#ready())
-#       call CocActionAsync('doHover')
-#     else
-#       execute '!' . &keywordprg . " " . expand('<cword>')
-#     endif
-#   endfunction
-#
-#   let g:coc_global_extensions = [
-#   \ 'coc-solargraph',
-#   \ 'coc-flutter',
-#   \ 'coc-tsserver',
-#   \ 'coc-prettier',
-#   \ 'coc-eslint',
-#   \ 'coc-git',
-#   \ 'coc-markdownlint',
-#   \ 'coc-pairs',
-#   \ 'coc-prettier',
-#   \ 'coc-yaml',
-#   \ 'coc-java',
-#   \ 'coc-css',
-#   \ 'coc-html',
-#   \ 'coc-sql',
-#   \ 'coc-pyright',
-#   \ 'coc-go',
-#   \ 'coc-json',
-#   \ 'coc-sourcekit'
-#   \ ]
-# '''
+[[plugins]]
+repo = 'neoclide/coc.nvim'
+rev = 'release'
+build = '''
+  git checkout release
+'''
+hook_add = '''
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? coc#_select_confirm() :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+      call CocActionAsync('doHover')
+    else
+      execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+  endfunction
+
+  let g:coc_global_extensions = [
+  \ 'coc-solargraph',
+  \ 'coc-flutter',
+  \ 'coc-tsserver',
+  \ 'coc-prettier',
+  \ 'coc-eslint',
+  \ 'coc-git',
+  \ 'coc-markdownlint',
+  \ 'coc-pairs',
+  \ 'coc-prettier',
+  \ 'coc-yaml',
+  \ 'coc-java',
+  \ 'coc-css',
+  \ 'coc-html',
+  \ 'coc-sql',
+  \ 'coc-pyright',
+  \ 'coc-go',
+  \ 'coc-json',
+  \ 'coc-sourcekit'
+  \ ]
+'''
 
 [[plugins]]
 repo = 'nvim-lua/popup.nvim'
