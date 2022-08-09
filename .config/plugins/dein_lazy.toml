@@ -303,3 +303,188 @@ hook_source = '''
 
 #
 #
+
+
+
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = 'BufEnter'
+hook_source= '''
+lua << EOF
+local nvim_lsp = require('lspconfig')
+local protocol = require'vim.lsp.protocol'
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+
+end
+
+ local lsp_installer = require('nvim-lsp-installer')
+ lsp_installer.on_server_ready(function(server)
+   local opts = {}
+   opts.on_attach = on_attach
+
+   server:setup(opts)
+   vim.cmd [[ do User LspAttachBuffers ]]
+ end)
+
+  local saga = require('lspsaga')
+  saga.init_lsp_saga()
+EOF
+
+nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+'''
+
+
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+on_source = 'nvim-lspconfig'
+
+[[plugins]]
+repo = 'glepnir/lspsaga.nvim'
+on_source = 'nvim-lspconfig'
+# hook_add = '''
+# lua << EOF
+#   local saga = require('lspsaga')
+#   saga.init_lsp_saga()
+# EOF
+#
+# nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+# nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+# "nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+# inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+# nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+# nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+# nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+# '''
+
+
+
+# vscode like pictograms
+# [[plugins]]
+# repo = 'onsails/lspkind-nvim'
+# hook_add = '''
+# lua << EOF
+# require('lspkind').init({
+#     -- DEPRECATED (use mode instead): enables text annotations
+#     --
+#     -- default: true
+#     -- with_text = true,
+#
+#     -- defines how annotations are shown
+#     -- default: symbol
+#     -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+#     mode = 'symbol_text',
+#
+#     -- default symbol map
+#     -- can be either 'default' (requires nerd-fonts font) or
+#     -- 'codicons' for codicon preset (requires vscode-codicons font)
+#     --
+#     -- default: 'default'
+#     preset = 'codicons',
+#
+#     -- override preset symbols
+#     --
+#     -- default: {}
+#     symbol_map = {
+#       Text = "",
+#       Method = "",
+#       Function = "",
+#       Constructor = "",
+#       Field = "ﰠ",
+#       Variable = "",
+#       Class = "ﴯ",
+#       Interface = "",
+#       Module = "",
+#       Property = "ﰠ",
+#       Unit = "塞",
+#       Value = "",
+#       Enum = "",
+#       Keyword = "",
+#       Snippet = "",
+#       Color = "",
+#       File = "",
+#       Reference = "",
+#       Folder = "",
+#       EnumMember = "",
+#       Constant = "",
+#       Struct = "פּ",
+#       Event = "",
+#       Operator = "",
+#       TypeParameter = ""
+#     },
+# })
+# EOF
+# '''
+# # nvim cmp source for buffer words
+# [[plugins]]
+# repo = 'hrsh7th/cmp-buffer'
+# # nvim-cmp source for neovim's built in LSP
+# [[plugins]]
+# repo = 'hrsh7th/cmp-nvim-lsp'
+#
+# # nvim-cmpで必須
+# # [[plugins]]
+# # repo = 'SirVer/ultisnips'
+# [[plugins]]
+# repo = 'quangnguyen30192/cmp-nvim-ultisnips'
+#
+#
+# # completion
+# [[plugins]]
+# repo = 'hrsh7th/nvim-cmp'
+# hook_add = '''
+# lua << EOF
+# local cmp = require'cmp'
+# cmp.setup({
+#   snippet = {
+#     -- REQUIRED - you must specify a snippet engine
+#     expand = function(args)
+#       -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+#       -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+#       -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+#       vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+#     end,
+#   },
+#   mapping = cmp.mapping.preset.insert({
+#     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+#     ['<C-f>'] = cmp.mapping.scroll_docs(4),
+#     ['<C-Space>'] = cmp.mapping.complete(),
+#     ['<C-e>'] = cmp.mapping.abort(),
+#     ['<CR>'] = cmp.mapping.confirm({
+#       behavior = cmp.ConfirmBehavior.Replate,
+#       select = true
+#     }),
+#   }),
+#   sources = cmp.config.sources({
+#     { name = 'nvim_lsp' },
+#     { name = 'ultisnips' },
+#     { name = 'buffer' },
+#   })
+# })
+# EOF
+#
+# set completeopt=menuone,noinsert,noselect
+# highlight! default link CmpItemKind CmpItemMenuDefault
+# '''
+
+
