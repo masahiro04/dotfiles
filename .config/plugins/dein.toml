@@ -98,105 +98,7 @@ EOF
 #   \ ]
 # '''
 
-
-# [[plugins]]
-# repo = 'neovim/nvim-lspconfig'
-# on_event = 'BufEnter'
-# hook_source= '''
-# lua << EOF
-# local nvim_lsp = require('lspconfig')
-# local protocol = require'vim.lsp.protocol'
-#
-# -- Use an on_attach function to only map the following keys
-# -- after the language server attaches to the current buffer
-# local on_attach = function(client, bufnr)
-#   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-#   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-#
-#   -- Mappings.
-#   local opts = { noremap=true, silent=true }
-#
-#   -- See `:help vim.lsp.*` for documentation on any of the below functions
-#   -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-#   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-#   -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-#   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-#
-# end
-# nvim_lsp.tsserver.setup {
-#   on_attach = on_attach,
-#   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-#   cmd = { "typescript-language-server", "--stdio" },
-# }
-#
-# EOF
-# '''
-
-#  local lsp_installer = require('nvim-lsp-installer')
-#  lsp_installer.on_server_ready(function(server)
-#    local opts = {}
-#    opts.on_attach = on_attach
-#
-#    server:setup(opts)
-#    vim.cmd [[ do User LspAttachBuffers ]]
-#  end)
-# hook_source= '''
-# lua << EOF
-#  local nvim_lsp = require('lspconfig')
-#  local on_attach = function (client, bufnr)
-#  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-#  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-#
-#   local opts = { noremap=true, silent=true }
-#    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-#   end
-#
-#  local lsp_installer = require('nvim-lsp-installer')
-#  lsp_installer.on_server_ready(function(server)
-#    local opts = {}
-#    opts.on_attach = on_attach
-#    server:setup(opts)
-#    vim.cmd [[ do User LspAttachBuffers ]]
-#  end)
-# EOF
-# '''
-# hook_source= '''
-# lua << EOF
-# local nvim_lsp = require('lspconfig')
-# local protocol = require'vim.lsp.protocol'
-#
-# -- Use an on_attach function to only map the following keys
-# -- after the language server attaches to the current buffer
-# local on_attach = function(client, bufnr)
-#   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-#   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-#
-#   -- Mappings.
-#   local opts = { noremap=true, silent=true }
-#
-#   -- See `:help vim.lsp.*` for documentation on any of the below functions
-#   -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-#   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-#   -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-#   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-#
-# end
-#  local lsp_installer = require('nvim-lsp-installer')
-#  lsp_installer.on_server_ready(function(server)
-#    local opts = {}
-#    opts.on_attach = on_attach
-#
-#    server:setup(opts)
-#    vim.cmd [[ do User LspAttachBuffers ]]
-#  end)
-# EOF
-# '''
-#
-# # lspのinstallを楽にしてくれる
-# [[plugins]]
-# repo = 'williamboman/nvim-lsp-installer'
-# on_source = 'nvim-lspconfig'
-
+# lsp config依存であればlazyでも良いのでは？と思ったが起動に失敗するのでこちらで
 [[plugins]]
 repo = 'glepnir/lspsaga.nvim'
 on_source = 'nvim-lspconfig'
@@ -215,11 +117,9 @@ nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
 '''
 
-[[plugins]]
-repo = 'nvim-lua/popup.nvim'
+# [[plugins]]
+# repo = 'nvim-lua/popup.nvim'
 
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
 
 # vscode like pictograms
 [[plugins]]
@@ -331,6 +231,8 @@ highlight! default link CmpItemKind CmpItemMenuDefault
 
 
 
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
 
 [[plugins]]
 repo = 'nvim-telescope/telescope.nvim'
@@ -355,31 +257,6 @@ EOF
   nnoremap fh <cmd>Telescope help_tags<cr>
 '''
 
-
-
-# nnoremap ff <cmd>Telescope find_files<cr>
-
-
-
-# ファイル検索。regexからファイル名までいけるので必須
-# [[plugins]]
-# repo = 'junegunn/fzf'
-# hook_post_update = './install --all'
-# merged = 0
-
-# [[plugins]]
-# repo = 'junegunn/fzf.vim'
-# depends = 'fzf'
-# hook_add = '''
-#   nnoremap fb :Buffers<CR>
-#   nnoremap fg :Rg<CR>
-#   nnoremap ff :Files<CR>
-#   nnoremap fc :Commits<CR>
-#
-#   let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
-#   let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --layout reverse --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
-#   set rtp+=/usr/local/opt/fzf
-# '''
 
 # telescopeで表示するアイコン
 [[plugins]]

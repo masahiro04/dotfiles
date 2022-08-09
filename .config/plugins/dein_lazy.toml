@@ -77,12 +77,12 @@ on_ft = ['javascript', 'javascript.jsx']
 repo = 'leafgarland/typescript-vim'
 on_ft = ['typescript', 'typescript.tsx']
 
-# [[plugins]]
-# repo = 'dart-lang/dart-vim-plugin'
-# on_ft = ['dart']
-# hook_add = '''
-#   let g:dart_format_on_save = 1
-# '''
+[[plugins]]
+repo = 'dart-lang/dart-vim-plugin'
+on_ft = ['dart']
+hook_add = '''
+  let g:dart_format_on_save = 1
+'''
 # TODO(okubo): dduはこちらに帰る
 # [[plugins]]
 # repo = 'akinsho/flutter-tools.nvim'
@@ -297,20 +297,7 @@ hook_source = '''
 #  on_source = 'ddc.vim'
 #
 
-# # Hover, definition, etc..
-
-
-
-#
-#
-
-
-
-
-
-
-
-
+# lsp config. lazy出ないと正常に読み込まれない
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
@@ -349,10 +336,7 @@ end
 EOF
 '''
 
-
+# さまざまなlspを簡単にinstallできる
 [[plugins]]
 repo = 'williamboman/nvim-lsp-installer'
 on_source = 'nvim-lspconfig'
-
-
-
