@@ -44,18 +44,38 @@ repo = 'w0rp/ale'
 # repo = 'Shougo/ddc-sorter_rank'
 # on_source = 'ddc.vim'
 #
-# [[plugins]]
-# repo = 'neovim/nvim-lspconfig'
-# on_event = 'BufEnter'
-# hook_source= '''
-# lua << EOF
-# local lsp_installer = require("nvim-lsp-installer")
-# lsp_installer.on_server_ready(function(server)
-#   local opts = {}
-#   server:setup(opts)
-# end)
-# EOF
-# '''
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = 'BufEnter'
+hook_source= '''
+lua << EOF
+local nvim_lsp = require('lspconfig')
+local protocol = require'vim.lsp.protocol'
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  -- buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  --buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+
+end
+
+nvim_lsp.tsserver.setup {
+  on_attach = on_attach,
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+}
+
+EOF
+'''
 #
 # # lspのinstallを楽にしてくれる
 # [[plugins]]
@@ -63,23 +83,26 @@ repo = 'w0rp/ale'
 # on_source = 'nvim-lspconfig'
 #
 # # Hover, definition, etc..
-# [[plugins]]
-# repo = 'glepnir/lspsaga.nvim'
-# hook_add = '''
-# lua << EOF
-# local saga = require('lspsaga')
-# saga.init_lsp_saga()
-# EOF
-#
-# nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
-# nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
-# "nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
-# inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-# nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
-# nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
-# nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
-#
-# '''
+[[plugins]]
+repo = 'glepnir/lspsaga.nvim'
+hook_add = '''
+lua << EOF
+local saga = require('lspsaga')
+saga.init_lsp_saga()
+EOF
+
+nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+'''
+
+[[plugins]]
+repo = 'hrsh7th/nbim-compe'
+
 
 # syntax highter
 [[plugins]]
@@ -113,60 +136,60 @@ EOF
 '''
 
 # LSP. COC便利なので利用
-[[plugins]]
-repo = 'neoclide/coc.nvim'
-rev = 'release'
-build = '''
-  git checkout release
-'''
-hook_add = '''
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? coc#_select_confirm() :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> gr <Plug>(coc-references)
-
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
-    else
-      execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
-  endfunction
-
-  let g:coc_global_extensions = [
-  \ 'coc-solargraph',
-  \ 'coc-flutter',
-  \ 'coc-tsserver',
-  \ 'coc-prettier',
-  \ 'coc-eslint',
-  \ 'coc-git',
-  \ 'coc-markdownlint',
-  \ 'coc-pairs',
-  \ 'coc-prettier',
-  \ 'coc-yaml',
-  \ 'coc-java',
-  \ 'coc-css',
-  \ 'coc-html',
-  \ 'coc-sql',
-  \ 'coc-pyright',
-  \ 'coc-go',
-  \ 'coc-json',
-  \ 'coc-sourcekit'
-  \ ]
-'''
+# [[plugins]]
+# repo = 'neoclide/coc.nvim'
+# rev = 'release'
+# build = '''
+#   git checkout release
+# '''
+# hook_add = '''
+#   inoremap <silent><expr> <TAB>
+#         \ pumvisible() ? coc#_select_confirm() :
+#         \ <SID>check_back_space() ? "\<TAB>" :
+#         \ coc#refresh()
+#   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+#   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+#   function! s:check_back_space() abort
+#     let col = col('.') - 1
+#     return !col || getline('.')[col - 1]  =~# '\s'
+#   endfunction
+#   nmap <silent> gd <Plug>(coc-definition)
+#   nmap <silent> gy <Plug>(coc-type-definition)
+#   nmap <silent> gi <Plug>(coc-implementation)
+#   nmap <silent> gr <Plug>(coc-references)
+#
+#   nnoremap <silent> K :call <SID>show_documentation()<CR>
+#   function! s:show_documentation()
+#     if (index(['vim','help'], &filetype) >= 0)
+#       execute 'h '.expand('<cword>')
+#     elseif (coc#rpc#ready())
+#       call CocActionAsync('doHover')
+#     else
+#       execute '!' . &keywordprg . " " . expand('<cword>')
+#     endif
+#   endfunction
+#
+#   let g:coc_global_extensions = [
+#   \ 'coc-solargraph',
+#   \ 'coc-flutter',
+#   \ 'coc-tsserver',
+#   \ 'coc-prettier',
+#   \ 'coc-eslint',
+#   \ 'coc-git',
+#   \ 'coc-markdownlint',
+#   \ 'coc-pairs',
+#   \ 'coc-prettier',
+#   \ 'coc-yaml',
+#   \ 'coc-java',
+#   \ 'coc-css',
+#   \ 'coc-html',
+#   \ 'coc-sql',
+#   \ 'coc-pyright',
+#   \ 'coc-go',
+#   \ 'coc-json',
+#   \ 'coc-sourcekit'
+#   \ ]
+# '''
 
 [[plugins]]
 repo = 'nvim-lua/popup.nvim'
