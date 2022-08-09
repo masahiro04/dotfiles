@@ -8,42 +8,46 @@ repo = 'w0rp/ale'
 
 # TODO(okubo): dduに切り替えたいが、LSP接続が難しいので一旦断念
 # ##### 自動補完
-# [[plugins]]
-# repo = 'vim-denops/denops.vim'
+[[plugins]]
+repo = 'vim-denops/denops.vim'
 #
 #
-# [[plugins]]
-# repo = 'Shougo/ddc.vim'
-# on_event = 'InsertEnter'
-# depends = ['denops.vim']
-# hook_source = '''
-#   call ddc#custom#patch_global('sources', ['around'])
-#   call ddc#custom#patch_global('sourceOptions', {
-#         \ '_': {
-#         \   'matchers': ['matcher_head'],
-#         \   'sorters': ['sorter_rank']},
-#         \ 'around': {
-#         \   'mark': 'around' },
-#         \ })
-#   call ddc#enable()
-# '''
-#
-# [[plugins]]
-# repo = 'Shougo/ddc-nvim-lsp'
-# on_source = 'ddc.vim'
-#
-# [[plugins]]
-# repo = 'Shougo/ddc-around'
-# on_source = 'ddc.vim'
-#
-# [[plugins]]
-# repo = 'Shougo/ddc-matcher_head'
-# on_source = 'ddc.vim'
-#
-# [[plugins]]
-# repo = 'Shougo/ddc-sorter_rank'
-# on_source = 'ddc.vim'
-#
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+on_event = 'InsertEnter'
+depends = ['denops.vim']
+hook_source = '''
+  call ddc#custom#patch_global('sources', ['nvim-lsp'])
+  call ddc#custom#patch_global('sourceOptions', {
+        \ 'nvim-lsp': {
+        \   'mark': 'L',
+        \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
+        \ })
+  call ddc#custom#patch_global('sourceParams', {
+        \ 'nvim-lsp': { 'kindLabels': { 'Class': 'c' } },
+        \ })
+  call ddc#enable()
+'''
+
+
+
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-around'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+on_source = 'ddc.vim'
+
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
@@ -71,9 +75,8 @@ end
 
 nvim_lsp.tsserver.setup {
   on_attach = on_attach,
-  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+  filetypes = {"javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"};
 }
-
 EOF
 '''
 #
@@ -100,8 +103,50 @@ nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
 '''
 
-[[plugins]]
-repo = 'hrsh7th/nbim-compe'
+# [[plugins]]
+# repo = 'hrsh7th/nbim-compe'
+# hook_add = '''
+# lua << EOF
+#   require'compe'.setup {
+#     enabled = true;
+#     autocomplete = true;
+#     debug = false;
+#     min_length = 1;
+#     preselect = 'enable';
+#     throttle_time = 80;
+#     source_timeout = 200;
+#     resolve_timeout = 800;
+#     incomplete_delay = 400;
+#     max_abbr_width = 100;
+#     max_kind_width = 100;
+#     max_menu_width = 100;
+#     documentation = {
+#       border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
+#       winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+#       max_width = 120,
+#       min_width = 60,
+#       max_height = math.floor(vim.o.lines * 0.3),
+#       min_height = 1,
+#     };
+#
+#     source = {
+#       path = true;
+#       buffer = true;
+#       calc = true;
+#       nvim_lsp = true;
+#       nvim_lua = true;
+#       vsnip = true;
+#       ultisnips = true;
+#       luasnip = true;
+#     };
+#   }
+# EOF
+# inoremap <silent><expr> <C-Space> compe#complete()
+# inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+# inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+# inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+# inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+# '''
 
 
 # syntax highter
