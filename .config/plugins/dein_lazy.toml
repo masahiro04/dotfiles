@@ -310,3 +310,98 @@ set completeopt=menuone,noinsert,noselect
 highlight! default link CmpItemKind CmpItemMenuDefault
 '''
 ##### Completion section end
+
+##### Buffer section start
+[[plugins]]
+repo = 'nvim-lualine/lualine.nvim'
+on_source = 'nvim-lspconfig'
+hook_source = '''
+lua << EOF
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'tokyonight',
+    section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    disabled_filetypes = {}
+  },
+  sections = {
+    lualine_a = { 'mode' },
+    lualine_b = { 'branch' },
+    lualine_c = { {
+      'filename',
+      file_status = true, -- displays file status (readonly status, modified status)
+      path = 0 -- 0 = just filename, 1 = relative path, 2 = absolute path
+    } },
+    lualine_x = {
+      { 'diagnostics', sources = { "nvim_diagnostic" }, symbols = { error = ' ', warn = ' ', info = ' ',
+        hint = ' ' } },
+      'encoding',
+      'filetype'
+    },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' }
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = { {
+      'filename',
+      file_status = true, -- displays file status (readonly status, modified status)
+      path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+    } },
+    lualine_x = { 'location' },
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = { 'fugitive' }
+}
+EOF
+'''
+
+[[plugins]]
+repo = 'akinsho/bufferline.nvim'
+on_source = 'nvim-lspconfig'
+hook_source = '''
+set termguicolors
+lua << EOF
+require('bufferline').setup {
+  options = {
+    mode = "buffers",
+    numbers = 'buffer_id',
+    indicator_icon = '▎',
+    modified_icon = '●',
+    left_trunc_marker = '',
+    right_trunc_marker = '',
+    diagnostics = "nvim_lsp",
+    show_buffer_icons = true,
+    show_close_icon = true,
+    show_tab_indicators = true,
+    separator_style = "slant",
+    always_show_bufferline = true
+  },
+  highlights = {
+    separator = {
+      guifg = '#073642',
+      guibg = '#002b36',
+    },
+    separator_selected = {
+      guifg = '#073642',
+    },
+    background = {
+      guifg = '#657b83',
+      guibg = '#002b36'
+    },
+    buffer_selected = {
+      guifg = '#fdf6e3',
+      gui = "bold",
+    },
+    fill = {
+      guibg = '#073642'
+    }
+  },
+}
+EOF
+'''
+##### Buffer section end
