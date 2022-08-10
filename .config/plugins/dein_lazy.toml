@@ -126,7 +126,8 @@ on_ft = ['go']
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
 on_ft = [
-  'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss'
+  'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss',
+  'toml'
 ]
 hook_source= '''
 lua << EOF
