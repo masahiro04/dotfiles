@@ -54,7 +54,6 @@ require 'nvim-treesitter.configs'.setup {
 EOF
 '''
 
-
 # lsp config依存であればlazyでも良いのでは？と思ったが起動に失敗するのでこちらで
 [[plugins]]
 repo = 'glepnir/lspsaga.nvim'

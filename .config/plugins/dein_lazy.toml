@@ -1,3 +1,4 @@
+## for language syntax or utils
 # for rails
 # :Rails + etc commands
 [[plugins]]
@@ -19,35 +20,19 @@ on_ft = ['ruby', 'haml']
 repo = 'slim-template/vim-slim'
 on_ft = ['slim']
 
-[[plugins]]
-repo = 'zah/nim.vim'
-on_ft = ['nim']
-# hook_add='''
-# let g:nvim_nim_highlighter_semantics=1
-# let g:nvim_nim_enable_async=0
-# '''
+# [[plugins]]
+# repo = 'pangloss/vim-javascript',
+# on_ft = ['javascript', 'javascript.jsx']
 
 # [[plugins]]
-# repo = 'baabelfish/nvim-nim'
-# on_ft = ['nim']
-# hook_add='''
-# let g:nvim_nim_highlighter_semantics=1
-# let g:nvim_nim_enable_async=0
-# '''
+# repo = 'maxmellon/vim-jsx-pretty'
+# on_ft = ['javascript', 'javascript.jsx']
+#
+# [[plugins]]
+# repo = 'leafgarland/typescript-vim'
+# on_ft = ['typescript', 'typescript.tsx']
 
-[[plugins]]
-repo = 'pangloss/vim-javascript',
-on_ft = ['javascript', 'javascript.jsx']
-
-[[plugins]]
-repo = 'maxmellon/vim-jsx-pretty'
-on_ft = ['javascript', 'javascript.jsx']
-
-[[plugins]]
-repo = 'leafgarland/typescript-vim'
-on_ft = ['typescript', 'typescript.tsx']
-
-# dart fileをsaveで自動format
+# dart file
 [[plugins]]
 repo = 'dart-lang/dart-vim-plugin'
 on_ft = ['dart']
@@ -55,14 +40,15 @@ hook_add = '''
   let g:dart_format_on_save = 1
 '''
 
-[[plugins]]
-repo = 'thosakwe/vim-flutter'
-on_ft = ['dart']
-hook_source = '''
-  let g:flutter_hot_reload_on_save = 1
-  let g:flutter_command = 'fvm'
-'''
+# [[plugins]]
+# repo = 'thosakwe/vim-flutter'
+# on_ft = ['dart']
+# hook_source = '''
+#   let g:flutter_hot_reload_on_save = 1
+#   let g:flutter_command = 'fvm'
+# '''
 
+# run flutter on vim through fvm
 [[plugins]]
 repo = 'akinsho/flutter-tools.nvim'
 on_ft = ['dart']
@@ -77,7 +63,7 @@ require('flutter-tools').setup{
 EOF
 '''
 
-# Goのデバッガ。あんまり使ってないかも
+# debugger for go
 [[plugins]]
 repo = 'sebdah/vim-delve'
 on_ft = ['go']
@@ -86,14 +72,14 @@ hook_source = '''
   nmap <silent> dt :DlvTest<CR>
 
 '''
-[[plugins]]
-repo = 'udalov/kotlin-vim'
-on_ft = ['kotlin']
+# [[plugins]]
+# repo = 'udalov/kotlin-vim'
+# on_ft = ['kotlin']
 
 # syntax highlight
-[[plugins]]
-repo = 'keith/swift.vim'
-on_ft = ['swift']
+# [[plugins]]
+# repo = 'keith/swift.vim'
+# on_ft = ['swift']
 
 [[plugins]]
 repo = 'elzr/vim-json'
@@ -104,11 +90,12 @@ on_ft = ['json']
 repo = 'neoclide/jsonc.vim'
 on_ft = ['json', 'jsonc']
 
+# indentation and syntax for graphql
 [[plugins]]
 repo = 'jparise/vim-graphql'
 on_ft = ['graphql', 'graphqls']
 
-# prettierの導入。必要な言語は都度導入
+# formatter
 [[plugins]]
 repo     = 'prettier/vim-prettier'
 build    = 'npm install'
