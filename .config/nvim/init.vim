@@ -80,7 +80,7 @@ autocmd BufEnter * call defx#redraw()
 " deinの後でないとpluginが効かない
 set t_Co=256
 set background=dark
-colorscheme PaperColor
+colorscheme tokyonight
 " ハイライトの色変更, deinの後でないと適用されない
 hi Search ctermfg=255 ctermbg=160
 
