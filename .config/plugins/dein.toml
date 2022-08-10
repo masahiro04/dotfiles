@@ -233,6 +233,22 @@ set completeopt=menuone,noinsert,noselect
 highlight! default link CmpItemKind CmpItemMenuDefault
 '''
 
+
+[[plugins]]
+repo = 'akinsho/flutter-tools.nvim'
+# on_ft = ['dart']
+hook_add = '''
+lua << EOF
+require('flutter-tools').setup{
+  fvm = true,
+   widget_guides = {
+    enabled = true,
+  },
+} -- use defaults
+EOF
+'''
+
+
 # telescopeの依存
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
