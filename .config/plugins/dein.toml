@@ -21,77 +21,39 @@ require 'nvim-treesitter.configs'.setup {
     disable = {},
   },
   ensure_installed = {
+    "c",
+    "cpp",
+    "cmake",
+    "css",
+    "dart",
+    "dot",
+    "go",
+    "gomod",
+    "graphql",
+    "html",
+    "json",
+    "java",
+    "javascript",
+    "kotlin",
+    "lua",
+    "make",
+    "markdown",
+    "python",
+    "ruby",
+    "rust",
+    "swift",
+    "scss",
+    "sql",
+    "typescript",
     "tsx",
     "toml",
-    "json",
-    "yaml",
-    "swift",
-    "kotlin",
-    "dart",
-    "ruby",
-    "html",
-    "css",
-    "scss"
+    "vim",
+    "yaml"
   }
 }
 EOF
 '''
 
-# LSP. COC便利なので利用
-# [[plugins]]
-# repo = 'neoclide/coc.nvim'
-# rev = 'release'
-# build = '''
-#   git checkout release
-# '''
-# hook_add = '''
-#   inoremap <silent><expr> <TAB>
-#         \ pumvisible() ? coc#_select_confirm() :
-#         \ <SID>check_back_space() ? "\<TAB>" :
-#         \ coc#refresh()
-#   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-#   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-#   function! s:check_back_space() abort
-#     let col = col('.') - 1
-#     return !col || getline('.')[col - 1]  =~# '\s'
-#   endfunction
-#   nmap <silent> gd <Plug>(coc-definition)
-#   nmap <silent> gy <Plug>(coc-type-definition)
-#   nmap <silent> gi <Plug>(coc-implementation)
-#   nmap <silent> gr <Plug>(coc-references)
-#
-#   nnoremap <silent> K :call <SID>show_documentation()<CR>
-#   function! s:show_documentation()
-#     if (index(['vim','help'], &filetype) >= 0)
-#       execute 'h '.expand('<cword>')
-#     elseif (coc#rpc#ready())
-#       call CocActionAsync('doHover')
-#     else
-#       execute '!' . &keywordprg . " " . expand('<cword>')
-#     endif
-#   endfunction
-#
-#   let g:coc_global_extensions = [
-#   \ 'coc-solargraph',
-#   \ 'coc-flutter',
-#   \ 'coc-tsserver',
-#   \ 'coc-prettier',
-#   \ 'coc-eslint',
-#   \ 'coc-git',
-#   \ 'coc-markdownlint',
-#   \ 'coc-pairs',
-#   \ 'coc-prettier',
-#   \ 'coc-yaml',
-#   \ 'coc-java',
-#   \ 'coc-css',
-#   \ 'coc-html',
-#   \ 'coc-sql',
-#   \ 'coc-pyright',
-#   \ 'coc-go',
-#   \ 'coc-json',
-#   \ 'coc-sourcekit'
-#   \ ]
-# '''
 
 # lsp config依存であればlazyでも良いのでは？と思ったが起動に失敗するのでこちらで
 [[plugins]]
@@ -229,20 +191,6 @@ set completeopt=menuone,noinsert,noselect
 highlight! default link CmpItemKind CmpItemMenuDefault
 '''
 
-# [[plugins]]
-# repo = 'akinsho/flutter-tools.nvim'
-# # on_ft = ['dart']
-# hook_add = '''
-# lua << EOF
-# require('flutter-tools').setup{
-#   fvm = true,
-#    widget_guides = {
-#     enabled = true,
-#   },
-# } -- use defaults
-# EOF
-# '''
-
 # telescopeの依存
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
@@ -262,7 +210,6 @@ require('telescope').setup {
     }
   }
 }
-
 EOF
   nnoremap ff <cmd>Telescope find_files hidden=true<cr>
   nnoremap fg <cmd>Telescope live_grep<cr>
@@ -274,7 +221,6 @@ EOF
 # telescopeで表示するアイコン
 [[plugins]]
 repo ="kyazdani42/nvim-web-devicons"
-
 
 [[plugins]]
 repo ="kristijanhusak/defx-git"
@@ -291,9 +237,11 @@ call defx#custom#column('git', 'indicators', {
   \ })
 '''
 
-# [[plugins]]
-# repo ="kristijanhusak/defx-icons"
+# icons for defx
+[[plugins]]
+repo ="kristijanhusak/defx-icons"
 
+# file viewer
 [[plugins]]
 repo = 'Shougo/defx.nvim'
 depends = ['defx-git', 'defx-icons']
