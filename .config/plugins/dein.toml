@@ -118,10 +118,6 @@ nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
 '''
 
-# [[plugins]]
-# repo = 'nvim-lua/popup.nvim'
-
-
 # vscode like pictograms
 [[plugins]]
 repo = 'onsails/lspkind-nvim'
@@ -233,7 +229,6 @@ set completeopt=menuone,noinsert,noselect
 highlight! default link CmpItemKind CmpItemMenuDefault
 '''
 
-
 [[plugins]]
 repo = 'akinsho/flutter-tools.nvim'
 # on_ft = ['dart']
@@ -247,7 +242,6 @@ require('flutter-tools').setup{
 } -- use defaults
 EOF
 '''
-
 
 # telescopeの依存
 [[plugins]]

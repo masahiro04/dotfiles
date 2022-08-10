@@ -19,14 +19,14 @@ hook_add = '''
 '''
 
 # css系
-[[plugins]]
-repo = 'cakebaker/scss-syntax.vim'
-on_ft = ['css','scss','sass']
+# [[plugins]]
+# repo = 'cakebaker/scss-syntax.vim'
+# on_ft = ['css','scss','sass']
 
 # rubyのsyntac
-[[plugins]]
-repo = 'vim-ruby/vim-ruby'
-on_ft = ['ruby']
+# [[plugins]]
+# repo = 'vim-ruby/vim-ruby'
+# on_ft = ['ruby']
 
 # railsのコマンド系
 # :Rails +いろんなコマンド, で割となんでもできるからめちゃ使える
@@ -77,27 +77,13 @@ on_ft = ['javascript', 'javascript.jsx']
 repo = 'leafgarland/typescript-vim'
 on_ft = ['typescript', 'typescript.tsx']
 
+# dart fileをsaveで自動format
 [[plugins]]
 repo = 'dart-lang/dart-vim-plugin'
 on_ft = ['dart']
 hook_add = '''
   let g:dart_format_on_save = 1
 '''
-# TODO(okubo): dduはこちらに帰る
-# [[plugins]]
-# repo = 'akinsho/flutter-tools.nvim'
-# on_ft = ['dart']
-# hook_add = '''
-# lua << EOF
-# require('flutter-tools').setup{
-#   fvm = true,
-#    widget_guides = {
-#     enabled = true,
-#   },
-# } -- use defaults
-# EOF
-# '''
-
 
 [[plugins]]
 repo = 'thosakwe/vim-flutter'
@@ -161,141 +147,6 @@ on_ft = ['python']
 [[plugins]]
 repo = 'mattn/vim-goimports'
 on_ft = ['go']
-
-# 機能としては非常に満足だがtoo muchなためdisableに
-# [[plugins]]
-# repo = 'fatih/vim-go'
-# on_ft = ['go']
-# hook_add = '''
-#   " 保存時に必要なimportを自動的に挿入
-#   let g:go_fmt_command = "goimports"
-#   " LSPに任せる機能をOFFにする
-#   " let g:go_def_mapping_enabled = 0
-#   " let g:go_doc_keywordprg_enabled = 0
-# '''
-
-[[plugins]]
-repo = 'zchee/deoplete-clang'
-on_ft = ['c', 'cpp', 'cmake']
-hook_source = '''
-  let g:deoplete#sources#clang#libclang_path = system("llvm-config --prefix")[:-2] . '/lib/libclang.dylib'
-  let g:deoplete#sources#clang#clang_header = system("llvm-config --prefix")[:-2] . '/lib/clang'
-  let g:deoplete#sources#clang#sort_algo = 'priority'
-  let g:deoplete#sources#clang#clang_complete_database="./build/"
-'''
-
-
-#
-# [[plugins]]
-# repo = 'Shougo/ddc.vim'
-# on_event = 'InsertEnter'
-# depends = ['denops.vim']
-# hook_source = '''
-#   call ddc#custom#patch_global('sources', ['nvim-lsp', 'around', 'file'])
-#   call ddc#custom#patch_global('sourceOptions', {
-#       \ '_': {
-#       \   'minAutoCompleteLength': 1 },
-#       \ 'nvim-lsp': {
-#       \   'mark': 'LSP',
-#       \   'matchers': ['matcher_head'],
-#       \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
-#       \ 'around': {
-#       \   'mark': 'A' },
-#       \ 'file': {
-#       \   'mark': 'File',
-#       \   'isVolatile': v:true,
-#       \   'forceCompletionPattern': '\S/\S*' },
-#       \ })
-#   call ddc#custom#patch_global('sourceParams', {
-#       \ 'nvim-lsp': { 'kindLabels': { 'Class': 'c' } },
-#       \ })
-#   call ddc#custom#patch_filetype(
-#       \ ['ps1', 'dosbatch', 'autohotkey', 'registry'], {
-#       \ 'sourceOptions': {
-#       \   'file': {
-#       \     'forceCompletionPattern': '\S\\\S*',
-#       \   },
-#       \ },
-#       \ 'sourceParams': {
-#       \   'file': {
-#       \     'mode': 'win32',
-#       \   },
-#       \ }})
-#
-#
-# inoremap <silent><expr> <TAB>
-# \ ddc#map#pum_visible() ? '<C-n>' :
-# \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-# \ '<TAB>' : ddc#map#manual_complete()
-#
-# " <S-TAB>: completion back.
-# inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
-# set completeopt+=noinsert
-# call ddc#enable()
-#
-#
-# '''
-
-
-  # inoremap <silent><expr> <TAB> ddc#map#complete()
-  # inoremap <expr><S-TAB> ddc#map#pum_visible() ? "\<C-p>" : "\<C-h>"
-  # inoremap <expr> <S-Tab> ddc#map#pum_visible() ? "\<C-p>" : "\<S-Tab>"
-
-  # inoremap <silent><expr> <TAB> ddc#map#manual_complete()
-  # inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
-  # inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
-
-  # inoremap <silent><expr> <TAB>
-  # \ ddc#map#pum_visible() ? '<C-n>' :
-  # \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-  # \ '<TAB>' : ddc#map#manual_complete()
-  #
-  # " <S-TAB>: completion back.
-  # inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
-
-
-
-
-# nvim lsp configとの連携
-# [[plugins]]
-# repo = 'Shougo/ddc-nvim-lsp'
-# on_source = 'ddc.vim'
-# # 近くにあるwordを拾ってくれる
-# [[plugins]]
-# repo = 'Shougo/ddc-around'
-# on_source = 'ddc.vim'
-# # 入力中の単語補完
-# [[plugins]]
-# repo = 'Shougo/ddc-matcher_head'
-# on_source = 'ddc.vim'
-#
-# [[plugins]]
-# repo = 'Shougo/ddc-sorter_rank'
-# on_source = 'ddc.vim'
-#
-# [[plugins]]
-# repo = 'Shougo/pum.vim'
-# on_source = 'ddc.vim'
-#
-# # 補完の詳細なソースのpopupが表示される
-# [[plugins]]
-#  repo = 'matsui54/denops-popup-preview.vim'
-#  on_source = 'ddc.vim'
-#  hook_source = '''
-#  call popup_preview#enable()
-# '''
-# # 入力時にhelpが出る
-# [[plugins]]
-#  repo = 'matsui54/denops-signature_help'
-#  on_source = 'ddc.vim'
-#  hook_source = '''
-#  call signature_help#enable()
-# '''
-# # file名の補完
-# [[plugins]]
-#  repo = 'LumaKernel/ddc-file'
-#  on_source = 'ddc.vim'
-#
 
 # lsp config. lazy出ないと正常に読み込まれない
 [[plugins]]
