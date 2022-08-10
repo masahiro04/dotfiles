@@ -120,6 +120,7 @@ on_ft = ['python']
 repo = 'mattn/vim-goimports'
 on_ft = ['go']
 
+##### LSP section start
 # lsp config. lazy出ないと正常に読み込まれない
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
@@ -188,6 +189,123 @@ nnoremap <silent> gd <Cmd>Lspsaga lsp_finder<CR>
 nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
 '''
+##### LSP section end
 
+##### Completion section start
+# vscode like pictograms
+[[plugins]]
+repo = 'onsails/lspkind-nvim'
+hook_source = '''
+lua << EOF
+require('lspkind').init({
+    -- DEPRECATED (use mode instead): enables text annotations
+    --
+    -- default: true
+    -- with_text = true,
 
+    -- defines how annotations are shown
+    -- default: symbol
+    -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+    mode = 'symbol_text',
 
+    -- default symbol map
+    -- can be either 'default' (requires nerd-fonts font) or
+    -- 'codicons' for codicon preset (requires vscode-codicons font)
+    --
+    -- default: 'default'
+    preset = 'codicons',
+
+    -- override preset symbols
+    --
+    -- default: {}
+    symbol_map = {
+      Text = "",
+      Method = "",
+      Function = "",
+      Constructor = "",
+      Field = "ﰠ",
+      Variable = "",
+      Class = "ﴯ",
+      Interface = "",
+      Module = "",
+      Property = "ﰠ",
+      Unit = "塞",
+      Value = "",
+      Enum = "",
+      Keyword = "",
+      Snippet = "",
+      Color = "",
+      File = "",
+      Reference = "",
+      Folder = "",
+      EnumMember = "",
+      Constant = "",
+      Struct = "פּ",
+      Event = "",
+      Operator = "",
+      TypeParameter = ""
+    },
+})
+EOF
+'''
+
+# # nvim cmp source for buffer words
+[[plugins]]
+repo = 'hrsh7th/cmp-buffer'
+on_source = 'nvim-lspconfig'
+
+# nvim-cmp source for neovim's built in LSP
+[[plugins]]
+repo = 'hrsh7th/cmp-nvim-lsp'
+on_source = 'nvim-lspconfig'
+
+# signature helpを入力時に表示
+[[plugins]]
+repo = 'hrsh7th/cmp-nvim-lsp-signature-help'
+on_source = 'nvim-lspconfig'
+
+# nvim-cmpで必須
+[[plugins]]
+repo = 'quangnguyen30192/cmp-nvim-ultisnips'
+on_source = 'nvim-lspconfig'
+
+# # completion
+[[plugins]]
+repo = 'hrsh7th/nvim-cmp'
+on_source = 'nvim-lspconfig'
+hook_source = '''
+lua << EOF
+local cmp = require'cmp'
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+      vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Replate,
+      select = true
+    }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'ultisnips' },
+    { name = 'buffer' },
+    { name = 'nvim_lsp_signature_help' }
+  })
+})
+EOF
+
+set completeopt=menuone,noinsert,noselect
+highlight! default link CmpItemKind CmpItemMenuDefault
+'''
+##### Completion section end
