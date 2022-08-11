@@ -59,27 +59,97 @@ EOF
 repo = 'nvim-lua/plenary.nvim'
 
 [[plugins]]
+repo = 'nvim-lua/popup.nvim'
+
+[[plugins]]
+repo = 'nvim-telescope/telescope-file-browser.nvim'
+
+[[plugins]]
 repo = 'nvim-telescope/telescope.nvim'
-depends = ['plenary.nvim', 'telescope-media-files.nvim']
+depends = ['plenary.nvim', 'telescope-file-browser.nvim']
 hook_add = '''
 lua << EOF
-local actions= require('telescope.actions')
-require('telescope').setup {
+local status_ok, telescope = pcall(require, 'telescope')
+
+local actions = require('telescope.actions')
+local builtin = require('telescope.builtin')
+local fb_actions = require "telescope".extensions.file_browser.actions
+
+local function telescope_buffer_dir()
+  return vim.fn.expand('%:p:h')
+end
+
+telescope.setup {
   defaults = {
+    file_ignore_patterns = { "node_modules", ".git/" },
     mappings = {
       n= {
         ["q"] = actions.close
       }
     }
-  }
+  },
+  extensions = {
+    file_browser = {
+      theme = "dropdown",
+      -- disables netrw and use telescope-file-browser in its place
+      hijack_netrw = true,
+      mappings = {
+        -- your custom insert mode mappings
+        ["i"] = {
+          ["<C-w>"] = function() vim.cmd('normal vbd') end,
+        },
+        ["n"] = {
+          -- your custom normal mode mappings
+          ["N"] = fb_actions.create,
+          ["h"] = fb_actions.goto_parent_dir,
+          ["l"] = fb_actions.open,
+          ["/"] = function()
+            vim.cmd('startinsert')
+          end
+        },
+      },
+    },
+  },
 }
-EOF
-  nnoremap ff <cmd>Telescope find_files hidden=true<cr>
-  nnoremap fg <cmd>Telescope live_grep<cr>
-  nnoremap fb <cmd>Telescope buffers<cr>
-  nnoremap fh <cmd>Telescope help_tags<cr>
-'''
 
+telescope.load_extension("file_browser")
+
+vim.keymap.set('n', 'ff',
+  function()
+    builtin.find_files({
+      no_ignore = false,
+      hidden = true
+    })
+  end)
+vim.keymap.set('n', 'fg', function()
+  builtin.live_grep()
+end)
+vim.keymap.set('n', 'fb', function()
+  builtin.buffers()
+end)
+vim.keymap.set('n', 'fh', function()
+  builtin.help_tags()
+end)
+vim.keymap.set('n', ';;', function()
+  builtin.resume()
+end)
+vim.keymap.set('n', ';e', function()
+  builtin.diagnostics()
+end)
+vim.keymap.set("n", "sf", function()
+  telescope.extensions.file_browser.file_browser({
+    path = "%:p:h",
+    cwd = telescope_buffer_dir(),
+    respect_gitignore = false,
+    hidden = true,
+    grouped = true,
+    previewer = false,
+    initial_mode = "normal",
+    layout_config = { height = 40 }
+  })
+end)
+EOF
+'''
 
 # telescopeで表示するアイコン
 [[plugins]]
