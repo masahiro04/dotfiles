@@ -40,6 +40,11 @@ hook_add = '''
   let g:dart_format_on_save = 1
 '''
 
+[[plugins]]
+repo = 'zah/nim.vim'
+on_ft = ['nim']
+
+
 # [[plugins]]
 # repo = 'thosakwe/vim-flutter'
 # on_ft = ['dart']
@@ -127,7 +132,7 @@ repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
 on_ft = [
   'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss',
-  'toml', 'ruby'
+   'nim', 'toml', 'ruby'
 ]
 hook_source= '''
 lua << EOF
