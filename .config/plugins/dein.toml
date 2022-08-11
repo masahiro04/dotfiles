@@ -84,9 +84,12 @@ telescope.setup {
     file_ignore_patterns = { "node_modules", ".git/" },
     mappings = {
       n= {
-        ["q"] = actions.close
+        ["q"] = actions.close,
+        ["<C-n>"] = actions.send_selected_to_qflist + actions.open_qflist,
       }
-    }
+    },
+  },
+  pickers = {
   },
   extensions = {
     file_browser = {
@@ -145,7 +148,7 @@ vim.keymap.set("n", "sf", function()
     grouped = true,
     previewer = false,
     initial_mode = "normal",
-    layout_config = { height = 40 }
+    layout_config = { height = 50 }
   })
 end)
 EOF
