@@ -315,3 +315,10 @@ repo = 'Shougo/vimshell.vim'
 # EOF
 # '''
 
+# registersの一覧を表示して簡単にpasteできる。
+[[plugins]]
+repo = 'tversteeg/registers.nvim'
+hook_add = '''
+  nmap ;r :Registers<CR>
+'''
+
