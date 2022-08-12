@@ -141,6 +141,17 @@ vim.keymap.set('n', ';e', function()
   builtin.diagnostics()
 end)
 
+vim.keymap.set('n', ';c', function()
+    builtin.git_commits({
+      initial_mode = "normal",
+    })
+end)
+vim.keymap.set('n', ';s', function()
+    builtin.git_status({
+      initial_mode = "normal",
+    })
+end)
+
 vim.keymap.set("n", "<C-e>", function()
   telescope.extensions.file_browser.file_browser({
     path = "%:p:h",
@@ -171,14 +182,6 @@ repo = "airblade/vim-gitgutter"
 # Gitに関するコマンドを使うことが可能。超便利
 [[plugins]]
 repo = "tpope/vim-fugitive"
-
-# [[plugins]]
-# repo = 'lewis6991/gitsigns.nvim'
-# hook_source = '''
-# lua << EOF
-#   require('gitsigns').setup {}
-# EOF
-# '''
 
 # 複数行のコメントいける
 [[plugins]]
@@ -303,3 +306,12 @@ repo = 'iberianpig/tig-explorer.vim'
 # vim でshell起動。主にdlvのUIを整えるため、が目的
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
+
+# [[plugins]]
+# repo = 'folke/trouble.nvim'
+# hook_source = '''
+# lua << EOF
+#   require("trouble").setup {}
+# EOF
+# '''
+
