@@ -365,6 +365,16 @@ require('lualine').setup {
 EOF
 '''
 
+# 右下にlspのloading状態を最初に表示してくれる
+[[plugins]]
+repo = 'j-hui/fidget.nvim'
+on_source = 'nvim-lspconfig'
+hook_source = '''
+lua << EOF
+  require('fidget').setup{}
+EOF
+'''
+
 [[plugins]]
 repo = 'akinsho/bufferline.nvim'
 on_source = 'nvim-lspconfig'
@@ -410,3 +420,4 @@ require('bufferline').setup {
 EOF
 '''
 ##### Buffer section end
+
