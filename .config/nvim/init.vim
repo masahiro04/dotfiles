@@ -1,19 +1,31 @@
 source ~/.vimrc
 
-" 認識しない系の言語はこちらで強制判別
+" file名の認識
 autocmd BufNewFile,BufRead *.tsx let b:tsx_ext_found = 1
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 autocmd BufNewFile,BufRead *.ts set filetype=typescript
+autocmd BufNewFile,BufRead *.rs set filetype=rust
+autocmd BufNewFile,BufRead *.rb set filetype=ruby
 autocmd BufReadPost *.kt setlocal filetype=kotlin
 autocmd BufNewFile,BufRead *.nim, set filetype=nim
 autocmd BufNewFile,BufRead *.slim, set filetype=slim
+autocmd BufNewFile,BufRead *.haml, set filetype=haml
 autocmd BufNewFile,BufRead *.swift, set filetype=swift
 autocmd BufNewFile,BufRead *.dart, set filetype=dart
 autocmd BufNewFile,BufRead *.go, set filetype=go
-autocmd FileType swift setlocal omnifunc=lsp#complete
+autocmd BufNewFile,BufRead *.csv, set filetype=csv
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 autocmd BufRead,BufNewFile package.json set filetype=jsonc
-" autocmd BufEnter * lua require'completion'.on_attach()
+
+autocmd FileType swift setlocal omnifunc=lsp#complete
+" file名からtab数を指定
+
+" autocmd Filetype rust setlocal tabstop=2
+
+" autocmd BufNewFile,BufRead *.rs setlocal tabstop=2
+
+" inoremap <expr> <CR> strcharpart(getline('.'),getpos('.')[2]-1,1) == '}' ? "\<CR>\<Esc>O" : "<CR>"
+
 "-------------------------------------------------------------------------------
 " Cursor line
 "-------------------------------------------------------------------------------
