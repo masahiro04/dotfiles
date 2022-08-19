@@ -250,15 +250,10 @@ hook_add = '''
 
 # 特定keywordで画面移動を素早く実行
 [[plugins]]
-repo ='easymotion/vim-easymotion'
+repo = 'rlane/pounce.nvim'
 hook_add = '''
-  let g:EasyMotion_do_mapping = 0
-  nmap qq <Plug>(easymotion-overwin-f)
-  nmap qq <Plug>(easymotion-overwin-f2)
-  let g:EasyMotion_smartcase = 1
-  map <Leader>j <Plug>(easymotion-j)
-  map <Leader>k <Plug>(easymotion-k)
- '''
+  nmap qq <cmd>Pounce<CR>
+'''
 
 # whitespace検出
 [[plugins]]
