@@ -146,6 +146,9 @@ export PATH="$PATH:$HOME/.pub-cache/bin"
 # export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
 # kotlin
 
+# rs
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # go
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
