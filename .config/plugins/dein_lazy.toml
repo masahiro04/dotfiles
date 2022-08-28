@@ -175,6 +175,17 @@ end
    server:setup(opts)
    vim.cmd [[ do User LspAttachBuffers ]]
  end)
+
+  nvim_lsp.solargraph.setup{
+    settings = {
+      solargraph = {
+        commandPath = '/Users/masahirookubo/.rbenv/shims/solargraph',
+        diagnostics = true,
+        completion = true
+      }
+    },
+    on_attach = on_attach
+  }
 EOF
 '''
 
