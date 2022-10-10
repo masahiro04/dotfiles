@@ -74,4 +74,4 @@ set t_Co=256
 set background=dark
 colorscheme tokyonight
 " ハイライトの色変更, deinの後でないと適用されない
-hi Search ctermfg=255 ctermbg=160
+" hi Search ctermfg=255 ctermbg=160

@@ -49,7 +49,7 @@ set ignorecase
 
 " 検索した時にハイライト
 set hlsearch
-
+hi Search ctermfg=255 ctermbg=160
 nnoremap nh :nohl<CR>
 "-------------------------------------------------------------------------------
 " キーバインド

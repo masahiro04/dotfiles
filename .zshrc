@@ -36,6 +36,10 @@ alias arm="arch -arm64 zsh"
 
 alias g="git"
 
+alias a='cd ../'
+alias aa='cd ../../'
+alias aaa='cd ../../../'
+
 # dockerとlocalのpsgl行き来するため
 alias pgstart="brew services start postgresql"
 alias pgstop="brew services stop postgresql"

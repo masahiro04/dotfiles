@@ -120,11 +120,12 @@ on_ft    = ['javascript', 'typescript', 'ruby', 'python', 'css', 'scss', 'json',
 hook_source = '''
   " @formatアノテーションを持ったファイルの自動フォーマットを無効にする
   let g:prettier#autoformat = 0
-
-  " Prettierのパースエラーをquickfixに表示しない
   let g:prettier#quickfix_enabled = 0
+  let g:prettier#autoformat_require_pragma = 0
+  let g:prettier#autoformat_config_present = 0
 
-  autocmd BufWritePre *.js,*.ts,*.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
+  " autocmd BufWritePre *.js,*.ts,*.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
+  autocmd BufWritePre *.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
 '''
 
 # pythonの括弧のインデントがおかしい問題を解消してくれる
@@ -359,7 +360,7 @@ require('lualine').setup {
     lualine_c = { {
       'filename',
       file_status = true, -- displays file status (readonly status, modified status)
-      path = 0 -- 0 = just filename, 1 = relative path, 2 = absolute path
+      path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
     } },
     lualine_x = {
       { 'diagnostics', sources = { "nvim_diagnostic" }, symbols = { error = ' ', warn = ' ', info = ' ',
@@ -443,4 +444,3 @@ require('bufferline').setup {
 EOF
 '''
 ##### Buffer section end
-

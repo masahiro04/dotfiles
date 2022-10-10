@@ -1,4 +1,31 @@
-extends typescript
+extends html
+
+snippet print "log something"
+console.log(${1});
+endsnippet
+
+snippet warn "warn something"
+console.warn(${1});
+endsnippet
+
+snippet fun "create a function"
+const ${1:name} = (): ${2:Type} => {
+}
+endsnippet
+
+snippet if "create a condition"
+if (${1}) {
+	${2}
+}
+endsnippet
+
+snippet ife "create a condition"
+if (${1}) {
+	${2}
+} else {
+	${3}
+}
+endsnippet
 
 snippet interface "create an interface"
 interface ${1} {

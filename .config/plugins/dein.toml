@@ -89,8 +89,7 @@ telescope.setup {
       }
     },
   },
-  pickers = {
-  },
+  pickers = {},
   extensions = {
     file_browser = {
       theme = "dropdown",
@@ -160,9 +159,9 @@ vim.keymap.set("n", "<C-e>", function()
     respect_gitignore = false,
     hidden = true,
     grouped = true,
-    previewer = false,
+    -- previewer = false,
     initial_mode = "normal",
-    layout_config = { height = 50 }
+    layout_config = { height = 15 }
   })
 end)
 EOF
@@ -303,18 +302,17 @@ repo = 'iberianpig/tig-explorer.vim'
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
 
-# [[plugins]]
-# repo = 'folke/trouble.nvim'
-# hook_source = '''
-# lua << EOF
-#   require("trouble").setup {}
-# EOF
-# '''
-
 # registersの一覧を表示して簡単にpasteできる。
 [[plugins]]
 repo = 'tversteeg/registers.nvim'
 hook_add = '''
   nmap ;r :Registers<CR>
+  let g:registers_trim_whitespace = 0
+  let g:registers_window_border = 'single'
+  let g:registers_window_min_height = 10
+  let g:registers_normal_mode = 0
+  let g:registers_paste_in_normal_mode = 2
+  let g:registers_show = "*+\"-/_=#%.0123456789:"
+  let g:system_clip = 1
 '''
 
