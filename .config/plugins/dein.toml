@@ -161,7 +161,7 @@ vim.keymap.set("n", "<C-e>", function()
     grouped = true,
     -- previewer = false,
     initial_mode = "normal",
-    layout_config = { height = 15 }
+    layout_config = { height = 30 }
   })
 end)
 EOF

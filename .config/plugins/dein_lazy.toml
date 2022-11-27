@@ -6,9 +6,9 @@ repo = 'tpope/vim-rails'
 on_ft = ['ruby', 'haml', 'slim', 'erb']
 
 # insert end automaticaly in ruby file
-[[plugins]]
-repo = 'tpope/vim-endwise'
-on_ft = ['ruby']
+# [[plugins]]
+# repo = 'tpope/vim-endwise'
+# on_ft = ['ruby']
 
 # haml syntax
 [[plugins]]
@@ -119,7 +119,7 @@ build    = 'npm install'
 on_ft    = ['javascript', 'typescript', 'ruby', 'python', 'css', 'scss', 'json', 'markdown']
 hook_source = '''
   " @formatアノテーションを持ったファイルの自動フォーマットを無効にする
-  let g:prettier#autoformat = 0
+  let g:prettier#autoformat = 1
   let g:prettier#quickfix_enabled = 0
   let g:prettier#autoformat_require_pragma = 0
   let g:prettier#autoformat_config_present = 0
@@ -144,8 +144,8 @@ on_ft = ['go']
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufEnter'
 on_ft = [
-'javascript', 'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss',
-   'nim', 'toml', 'ruby'
+  'javascript', 'typescript', 'typescript.tsx', 'dart', 'go', 'html', 'css', 'scss',
+  'nim', 'toml', 'ruby', 'elm'
 ]
 hook_source= '''
 lua << EOF
@@ -325,6 +325,8 @@ cmp.setup({
       behavior = cmp.ConfirmBehavior.Replate,
       select = true
     }),
+    ['<Tab>'] = cmp.mapping.select_next_item({behavior=cmp.SelectBehavior.Insert}),
+    ['<S-Tab>'] = cmp.mapping.select_prev_item({behavior=cmp.SelectBehavior.Insert}),
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },

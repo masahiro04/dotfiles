@@ -76,6 +76,8 @@ alias ffr="fvm flutter run"
 # docker系コマンド
 alias b="build"
 alias d="docker-compose"
+alias de="docker-compose exec"
+alias dew="docker-compose exec web"
 alias dcu="docker-compose up"
 alias dcb="docker-compose build --no-cache"
 alias dclear="docker system prune -a"
@@ -121,24 +123,14 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# zlib, pyenv入れる際の問題解消で挿入
-# export LDFLAGS="-L/usr/local/opt/zlib/lib"
-# export CPPFLAGS="-I/usr/local/opt/zlib/include"
-
-# tesserocrをinstallする際の回避策
-# export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
-
-# gitの設定
-# PATH="/usr/local/git/bin:$PATH"
-# export PATH
-
 # posgreの設定
 export PGDATA=/usr/local/var/postgres
 export PATH=/usr/local/opt/postgresql/bin:$PATH
 
-# nodeの設定
-export NODE_PATH='/usr/local/lib/node_modules'
-export PATH=~/.npm-global/bin:$PATH
+# node(nvm)の設定
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # androidの設定
 export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
@@ -185,3 +177,4 @@ eval "$(rbenv init -)"
 # export BAT_THEME="Dracula"
 
 # source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
+

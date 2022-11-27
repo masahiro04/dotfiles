@@ -6,6 +6,7 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 autocmd BufNewFile,BufRead *.ts set filetype=typescript
 autocmd BufNewFile,BufRead *.rs set filetype=rust
 autocmd BufNewFile,BufRead *.rb set filetype=ruby
+autocmd BufNewFile,BufRead *.elm set filetype=elm
 autocmd BufReadPost *.kt setlocal filetype=kotlin
 autocmd BufNewFile,BufRead *.nim, set filetype=nim
 autocmd BufNewFile,BufRead *.slim, set filetype=slim
