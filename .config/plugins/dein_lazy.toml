@@ -116,7 +116,7 @@ on_ft = ['graphql', 'graphqls']
 [[plugins]]
 repo     = 'prettier/vim-prettier'
 build    = 'npm install'
-on_ft    = ['javascript', 'typescript', 'ruby', 'python', 'css', 'scss', 'json', 'markdown']
+on_ft    = ['javascript', 'typescript', 'python', 'css', 'scss', 'json', 'markdown']
 hook_source = '''
   " @formatアノテーションを持ったファイルの自動フォーマットを無効にする
   let g:prettier#autoformat = 1

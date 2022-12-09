@@ -75,11 +75,11 @@ alias ffr="fvm flutter run"
 
 # docker系コマンド
 alias b="build"
-alias d="docker-compose"
-alias de="docker-compose exec"
-alias dew="docker-compose exec web"
-alias dcu="docker-compose up"
-alias dcb="docker-compose build --no-cache"
+alias d="docker compose"
+alias de="docker compose exec"
+alias dew="docker compose exec web"
+alias dcu="docker compose up"
+alias dcb="docker compose build --no-cache"
 alias dclear="docker system prune -a"
 
 # ios/android/flutter系
