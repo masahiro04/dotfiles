@@ -124,8 +124,8 @@ hook_source = '''
   let g:prettier#autoformat_require_pragma = 0
   let g:prettier#autoformat_config_present = 0
 
-  " autocmd BufWritePre *.js,*.ts,*.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
-  autocmd BufWritePre *.rb,*.py,*.css,*.scss,*.json,*.md PrettierAsync
+  " autocmd BufWritePre *.js,*.ts,*.py,*.css,*.scss,*.json,*.md PrettierAsync
+  autocmd BufWritePre *.py,*.css,*.scss,*.json,*.md PrettierAsync
 '''
 
 # pythonの括弧のインデントがおかしい問題を解消してくれる

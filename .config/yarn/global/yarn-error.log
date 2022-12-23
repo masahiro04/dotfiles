@@ -1,0 +1,36 @@
+Arguments: 
+  /Users/masahirookubo/.nvm/versions/node/v19.1.0/bin/node /usr/local/Cellar/yarn/1.22.10/libexec/bin/yarn.js create next-app-pack
+
+PATH: 
+  /Users/masahirookubo/.rbenv/shims:/opt/homebrew/opt/openssl@1.1/bin:/Users/masahirookubo/.nimble/bin:/Users/masahirookubo/.tfenv/bin:/Users/masahirookubo/.goenv/versions/1.17.3/bin:/Users/masahirookubo/.goenv/shims:/Users/masahirookubo/.goenv/bin:/Users/masahirookubo/.cargo/bin:/Users/masahirookubo/Library/Android/sdk/platform-tools:/Users/masahirookubo/.nvm/versions/node/v19.1.0/bin:/usr/local/opt/postgresql/bin:/Users/masahirookubo/.pyenv/shims:/Users/masahirookubo/.pyenv/bin:/opt/homebrew/bin:/usr/local/Cellar/git/2.5.0/bin:/opt/homebrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin:/usr/local/sbin:/Library/Apple/usr/bin:/Users/masahirookubo/.pub-cache/bin:/Users/masahirookubo/go/1.17.3/bin:/Users/masahirookubo/go/bin:/opt/homebrew/Cellar/gnupg/2.3.6
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  19.1.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/create-next-app-pack: Not found
+      at params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:66988:18)
+      at self.callback (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:140749:22)
+      at Request.emit (node:events:513:28)
+      at Request.<anonymous> (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:141721:10)
+      at Request.emit (node:events:513:28)
+      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:141643:12)
+      at Object.onceWrapper (node:events:627:28)
+      at IncomingMessage.emit (node:events:525:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
