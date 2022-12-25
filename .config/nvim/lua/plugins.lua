@@ -23,6 +23,7 @@ packer.startup(function(use)
   use 'glepnir/lspsaga.nvim' -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
+  use 'j-hui/fidget.nvim' -- Lsp loading indicator
   use 'MunifTanjim/prettier.nvim'
   use 'jose-elias-alvarez/null-ls.nvim' -- Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua
   use 'kyazdani42/nvim-web-devicons' -- File icons
@@ -43,6 +44,7 @@ packer.startup(function(use)
       'JoosepAlviste/nvim-ts-context-commentstring'
     }
   }
+  use 'rlane/pounce.nvim'
   use 'lewis6991/gitsigns.nvim'
   use 'dinhhuy258/git.nvim' -- For git blame & browse
 end)
