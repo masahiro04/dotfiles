@@ -1,6 +1,5 @@
 local keymap = vim.keymap
 
-
 --- Do not yank with x
 keymap.set('n', 'x', '"_x')
 
@@ -50,4 +49,3 @@ keymap.set('i', 'jj', '<ESC>', {silent=true})
 
 -- Pounce
 keymap.set('', 'qq', '<cmd>Pounce<CR>')
-
