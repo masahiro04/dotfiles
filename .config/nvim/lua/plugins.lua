@@ -36,7 +36,7 @@ packer.startup(function(use)
   }
   use 'windwp/nvim-autopairs'
   use 'windwp/nvim-ts-autotag'
-  use 'kylechui/nvim-surround' -- Sound text with x
+  use 'kylechui/nvim-surround' -- Surround text with selected charactors
   use 'akinsho/nvim-bufferline.lua'
   use 'norcalli/nvim-colorizer.lua'
   use 'L3MON4D3/LuaSnip'
