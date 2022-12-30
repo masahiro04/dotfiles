@@ -37,7 +37,7 @@ packer.startup(function(use)
   use 'windwp/nvim-autopairs'
   use 'windwp/nvim-ts-autotag'
   use 'kylechui/nvim-surround' -- Surround text with selected charactors
-  use 'akinsho/nvim-bufferline.lua'
+  use 'akinsho/bufferline.nvim'
   use 'norcalli/nvim-colorizer.lua'
   use 'L3MON4D3/LuaSnip'
   use 'rafamadriz/friendly-snippets'
