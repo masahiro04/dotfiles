@@ -1,6 +1,6 @@
 local status, packer = pcall(require, 'packer')
 if (not status) then
-  print("Packer is not installed")
+  print('Packer is not installed')
   return
 end
 
@@ -47,6 +47,7 @@ packer.startup(function(use)
     }
   }
   use 'rlane/pounce.nvim'
+  use 'p00f/nvim-ts-rainbow' -- Rainbow parentheses
   use 'lewis6991/gitsigns.nvim'
   use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
