@@ -12,7 +12,6 @@ ts.setup {
   },
   ensure_installed = {
     "c",
-    "cpp",
     "cmake",
     "css",
     "dart",
@@ -21,6 +20,7 @@ ts.setup {
     "gomod",
     "graphql",
     "html",
+    "elm",
     "json",
     "java",
     "javascript",

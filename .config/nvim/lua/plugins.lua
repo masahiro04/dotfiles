@@ -20,7 +20,7 @@ packer.startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp' -- nvim-cmp source for neovim's built-in LSP
   use 'hrsh7th/nvim-cmp' -- Completion
   use 'neovim/nvim-lspconfig' -- LSP
-  use 'glepnir/lspsaga.nvim' -- LSP UIs
+  use { 'glepnir/lspsaga.nvim', branch = 'main' } -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   use 'j-hui/fidget.nvim' -- Lsp loading indicator
@@ -46,9 +46,15 @@ packer.startup(function(use)
       'JoosepAlviste/nvim-ts-context-commentstring'
     }
   }
+  use 'akinsho/toggleterm.nvim'
   use 'rlane/pounce.nvim'
   use 'p00f/nvim-ts-rainbow' -- Rainbow parentheses
   use 'lewis6991/gitsigns.nvim'
   use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+  use 'akinsho/git-conflict.nvim'
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
+
+  -- Vim scripts under this line
+  use { 'ntpeters/vim-better-whitespace' }
+  use { 'ElmCast/elm-vim' }
 end)
