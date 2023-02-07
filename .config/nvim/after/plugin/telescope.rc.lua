@@ -4,6 +4,7 @@ if (not status) then return end
 local actions = require('telescope.actions')
 local builtin = require('telescope.builtin')
 local fb_actions = require "telescope".extensions.file_browser.actions
+local media_actions = require "telescope".load_extension('media_files')
 
 local function telescope_buffer_dir()
   return vim.fn.expand('%:p:h')
@@ -43,6 +44,12 @@ telescope.setup {
         },
       },
     },
+    media_files = {
+      -- filetypes whitelist
+      -- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
+      filetypes = {"png", "webp", "jpg", "jpeg"},
+      find_cmd = "rg" -- find command (defaults to `fd`)
+    }
   },
 }
 
