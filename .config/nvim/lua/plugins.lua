@@ -17,7 +17,7 @@ packer.startup(function(use)
   use 'hrsh7th/nvim-cmp' -- Completion
   use 'hrsh7th/cmp-nvim-lsp-signature-help' -- Shows sigunature help messages
   use 'neovim/nvim-lspconfig' -- LSP
-  use { 'glepnir/lspsaga.nvim' } -- LSP UIs
+  use { 'glepnir/lspsaga.nvim', branch = 'main' } -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   use 'j-hui/fidget.nvim' -- Lsp loading indicator
@@ -26,7 +26,7 @@ packer.startup(function(use)
   use 'kyazdani42/nvim-web-devicons' -- File icons
   use 'nvim-telescope/telescope.nvim'
   use 'nvim-telescope/telescope-file-browser.nvim'
-  use 'nvim-telescope/telescope-media-files.nvim'
+  -- use 'nvim-telescope/telescope-media-files.nvim'
 
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- Code color scheme
   -- use 'windwp/nvim-autopairs'
@@ -44,6 +44,8 @@ packer.startup(function(use)
   -- use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' } -- Git client
   use 'akinsho/git-conflict.nvim' -- Git client to fix conflict
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' } -- Git diff view
+  -- Image viewer
+  use { 'samodostal/image.nvim', requires = { 'nvim-lua/plenary.nvim' } }
 
   -- Vim scripts under this line
   use { 'ntpeters/vim-better-whitespace' }
@@ -56,6 +58,7 @@ packer.startup(function(use)
   use { 'slim-template/vim-slim' } -- TODO: Add ft
   use { 'tpope/vim-rails' } -- TODO: Add ft
   use { 'rust-lang/rust.vim' }
+  use { 'zah/nim.vim' } -- Nim syntax highlighter
 -- [[plugins]]
 -- repo = 'rust-lang/rust.vim'
 -- on_ft = ['rust']

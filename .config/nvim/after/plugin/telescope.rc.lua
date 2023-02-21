@@ -4,7 +4,6 @@ if (not status) then return end
 local actions = require('telescope.actions')
 local builtin = require('telescope.builtin')
 local fb_actions = require "telescope".extensions.file_browser.actions
-local media_actions = require "telescope".load_extension('media_files')
 
 local function telescope_buffer_dir()
   return vim.fn.expand('%:p:h')
@@ -98,6 +97,6 @@ vim.keymap.set("n", "<C-e>", function()
     grouped = true,
     -- previewer = false,
     initial_mode = "normal",
-    layout_config = { height = 30 }
+    layout_config = { height = 0.5 }
   })
 end)

@@ -21,12 +21,6 @@ autoload -U compinit && compinit
 # NOTE(okubo): 色を有効化
 autoload -Uz colors && colors
 
-# NOTE(okubo): プロンプトカスタマイズ
-PROMPT='
-[%B%F{green}%n@%m%f%b %F{cyan}($(arch))%f:%F{blue}%~%f]$vcs_info_msg_0_%f'
-PROMPT+=""$'\n'"%# "
-precmd(){ vcs_info }
-
 export PATH="/usr/local/Cellar/git/2.5.0/bin:$PATH"
 
 alias ide="~/.ide.sh"
@@ -44,10 +38,6 @@ alias aaa='cd ../../../'
 alias pgstart="brew services start postgresql"
 alias pgstop="brew services stop postgresql"
 alias mystart="mysql.server restart"
-
-# alias ctags="ctags -R -f .tags"
-# alias belongs_to="echo '--regex-ruby=/^[ \t]*belongs_to[ \t]*:([a-zA-Z0-9_]+)/\1/' >> .tags"
-# alias scope="echo '--regex-ruby=/^[ \t]*scope[ \t]*:([a-zA-Z0-9_]+)/\1/' >> .tags"
 
 # rails系コマンド
 alias bi="bundle install"
@@ -130,9 +120,6 @@ export PATH=/usr/local/opt/postgresql/bin:$PATH
 # node(nvm)の設定
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # androidの設定
 export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
@@ -168,15 +155,8 @@ export PATH=/Users/masahirookubo/.nimble/bin:$PATH
 # GnuPG, ecs cli
 export PATH=$PATH:/opt/homebrew/Cellar/gnupg/2.3.6
 
-
 export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 eval "$(rbenv init -)"
-
-# NOTE: nvim + fzf.nvimのpreviewをいい感じにするための設定
-# export BAT_THEME="Dracula"
-
-# source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
-

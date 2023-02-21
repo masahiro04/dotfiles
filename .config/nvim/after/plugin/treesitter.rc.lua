@@ -38,7 +38,8 @@ ts.setup {
     "tsx",
     "toml",
     "vim",
-    "yaml"
+    "yaml",
+    "markdown_inline"
   },
   autotag = {
     enable = true,
