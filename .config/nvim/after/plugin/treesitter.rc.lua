@@ -22,6 +22,7 @@ ts.setup {
     "html",
     "elm",
     "json",
+    "terraform",
     "java",
     "javascript",
     "kotlin",

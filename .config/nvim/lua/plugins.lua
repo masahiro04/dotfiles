@@ -59,6 +59,7 @@ packer.startup(function(use)
   use { 'tpope/vim-rails' } -- TODO: Add ft
   use { 'rust-lang/rust.vim' }
   use { 'zah/nim.vim' } -- Nim syntax highlighter
+  use { 'hashivim/vim-terraform' } -- Terraform formatter
 -- [[plugins]]
 -- repo = 'rust-lang/rust.vim'
 -- on_ft = ['rust']
