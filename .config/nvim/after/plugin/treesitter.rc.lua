@@ -40,6 +40,8 @@ ts.setup {
     "toml",
     "vim",
     "yaml",
+    "hcl",
+    "make",
     "markdown_inline"
   },
   autotag = {
