@@ -46,6 +46,7 @@ packer.startup(function(use)
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' } -- Git diff view
   -- Image viewer
   use { 'samodostal/image.nvim', requires = { 'nvim-lua/plenary.nvim' } }
+  use { 'github/copilot.vim' }
 
   -- Vim scripts under this line
   use { 'ntpeters/vim-better-whitespace' }
@@ -60,6 +61,8 @@ packer.startup(function(use)
   use { 'rust-lang/rust.vim' }
   use { 'zah/nim.vim' } -- Nim syntax highlighter
   use { 'hashivim/vim-terraform' } -- Terraform formatter
+  use { 'chrisbra/csv.vim' } -- CSV visualizer
+
 -- [[plugins]]
 -- repo = 'rust-lang/rust.vim'
 -- on_ft = ['rust']
