@@ -1,5 +1,3 @@
---vim.lsp.set_log_level("debug")
-
 local status, nvim_lsp = pcall(require, "lspconfig")
 if (not status) then return end
 
@@ -67,7 +65,6 @@ protocol.CompletionItemKind = {
 -- Set up completion using nvim_cmp with LSP source
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-
 local mason_lspconfig = require('mason-lspconfig')
 
 -- todo: 新規でファイル作って、lspconfig + masonの設定だけ追加したい
@@ -77,6 +74,33 @@ mason_lspconfig.setup_handlers({ function(server_name)
     capabilities = capabilities
   })
 end})
+
+-- proc-macro warnings, というエラーが出るので明示的に無効化
+nvim_lsp.rust_analyzer.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    ["rust-analyzer"] = {
+      -- imports = {
+      --   granularity = {
+      --       group = "module",
+      --   },
+      --   prefix = "self",
+      -- },
+      -- cargo = {
+      --     buildScripts = {
+      --         enable = true,
+      --     },
+      -- },
+      procMacro = {
+          enable = true
+      },
+      diagnostics = {
+        disabled = { "unresolved-proc-macro" }
+      }
+    }
+  }
+})
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
