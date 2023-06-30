@@ -29,6 +29,7 @@ alias tk="tmux kill-server"
 alias arm="arch -arm64 zsh"
 
 alias g="git"
+alias delete-merged-branches="git branch --merged | grep -v main | xargs -I % git branch -d %"
 
 alias a='cd ../'
 alias aa='cd ../../'
@@ -160,3 +161,8 @@ export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 eval "$(rbenv init -)"
+
+# Google Cloud CLI
+export PATH="/Users/masahirookubo/google-cloud-sdk/bin:$PATH"
+
+
