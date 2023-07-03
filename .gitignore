@@ -5,6 +5,8 @@
 .config/iterm2
 .config/coc/extensions/*
 .config/yarn
+.config/gh
+.config/gcloud
 
 !nvim
 
