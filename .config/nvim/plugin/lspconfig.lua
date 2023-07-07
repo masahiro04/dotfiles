@@ -81,17 +81,21 @@ nvim_lsp.rust_analyzer.setup({
   capabilities = capabilities,
   settings = {
     ["rust-analyzer"] = {
-      -- imports = {
-      --   granularity = {
-      --       group = "module",
-      --   },
-      --   prefix = "self",
-      -- },
+      imports = {
+        granularity = {
+            group = "module",
+        },
+        prefix = "self",
+      },
       -- cargo = {
       --     buildScripts = {
       --         enable = true,
       --     },
       -- },
+      -- NOTE: procMacro/diagnosticsに関してはマクロに警告が表示されるので無効化の処理を入れている
+      checkOnSave = {
+        command = "clippy",
+      },
       procMacro = {
           enable = true
       },
