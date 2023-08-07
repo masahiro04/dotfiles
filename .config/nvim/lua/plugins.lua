@@ -13,11 +13,13 @@ packer.startup(function(use)
   use 'nvim-lua/plenary.nvim' -- Common utilities
   use 'onsails/lspkind-nvim' -- vscode-like pictograms
   use 'hrsh7th/cmp-buffer' -- nvim-cmp source for buffer words
+  use 'hrsh7th/cmp-path' -- nvim-cmp source for filesystem paths.
   use 'hrsh7th/cmp-nvim-lsp' -- nvim-cmp source for neovim's built-in LSP
   use 'hrsh7th/nvim-cmp' -- Completion
   use 'hrsh7th/cmp-nvim-lsp-signature-help' -- Shows sigunature help messages
   use 'neovim/nvim-lspconfig' -- LSP
-  use { 'glepnir/lspsaga.nvim', branch = 'main' } -- LSP UIs
+  -- 最新版だとエラーが出るのでcommit指定してる
+  use { 'glepnir/lspsaga.nvim', commit = '83d78e239851e001ee68277e1f1c5370161ddac2' } -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   use 'j-hui/fidget.nvim' -- Lsp loading indicator
@@ -26,11 +28,8 @@ packer.startup(function(use)
   use 'kyazdani42/nvim-web-devicons' -- File icons
   use 'nvim-telescope/telescope.nvim'
   use 'nvim-telescope/telescope-file-browser.nvim'
-  -- use 'nvim-telescope/telescope-media-files.nvim'
-
-  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- Code color scheme
-  -- use 'windwp/nvim-autopairs'
-  use 'windwp/nvim-ts-autotag'
+  use { 'nvim-treesitter/nvim-treesitter' } -- Code color scheme
+  use 'windwp/nvim-autopairs'
   use 'kylechui/nvim-surround' -- Surround text with selected charactors
   use 'akinsho/bufferline.nvim'
   use 'norcalli/nvim-colorizer.lua'
@@ -39,9 +38,7 @@ packer.startup(function(use)
   use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
   use 'akinsho/toggleterm.nvim'
   use 'rlane/pounce.nvim' -- Easy motion
-  use 'p00f/nvim-ts-rainbow' -- Rainbow parentheses
   use 'lewis6991/gitsigns.nvim' -- Show git change on buffers on left
-  -- use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' } -- Git client
   use 'akinsho/git-conflict.nvim' -- Git client to fix conflict
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' } -- Git diff view
   -- Image viewer
@@ -53,7 +50,7 @@ packer.startup(function(use)
   use { 'ElmCast/elm-vim', ft = { 'elm' } }
   use { 'simeji/winresizer' } -- Change buffer size
   use { 'tpope/vim-fugitive' }
-  use { 'jiangmiao/auto-pairs' } -- Auto pairs
+  -- use { 'jiangmiao/auto-pairs' } -- Auto pairs
   use { 'nathanaelkane/vim-indent-guides' } -- Show indent
   use { 'iberianpig/tig-explorer.vim' }
   use { 'slim-template/vim-slim' } -- TODO: Add ft
@@ -62,21 +59,4 @@ packer.startup(function(use)
   use { 'zah/nim.vim' } -- Nim syntax highlighter
   use { 'hashivim/vim-terraform' } -- Terraform formatter
   use { 'chrisbra/csv.vim' } -- CSV visualizer
-
--- [[plugins]]
--- repo = 'rust-lang/rust.vim'
--- on_ft = ['rust']
--- hook_add = '''
---   let g:rustfmt_autosave = 1
--- '''
-  -- use {
-  --   'prettier/vim-prettier',
-  --   run = function()
-  --     print('luadesu!!!')
-  --     vim.g['prettier#autoformat'] = 1
-  --     vim.g['prettier#quickfix_enabled'] = 0
-  --   end,
-  --   ft = { 'tsx', 'ts', 'js', 'typescript', 'typescriptreact' }
-  --
-  -- } -- Prettier
 end)
