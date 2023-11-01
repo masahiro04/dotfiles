@@ -22,7 +22,7 @@ packer.startup(function(use)
   use { 'glepnir/lspsaga.nvim', commit = '83d78e239851e001ee68277e1f1c5370161ddac2' } -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
-  use 'j-hui/fidget.nvim' -- Lsp loading indicator
+  use { 'j-hui/fidget.nvim', tag = 'legacy' } -- Lsp loading indicator
   use 'MunifTanjim/prettier.nvim'
   use 'jose-elias-alvarez/null-ls.nvim' -- Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua
   use 'kyazdani42/nvim-web-devicons' -- File icons
@@ -35,7 +35,8 @@ packer.startup(function(use)
   use 'norcalli/nvim-colorizer.lua'
   use 'L3MON4D3/LuaSnip'
   use 'rafamadriz/friendly-snippets'
-  use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
+  -- use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
+  use { 'numToStr/Comment.nvim' }
   use 'akinsho/toggleterm.nvim'
   use 'rlane/pounce.nvim' -- Easy motion
   use 'lewis6991/gitsigns.nvim' -- Show git change on buffers on left
