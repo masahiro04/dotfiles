@@ -19,7 +19,8 @@ packer.startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp-signature-help' -- Shows sigunature help messages
   use 'neovim/nvim-lspconfig' -- LSP
   -- 最新版だとエラーが出るのでcommit指定してる
-  use { 'glepnir/lspsaga.nvim', commit = '83d78e239851e001ee68277e1f1c5370161ddac2' } -- LSP UIs
+  use { 'glepnir/lspsaga.nvim', commit = '335805d4f591f5bb71cabb6aa4dc58ccef8e8617' } -- LSP UIs
+  -- use { 'glepnir/lspsaga.nvim' } -- LSP UIs
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   use { 'j-hui/fidget.nvim', tag = 'legacy' } -- Lsp loading indicator
@@ -28,15 +29,18 @@ packer.startup(function(use)
   use 'kyazdani42/nvim-web-devicons' -- File icons
   use 'nvim-telescope/telescope.nvim'
   use 'nvim-telescope/telescope-file-browser.nvim'
-  use { 'nvim-treesitter/nvim-treesitter' } -- Code color scheme
+  -- use { 'nvim-treesitter/nvim-treesitter' } -- Code color scheme
+  use {
+    'nvim-treesitter/nvim-treesitter',
+  }
   use 'windwp/nvim-autopairs'
   use 'kylechui/nvim-surround' -- Surround text with selected charactors
   use 'akinsho/bufferline.nvim'
   use 'norcalli/nvim-colorizer.lua'
-  use 'L3MON4D3/LuaSnip'
+  -- use 'L3MON4D3/LuaSnip'
   use 'rafamadriz/friendly-snippets'
-  -- use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
-  use { 'numToStr/Comment.nvim' }
+  use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
+  -- use { 'numToStr/Comment.nvim' }
   use 'akinsho/toggleterm.nvim'
   use 'rlane/pounce.nvim' -- Easy motion
   use 'lewis6991/gitsigns.nvim' -- Show git change on buffers on left
@@ -50,7 +54,7 @@ packer.startup(function(use)
   use { 'ntpeters/vim-better-whitespace' }
   use { 'ElmCast/elm-vim', ft = { 'elm' } }
   use { 'simeji/winresizer' } -- Change buffer size
-  use { 'tpope/vim-fugitive' }
+  use { 'tpope/vim-fugitive' } -- git
   -- use { 'jiangmiao/auto-pairs' } -- Auto pairs
   use { 'nathanaelkane/vim-indent-guides' } -- Show indent
   use { 'iberianpig/tig-explorer.vim' }
