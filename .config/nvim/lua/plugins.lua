@@ -23,23 +23,23 @@ packer.startup(function(use)
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   -- use { 'j-hui/fidget.nvim', tag = 'legacy' } -- Lsp loading indicator
-  use 'MunifTanjim/prettier.nvim'
+  -- use 'MunifTanjim/prettier.nvim'
   -- use 'jose-elias-alvarez/null-ls.nvim' -- Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua
-  use 'kyazdani42/nvim-web-devicons' -- File icons
+  -- use 'kyazdani42/nvim-web-devicons' -- File icons
   use 'nvim-telescope/telescope.nvim'
   use 'nvim-telescope/telescope-file-browser.nvim'
   -- use { 'nvim-treesitter/nvim-treesitter' } -- Code color scheme
   use { 'nvim-treesitter/nvim-treesitter' }
-  use 'windwp/nvim-autopairs'
-  use 'kylechui/nvim-surround' -- Surround text with selected charactors
-  use 'akinsho/bufferline.nvim'
-  use 'norcalli/nvim-colorizer.lua' -- Colorize hex color
+  -- use 'windwp/nvim-autopairs'
+  -- use 'kylechui/nvim-surround' -- Surround text with selected charactors
+  -- use 'akinsho/bufferline.nvim'
+  -- use 'norcalli/nvim-colorizer.lua' -- Colorize hex color
   -- use 'L3MON4D3/LuaSnip'
   -- use 'rafamadriz/friendly-snippets'
-  use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
+  -- use { 'numToStr/Comment.nvim', requires = { 'JoosepAlviste/nvim-ts-context-commentstring' } }
   -- use { 'numToStr/Comment.nvim' }
-  use 'akinsho/toggleterm.nvim'
-  use 'rlane/pounce.nvim' -- Easy motion
+  -- use 'akinsho/toggleterm.nvim'
+  -- use 'rlane/pounce.nvim' -- Easy motion
   -- use 'lewis6991/gitsigns.nvim' -- Show git change on buffers on left
   -- use 'akinsho/git-conflict.nvim' -- Git client to fix conflict
   -- use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' } -- Git diff view
