@@ -7,7 +7,7 @@
 .config/yarn
 .config/gh
 .config/gcloud
-.config/github-copilot
+.config/github-copilot/*
 
 !nvim
 
