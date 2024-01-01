@@ -84,6 +84,11 @@ _G.packer_plugins = {
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/LuaSnip",
     url = "https://github.com/L3MON4D3/LuaSnip"
   },
+  ["auto-pairs"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/auto-pairs",
+    url = "https://github.com/jiangmiao/auto-pairs"
+  },
   ["bufferline.nvim"] = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
@@ -104,14 +109,31 @@ _G.packer_plugins = {
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp-signature-help",
     url = "https://github.com/hrsh7th/cmp-nvim-lsp-signature-help"
   },
+  ["cmp-path"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/cmp-path",
+    url = "https://github.com/hrsh7th/cmp-path"
+  },
+  ["copilot.vim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/copilot.vim",
+    url = "https://github.com/github/copilot.vim"
+  },
+  ["csv.vim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/csv.vim",
+    url = "https://github.com/chrisbra/csv.vim"
+  },
   ["diffview.nvim"] = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/diffview.nvim",
     url = "https://github.com/sindrets/diffview.nvim"
   },
   ["elm-vim"] = {
-    loaded = true,
-    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/elm-vim",
+    loaded = false,
+    needs_bufread = true,
+    only_cond = false,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/opt/elm-vim",
     url = "https://github.com/ElmCast/elm-vim"
   },
   ["fidget.nvim"] = {
@@ -133,6 +155,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
+  },
+  ["image.nvim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/image.nvim",
+    url = "https://github.com/samodostal/image.nvim"
   },
   ["lspkind-nvim"] = {
     loaded = true,
@@ -159,20 +186,15 @@ _G.packer_plugins = {
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
   },
-  neogit = {
+  ["nim.vim"] = {
     loaded = true,
-    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/neogit",
-    url = "https://github.com/TimUntersberger/neogit"
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/nim.vim",
+    url = "https://github.com/zah/nim.vim"
   },
   ["null-ls.nvim"] = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/null-ls.nvim",
     url = "https://github.com/jose-elias-alvarez/null-ls.nvim"
-  },
-  ["nvim-autopairs"] = {
-    loaded = true,
-    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/nvim-autopairs",
-    url = "https://github.com/windwp/nvim-autopairs"
   },
   ["nvim-cmp"] = {
     loaded = true,
@@ -239,6 +261,11 @@ _G.packer_plugins = {
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/prettier.nvim",
     url = "https://github.com/MunifTanjim/prettier.nvim"
   },
+  ["rust.vim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/rust.vim",
+    url = "https://github.com/rust-lang/rust.vim"
+  },
   ["telescope-file-browser.nvim"] = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/telescope-file-browser.nvim",
@@ -248,6 +275,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
+  },
+  ["tig-explorer.vim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/tig-explorer.vim",
+    url = "https://github.com/iberianpig/tig-explorer.vim"
   },
   ["toggleterm.nvim"] = {
     loaded = true,
@@ -264,6 +296,31 @@ _G.packer_plugins = {
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-better-whitespace",
     url = "https://github.com/ntpeters/vim-better-whitespace"
   },
+  ["vim-fugitive"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-fugitive",
+    url = "https://github.com/tpope/vim-fugitive"
+  },
+  ["vim-indent-guides"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-indent-guides",
+    url = "https://github.com/nathanaelkane/vim-indent-guides"
+  },
+  ["vim-rails"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-rails",
+    url = "https://github.com/tpope/vim-rails"
+  },
+  ["vim-slim"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-slim",
+    url = "https://github.com/slim-template/vim-slim"
+  },
+  ["vim-terraform"] = {
+    loaded = true,
+    path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/vim-terraform",
+    url = "https://github.com/hashivim/vim-terraform"
+  },
   winresizer = {
     loaded = true,
     path = "/Users/masahirookubo/.local/share/nvim/site/pack/packer/start/winresizer",
@@ -272,6 +329,18 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+vim.cmd [[augroup packer_load_aucmds]]
+vim.cmd [[au!]]
+  -- Filetype lazy-loads
+time([[Defining lazy-load filetype autocommands]], true)
+vim.cmd [[au FileType elm ++once lua require("packer.load")({'elm-vim'}, { ft = "elm" }, _G.packer_plugins)]]
+time([[Defining lazy-load filetype autocommands]], false)
+vim.cmd("augroup END")
+vim.cmd [[augroup filetypedetect]]
+time([[Sourcing ftdetect script at: /Users/masahirookubo/.local/share/nvim/site/pack/packer/opt/elm-vim/ftdetect/elm.vim]], true)
+vim.cmd [[source /Users/masahirookubo/.local/share/nvim/site/pack/packer/opt/elm-vim/ftdetect/elm.vim]]
+time([[Sourcing ftdetect script at: /Users/masahirookubo/.local/share/nvim/site/pack/packer/opt/elm-vim/ftdetect/elm.vim]], false)
+vim.cmd("augroup END")
 
 _G._packer.inside_compile = false
 if _G._packer.needs_bufread == true then

@@ -106,6 +106,13 @@ nvim_lsp.rust_analyzer.setup({
   }
 })
 
+-- nvim_lsp.tsserver.setup({
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+--   root_dir = function() return vim.loop.cwd() end      -- run lsp for javascript in any directory
+-- })
+
+
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     underline = true,

@@ -11,9 +11,10 @@ packer.startup(function(use)
   use 'folke/tokyonight.nvim' -- Theme
   use 'hoob3rt/lualine.nvim' -- Statusline
   use 'nvim-lua/plenary.nvim' -- Common utilities
-  use 'onsails/lspkind-nvim' -- vscode-like pictograms
+  -- use 'onsails/lspkind-nvim' -- vscode-like pictograms
   use 'hrsh7th/cmp-buffer' -- nvim-cmp source for buffer words
   use 'hrsh7th/cmp-path' -- nvim-cmp source for filesystem paths.
+  -- 問題は[cmp-nvim-lsp]で、こちらを入れるとlightのiconが出る
   use 'hrsh7th/cmp-nvim-lsp' -- nvim-cmp source for neovim's built-in LSP
   use 'hrsh7th/nvim-cmp' -- Completion
   use 'hrsh7th/cmp-nvim-lsp-signature-help' -- Shows sigunature help messages
@@ -45,18 +46,18 @@ packer.startup(function(use)
   -- use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' } -- Git diff view
   -- Image viewer
   -- use { 'samodostal/image.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  use { 'github/copilot.vim' }
+  -- use { 'github/copilot.vim' }
 
   -- Vim scripts under this line
   -- use { 'ntpeters/vim-better-whitespace' }
   -- use { 'ElmCast/elm-vim', ft = { 'elm' } }
   -- use { 'simeji/winresizer' } -- Change buffer size
-  use { 'tpope/vim-fugitive' } -- git
+  -- use { 'tpope/vim-fugitive' } -- git
   -- use { 'jiangmiao/auto-pairs' } -- Auto pairs
   -- use { 'nathanaelkane/vim-indent-guides' } -- Show indent
   -- use { 'iberianpig/tig-explorer.vim' }
   -- use { 'slim-template/vim-slim' } -- TODO: Add ft
-  use { 'tpope/vim-rails' } -- TODO: Add ft
+  -- use { 'tpope/vim-rails' } -- TODO: Add ft
   use { 'rust-lang/rust.vim' }
   -- use { 'zah/nim.vim' } -- Nim syntax highlighter
   -- use { 'hashivim/vim-terraform' } -- Terraform formatter
