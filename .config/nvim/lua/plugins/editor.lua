@@ -12,21 +12,19 @@ return {
       },
     },
   },
+  { "rlane/pounce.nvim" }, -- easy motion
   {
     -- window resizer
     "simeji/winresizer",
   },
   {
     "tpope/vim-fugitive",
-    opts = {
-      event = "BufReadPre",
-      keymaps = {
-        -- Open blame window
-        blame = "<Leader>gb",
-        -- Open file/folder in git repository
-        browse = "<Leader>go",
-      },
-    },
+  },
+  {
+    "smjonas/inc-rename.nvim",
+    config = function()
+      require("inc_rename").setup()
+    end,
   },
   {
     "telescope.nvim",
