@@ -165,4 +165,20 @@ eval "$(rbenv init -)"
 # Google Cloud CLI
 export PATH="/Users/masahirookubo/google-cloud-sdk/bin:$PATH"
 
+# llvm
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+
+# export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm/lib/:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="/opt/homebrew/lib:$DYLD_LIBRARY_PATH"
+
+
+# export PATH="/opt/homebrew/opt/mbedtls@2/bin:$PATH"
+
+# export LDFLAGS="-L/opt/homebrew/opt/mbedtls@2/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/mbedtls@2/include"
+
+
+
 
