@@ -18,12 +18,37 @@ return {
     "simeji/winresizer",
   },
   {
+    -- show whitespace -> vim script not lua
+    "ntpeters/vim-better-whitespace",
+  },
+  {
+    -- nvim-surroundを利用するので使わない方で
+    "echasnovski/mini.surround",
+    enabled = false,
+  },
+  {
+    "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end,
+  },
+  {
     "tpope/vim-fugitive",
   },
   {
     "smjonas/inc-rename.nvim",
     config = function()
       require("inc_rename").setup()
+    end,
+  },
+  {
+    "filipdutescu/renamer.nvim",
+    config = function()
+      require("renamer").setup()
     end,
   },
   {

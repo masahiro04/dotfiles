@@ -11,3 +11,8 @@
 
 !nvim
 
+
+
+# Added by cargo
+
+/target

@@ -59,13 +59,14 @@ keymap.set("i", "jj", "<ESC>", { silent = true })
 
 -- Pounce
 keymap.set("", "qq", "<cmd>Pounce<CR>")
+keymap.set("", "dr", '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })
 
 -- NeoGit
-keymap.set("", "git", "<cmd>Neogit<CR>")
+-- keymap.set("", "git", "<cmd>Neogit<CR>")
 
 -- DiffView
-keymap.set("", "do", "<cmd>DiffviewOpen<CR>")
-keymap.set("", "dc", "<cmd>DiffviewClose<CR>")
+-- keymap.set("", "do", "<cmd>DiffviewOpen<CR>")
+-- keymap.set("", "dc", "<cmd>DiffviewClose<CR>")
 
 -- Diagnostics
 keymap.set("n", "<C-j>", function()
