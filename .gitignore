@@ -7,6 +7,12 @@
 .config/yarn
 .config/gh
 .config/gcloud
+.config/github-copilot/*
 
 !nvim
 
+
+
+# Added by cargo
+
+/target

@@ -29,43 +29,23 @@ alias tk="tmux kill-server"
 alias arm="arch -arm64 zsh"
 
 alias g="git"
+alias gs="git switch"
 alias delete-merged-branches="git branch --merged | grep -v main | xargs -I % git branch -d %"
 
+# dir移動
 alias a='cd ../'
 alias aa='cd ../../'
 alias aaa='cd ../../../'
+
+# 履歴削除
+alias c='clear'
 
 # dockerとlocalのpsgl行き来するため
 alias pgstart="brew services start postgresql"
 alias pgstop="brew services stop postgresql"
 alias mystart="mysql.server restart"
 
-# rails系コマンド
-alias bi="bundle install"
-alias rs="rails s"
-alias rc="rails c"
-alias rcr="rails db:create"
-alias rmi="rails db:migrate"
-
-alias rubo="bundle exec rubocop"
-alias haml="bundle exec haml-lint app/views/"
-alias best="bundle exec rails_best_practices -e node_modules"
-
-alias rsp="bundle exec rspec"
-alias rw="bin/webpack-dev-server"
-
-# yarn/npmコマンド
-alias ys="yarn start"
-alias yi="yarn install"
-alias nr="npm run start"
-alias ni="npm install"
-
-# flutter
-alias ff="fvm flutter"
-alias ffr="fvm flutter run"
-
 # docker系コマンド
-alias b="build"
 alias d="docker compose"
 alias de="docker compose exec"
 alias dew="docker compose exec web"
@@ -94,27 +74,16 @@ zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 
-# nvim
+# NeoVim
 alias vim='nvim'
 alias vi='nvim'
 
 # M1の場合はこちららしい
 export PATH="/opt/homebrew/bin:$PATH"
 
-# Settings for fzf
-# export PATH="$PATH:$HOME/.fzf/bin"
-# export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-#
-# export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --inline-info --preview 'head -100 {}'"
-#
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="/usr/local/opt/python@3.9/bin:$PATH"
 
-# pythonの設定
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# posgreの設定
+# PostgreSQLの設定
 export PGDATA=/usr/local/var/postgres
 export PATH=/usr/local/opt/postgresql/bin:$PATH
 
@@ -125,12 +94,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 # androidの設定
 export ANDROID_SDK=/Users/masahirookubo/Library/Android/sdk
 export PATH=/Users/masahirookubo/Library/Android/sdk/platform-tools:$PATH
-
-# fvm
-export PATH="$PATH:$HOME/.pub-cache/bin"
-# flutter
-# export PATH="/Users/masahirookubo/development/flutter/bin/:$PATH"
-# kotlin
 
 # rs
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -164,5 +127,10 @@ eval "$(rbenv init -)"
 
 # Google Cloud CLI
 export PATH="/Users/masahirookubo/google-cloud-sdk/bin:$PATH"
+export CLOUDSDK_PYTHON_SITEPACKAGES=1
+# llvm
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
-
+# export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm/lib/:$DYLD_LIBRARY_PATH"
