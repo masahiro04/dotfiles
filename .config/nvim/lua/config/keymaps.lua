@@ -59,6 +59,8 @@ keymap.set("i", "jj", "<ESC>", { silent = true })
 
 -- Pounce
 keymap.set("", "qq", "<cmd>Pounce<CR>")
+
+-- Renamer
 keymap.set("", "dr", '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })
 
 -- NeoGit

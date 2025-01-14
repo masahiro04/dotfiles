@@ -39,12 +39,12 @@ return {
   {
     "tpope/vim-fugitive",
   },
-  {
-    "smjonas/inc-rename.nvim",
-    config = function()
-      require("inc_rename").setup()
-    end,
-  },
+  -- {
+  --   "smjonas/inc-rename.nvim",
+  --   config = function()
+  --     require("inc_rename").setup()
+  --   end,
+  -- },
   {
     "filipdutescu/renamer.nvim",
     config = function()
