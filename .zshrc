@@ -32,9 +32,13 @@ alias g="git"
 alias gs="git switch"
 alias delete-merged-branches="git branch --merged | grep -v main | xargs -I % git branch -d %"
 
+# dir移動
 alias a='cd ../'
 alias aa='cd ../../'
 alias aaa='cd ../../../'
+
+# 履歴削除
+alias c='clear'
 
 # dockerとlocalのpsgl行き来するため
 alias pgstart="brew services start postgresql"
@@ -42,7 +46,6 @@ alias pgstop="brew services stop postgresql"
 alias mystart="mysql.server restart"
 
 # docker系コマンド
-alias b="build"
 alias d="docker compose"
 alias de="docker compose exec"
 alias dew="docker compose exec web"
@@ -71,21 +74,16 @@ zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 
-# nvim
+# NeoVim
 alias vim='nvim'
 alias vi='nvim'
 
 # M1の場合はこちららしい
 export PATH="/opt/homebrew/bin:$PATH"
 
-# pythonの設定
-# export PYENV_ROOT="$HOME/.pyenv"
-# export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
-
 export PATH="/usr/local/opt/python@3.9/bin:$PATH"
 
-# posgreの設定
+# PostgreSQLの設定
 export PGDATA=/usr/local/var/postgres
 export PATH=/usr/local/opt/postgresql/bin:$PATH
 
