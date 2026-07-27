@@ -2,11 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- local dscipline = require("discipline")
--- dscipline.cowboy()
--- local discipline = require("masahiro.disciplie")
--- discipline.cowboy()
-
 local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
 
@@ -59,6 +54,8 @@ keymap.set("i", "jj", "<ESC>", { silent = true })
 
 -- Pounce
 keymap.set("", "qq", "<cmd>Pounce<CR>")
+
+-- Renamer
 keymap.set("", "dr", '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })
 
 -- NeoGit
@@ -72,3 +69,10 @@ keymap.set("", "dr", '<cmd>lua require("renamer").rename()<cr>', { noremap = tru
 keymap.set("n", "<C-j>", function()
   vim.diagnostic.goto_next()
 end, opts)
+
+-- Copy current file path to clipboard
+keymap.set("n", "<leader>y", function()
+  local path = vim.fn.expand("%:.")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. path)
+end, { desc = "Copy file path to clipboard" })

@@ -39,12 +39,12 @@ return {
   {
     "tpope/vim-fugitive",
   },
-  {
-    "smjonas/inc-rename.nvim",
-    config = function()
-      require("inc_rename").setup()
-    end,
-  },
+  -- {
+  --   "smjonas/inc-rename.nvim",
+  --   config = function()
+  --     require("inc_rename").setup()
+  --   end,
+  -- },
   {
     "filipdutescu/renamer.nvim",
     config = function()
@@ -93,7 +93,9 @@ return {
         "\\\\",
         function()
           local builtin = require("telescope.builtin")
-          builtin.buffers()
+          builtin.buffers({
+            initial_mode = "normal",
+          })
         end,
         desc = "Lists open buffers",
       },
@@ -149,7 +151,6 @@ return {
             grouped = true,
             previewer = true,
             initial_mode = "normal",
-            layout_config = { height = 20 },
           })
         end,
         desc = "Open File Browser with the path of the current buffer",
@@ -158,16 +159,57 @@ return {
     config = function(_, opts)
       local telescope = require("telescope")
       local actions = require("telescope.actions")
+      local action_state = require("telescope.actions.state")
       local fb_actions = require("telescope").extensions.file_browser.actions
+
+      -- Tabで複数選択したファイルをEnterでまとめてバッファとして開く
+      -- 選択がないときは従来どおり(ファイルを開く/ディレクトリに入る)
+      local function fb_open_selected(prompt_bufnr)
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        local selections = picker:get_multi_selection()
+        if vim.tbl_isempty(selections) then
+          actions.select_default(prompt_bufnr)
+          return
+        end
+        actions.close(prompt_bufnr)
+        for _, entry in ipairs(selections) do
+          if vim.fn.isdirectory(entry.path) == 0 then
+            vim.cmd.edit(vim.fn.fnameescape(entry.path))
+          end
+        end
+      end
+
+      -- カーソル下のエントリの相対パスをクリップボードにコピー(pickerは開いたまま)
+      local function copy_entry_path()
+        local entry = action_state.get_selected_entry()
+        if entry == nil then
+          return
+        end
+        local path = vim.fn.fnamemodify(entry.path or entry.filename or entry.value, ":.")
+        vim.fn.setreg("+", path)
+        vim.notify("Copied: " .. path)
+      end
 
       opts.defaults = vim.tbl_deep_extend("force", opts.defaults, {
         wrap_results = true,
         layout_strategy = "horizontal",
-        layout_config = { prompt_position = "top" },
+        layout_config = {
+          prompt_position = "top",
+          horizontal = {
+            width = 0.99,
+            height = 0.99,
+            preview_width = 0.55,
+          },
+        },
         sorting_strategy = "ascending",
         winblend = 0,
         mappings = {
-          n = {},
+          i = {
+            ["<C-y>"] = copy_entry_path,
+          },
+          n = {
+            ["<C-y>"] = copy_entry_path,
+          },
         },
       })
       opts.pickers = {
@@ -181,12 +223,15 @@ return {
       }
       opts.extensions = {
         file_browser = {
-          theme = "dropdown",
           -- disables netrw and use telescope-file-browser in its place
           hijack_netrw = true,
           mappings = {
             -- your custom insert mode mappings
+            ["i"] = {
+              ["<CR>"] = fb_open_selected,
+            },
             ["n"] = {
+              ["<CR>"] = fb_open_selected,
               -- your custom normal mode mappings
               ["N"] = fb_actions.create,
               ["h"] = fb_actions.goto_parent_dir,
