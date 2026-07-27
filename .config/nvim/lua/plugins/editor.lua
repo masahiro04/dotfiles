@@ -179,6 +179,17 @@ return {
         end
       end
 
+      -- カーソル下のエントリの相対パスをクリップボードにコピー(pickerは開いたまま)
+      local function copy_entry_path()
+        local entry = action_state.get_selected_entry()
+        if entry == nil then
+          return
+        end
+        local path = vim.fn.fnamemodify(entry.path or entry.filename or entry.value, ":.")
+        vim.fn.setreg("+", path)
+        vim.notify("Copied: " .. path)
+      end
+
       opts.defaults = vim.tbl_deep_extend("force", opts.defaults, {
         wrap_results = true,
         layout_strategy = "horizontal",
@@ -193,7 +204,12 @@ return {
         sorting_strategy = "ascending",
         winblend = 0,
         mappings = {
-          n = {},
+          i = {
+            ["<C-y>"] = copy_entry_path,
+          },
+          n = {
+            ["<C-y>"] = copy_entry_path,
+          },
         },
       })
       opts.pickers = {
