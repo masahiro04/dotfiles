@@ -38,6 +38,21 @@ return {
           hide_gitignored = false,
         },
       },
+      window = {
+        mappings = {
+          -- カーソル下のファイルをブラウザで開く(PNGプレビュー用)
+          -- LazyVim標準の O(システムアプリで開く)を上書きしている
+          ["O"] = {
+            function(state)
+              local node = state.tree:get_node()
+              if node and node.type == "file" then
+                require("browser_preview").open(node.path)
+              end
+            end,
+            desc = "Open in browser",
+          },
+        },
+      },
     },
   },
   {

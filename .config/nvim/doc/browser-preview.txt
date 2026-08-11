@@ -1,0 +1,45 @@
+*browser-preview.txt*  ファイルをブラウザで開くローカルプラグイン
+
+==============================================================================
+概要                                                        *browser-preview*
+
+PNG などの画像ファイルをエディタから離れずにブラウザで確認するための
+自作プラグイン。実体は |lua| モジュール `browser_preview`
+(`lua/browser_preview/init.lua`)。
+
+macOS では /Applications と ~/Applications から
+Google Chrome → Arc → Brave Browser → Microsoft Edge → Safari の順に探して
+最初に見つかったブラウザで `open -a` する。macOS 以外では |vim.ui.open()| に
+フォールバックする。
+
+==============================================================================
+キーマップ                                          *browser-preview-mappings*
+
+                                                                *<leader>ob*
+<leader>ob              現在のバッファのファイルをブラウザで開く。
+
+O                       telescope-file-browser(|;c| で開く)の
+                        ノーマルモード、および neo-tree で、
+                        カーソル下のファイルをブラウザで開く。
+                        Note: neo-tree では LazyVim 標準の O
+                        (システムアプリで開く)を上書きしている。
+
+==============================================================================
+コマンド                                            *browser-preview-commands*
+
+                                                             *:BrowserPreview*
+:BrowserPreview [path]  指定したファイルをブラウザで開く。
+                        省略時は現在のバッファのファイル。
+                        パスはファイル名補完が効く。
+
+==============================================================================
+設定                                                  *browser-preview-setup*
+
+`config/keymaps.lua` から `require("browser_preview").setup()` を呼んでいる。
+ブラウザを固定したい場合は: >lua
+    require("browser_preview").setup({
+      browsers = { "Safari" },
+    })
+<
+==============================================================================
+vim:tw=78:ts=8:noet:ft=help:norl:

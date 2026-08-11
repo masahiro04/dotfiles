@@ -179,6 +179,18 @@ return {
         end
       end
 
+      -- カーソル下のエントリをブラウザで開く(PNGプレビュー用。pickerは開いたまま)
+      local function open_entry_in_browser()
+        local entry = action_state.get_selected_entry()
+        if entry == nil then
+          return
+        end
+        local path = entry.path or entry.filename or entry.value
+        if path and vim.fn.isdirectory(path) == 0 then
+          require("browser_preview").open(path)
+        end
+      end
+
       -- カーソル下のエントリの相対パスをクリップボードにコピー(pickerは開いたまま)
       local function copy_entry_path()
         local entry = action_state.get_selected_entry()
@@ -233,6 +245,7 @@ return {
             ["n"] = {
               ["<CR>"] = fb_open_selected,
               -- your custom normal mode mappings
+              ["O"] = open_entry_in_browser,
               ["N"] = fb_actions.create,
               ["h"] = fb_actions.goto_parent_dir,
               ["/"] = function()

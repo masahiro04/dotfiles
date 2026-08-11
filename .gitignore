@@ -16,3 +16,6 @@
 # Added by cargo
 
 /target
+
+# nvim helptags (自動生成)
+.config/nvim/doc/tags
