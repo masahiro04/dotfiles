@@ -38,6 +38,31 @@ return {
   },
   {
     "tpope/vim-fugitive",
+    config = function()
+      -- :G(引数なし)は新しいタブで全画面表示する。
+      -- diff などの閲覧系サブコマンドも全画面タブで開く。
+      -- :G blame などそれ以外の引数ありは従来どおり fugitive の :Git に流す
+      local fullscreen_subcommands = { diff = true, log = true, show = true }
+      vim.api.nvim_create_user_command("G", function(cmd)
+        if cmd.args == "" then
+          vim.cmd("tab Git")
+        elseif fullscreen_subcommands[cmd.args:match("^%S+")] then
+          vim.cmd("tab Git " .. cmd.args)
+        else
+          vim.cmd("Git" .. (cmd.bang and "!" or "") .. " " .. cmd.args)
+        end
+      end, { nargs = "*", bang = true, complete = "customlist,fugitive#Complete" })
+
+      -- status画面(:G)で <CR>・ダブルクリックしたファイルは
+      -- 分割ではなく新しいタブで全画面表示する(fugitive の O と同じ動き)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "fugitive",
+        callback = function(ev)
+          vim.keymap.set("n", "<CR>", "O", { buffer = ev.buf, remap = true, desc = "Open in new tab" })
+          vim.keymap.set("n", "<2-LeftMouse>", "O", { buffer = ev.buf, remap = true, desc = "Open in new tab" })
+        end,
+      })
+    end,
   },
   -- {
   --   "smjonas/inc-rename.nvim",
