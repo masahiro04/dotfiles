@@ -70,6 +70,12 @@ keymap.set("n", "<C-j>", function()
   vim.diagnostic.goto_next()
 end, opts)
 
+-- 自作チートシート (;? で検索 / ;k で一覧 / :Cheat :CheatList)
+require("cheatsheet").setup()
+
+-- ファイルをブラウザで開く (<leader>ob / :BrowserPreview / neo-tree・file-browserの O)
+require("browser_preview").setup()
+
 -- Copy current file path to clipboard
 keymap.set("n", "<leader>y", function()
   local path = vim.fn.expand("%:.")
