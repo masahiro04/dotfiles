@@ -21,6 +21,41 @@ return {
   {
     -- show whitespace -> vim script not lua
     "ntpeters/vim-better-whitespace",
+    -- vimscript プラグインなので、読み込み前に g: を立てる必要がある
+    init = function()
+      -- プラグイン側は「buftype が空のバッファのみ対象」という作りだが、
+      -- dashboard のように filetype 確定と buftype 設定のタイミングがずれる
+      -- UI バッファは判定をすり抜けて全面が赤くなる。
+      -- (dashboard は中央寄せのため各行を空白でパディングしている)
+      -- ブラックリストは上書き指定なので、プラグイン既定値も含めて並べる。
+      vim.g.better_whitespace_filetypes_blacklist = {
+        -- プラグイン既定
+        "diff",
+        "git",
+        "gitcommit",
+        "unite",
+        "qf",
+        "help",
+        "markdown",
+        "fugitive",
+        -- 編集対象ではない UI バッファ
+        "dashboard",
+        "alpha",
+        "snacks_dashboard",
+        "lazy",
+        "mason",
+        "neo-tree",
+        "TelescopePrompt",
+        "TelescopeResults",
+        "trouble",
+        "toggleterm",
+        "checkhealth",
+        "lspinfo",
+        "man",
+        "notify",
+        "noice",
+      }
+    end,
   },
   {
     -- nvim-surroundを利用するので使わない方で
