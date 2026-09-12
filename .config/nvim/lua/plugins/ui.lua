@@ -9,7 +9,10 @@ return {
         },
         opts = { skip = true },
       })
-      opts.presets.lsp_doc_border = true
+      -- presets.lsp_doc_border は nvim 0.12 では無効。
+      -- 0.12 の vim.lsp.buf.hover() が vim.lsp.handlers を経由しなくなり、
+      -- noice が hover ウィンドウを持たないため。
+      -- 枠・背景・タイトルは lua/plugins/lsp-hover.lua で付けている。
     end,
   },
   {
