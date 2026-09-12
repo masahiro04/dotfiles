@@ -41,13 +41,21 @@ return {
     "tpope/vim-fugitive",
     config = function()
       -- :G(引数なし)は新しいタブで全画面表示する。
-      -- diff などの閲覧系サブコマンドも全画面タブで開く。
+      -- log / show も全画面タブで開く。
+      -- diff だけは diffview.nvim に流す(設定は plugins/diffview.lua)。
+      --   fugitive の diff は filetype=diff の1枚バッファでシンタックス
+      --   ハイライトが効かないため、GitHub の PR に近い2カラム表示にしている。
+      --   fugitive 版が欲しいときは :G! diff で従来どおり。
       -- :G blame などそれ以外の引数ありは従来どおり fugitive の :Git に流す
-      local fullscreen_subcommands = { diff = true, log = true, show = true }
+      local fullscreen_subcommands = { log = true, show = true }
       vim.api.nvim_create_user_command("G", function(cmd)
+        local sub, rest = cmd.args:match("^(%S+)%s*(.*)$")
         if cmd.args == "" then
           vim.cmd("tab Git")
-        elseif fullscreen_subcommands[cmd.args:match("^%S+")] then
+        elseif sub == "diff" and not cmd.bang then
+          -- 引数はそのまま渡す (:G diff HEAD~1 / :G diff main...HEAD)
+          vim.cmd("DiffviewOpen " .. rest)
+        elseif fullscreen_subcommands[sub] then
           vim.cmd("tab Git " .. cmd.args)
         else
           vim.cmd("Git" .. (cmd.bang and "!" or "") .. " " .. cmd.args)

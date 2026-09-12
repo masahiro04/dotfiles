@@ -13,7 +13,7 @@ return {
     "killinsun/storyline.nvim",
     dependencies = {
       "lewis6991/gitsigns.nvim",
-      "sindrets/diffview.nvim", -- サイドバーの v でチャプター全体を diff 表示
+      "sindrets/diffview.nvim", -- サイドバーの v でチャプター全体を diff 表示 (設定は plugins/diffview.lua)
     },
     cmd = {
       "Storyline",
@@ -40,14 +40,5 @@ return {
         ask_extra = "日本語で回答してください。",
       },
     },
-  },
-
-  -- storyline のサイドバー v (チャプター全体を diff で開く) 用。
-  -- 単体で使う場合は :DiffviewOpen / :DiffviewClose。
-  {
-    "sindrets/diffview.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
-    opts = {},
   },
 }
