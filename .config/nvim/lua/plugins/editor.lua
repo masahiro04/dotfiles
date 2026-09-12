@@ -187,6 +187,20 @@ return {
       local action_state = require("telescope.actions.state")
       local fb_actions = require("telescope").extensions.file_browser.actions
 
+      -- telescope のプレビューは filetype "tf" のまま treesitter を起動しようと
+      -- するが、パーサー名は "terraform" なので別名として登録しておく
+      vim.treesitter.language.register("terraform", "tf")
+
+      -- nvim 0.11+ では vim.treesitter.language.add() がエラーを投げず
+      -- nil を返す仕様になったため、pcall だけで判定している telescope の
+      -- has_ts_parser がパーサー未インストールでも true を返してしまい、
+      -- プレビューで `Parser could not be created` のエラーになる。
+      -- 戻り値まで見るように上書きする。telescope 更新後に不要なら削除可。
+      require("telescope.utils").has_ts_parser = function(lang)
+        local ok, added = pcall(vim.treesitter.language.add, lang)
+        return ok and added ~= nil and added ~= false
+      end
+
       -- Tabで複数選択したファイルをEnterでまとめてバッファとして開く
       -- 選択がないときは従来どおり(ファイルを開く/ディレクトリに入る)
       local function fb_open_selected(prompt_bufnr)
