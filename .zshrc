@@ -28,8 +28,8 @@ alias gs="git switch"
 alias delete-merged-branches="git branch --merged | grep -v main | xargs -I % git branch -d %"
 
 # dir移動
-alias a='cd ../'
 alias aa='cd ../../'
+alias a='cd ../'
 alias aaa='cd ../../../'
 
 # 履歴削除

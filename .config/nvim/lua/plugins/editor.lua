@@ -12,7 +12,8 @@ return {
       },
     },
   },
-  { "rlane/pounce.nvim" }, -- easy motion
+  -- easy motion
+  { "rlane/pounce.nvim" },
   {
     -- window resizer
     "simeji/winresizer",
