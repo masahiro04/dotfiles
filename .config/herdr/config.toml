@@ -1,0 +1,23 @@
+onboarding = false
+
+[keys]
+goto = "ctrl+g"   # session navigator（旧: ctrl+b → w → g）を prefix なし1打で開く
+
+# 現在の pane の cwd で workspace を1打作成。ラベルは <リポジトリ名>:<ブランチ名>（非gitはブランチを「-」）
+[[keys.command]]
+key = "ctrl+alt+n"
+type = "shell"
+command = 'd="$HERDR_ACTIVE_PANE_CWD"; r=$(git -C "$d" rev-parse --show-toplevel 2>/dev/null || echo "$d"); b=$(git -C "$d" branch --show-current 2>/dev/null); "$HOME/.local/bin/herdr" workspace create --cwd "$d" --label "$(basename "$r"):${b:--}" --focus'
+
+[keys.indexed]
+tabs = "ctrl"   # ctrl+1〜9 でタブを直接切り替え
+
+[ui.toast]
+delivery = "herdr"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+
+agent_panel_sort = "priority"
+[experimental]
+pane_history = false

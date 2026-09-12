@@ -134,3 +134,13 @@ export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
 # export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm/lib/:$DYLD_LIBRARY_PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+# herder の設定
+# export PATH="/Users/masahirookubo/.local/bin:$PATH"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# pnpmの設定
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
