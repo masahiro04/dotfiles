@@ -9,10 +9,12 @@ return {
         },
         opts = { skip = true },
       })
-      -- presets.lsp_doc_border は nvim 0.12 では無効。
-      -- 0.12 の vim.lsp.buf.hover() が vim.lsp.handlers を経由しなくなり、
-      -- noice が hover ウィンドウを持たないため。
-      -- 枠・背景・タイトルは lua/plugins/lsp-hover.lua で付けている。
+      -- `:` のコマンドラインを画面上端から少し下げる。
+      local cmdline_row = 10
+      opts.views = vim.tbl_deep_extend("force", opts.views or {}, {
+        cmdline_popup = { position = { row = cmdline_row } },
+        cmdline_popupmenu = { position = { row = cmdline_row + 3 } },
+      })
     end,
   },
   {
