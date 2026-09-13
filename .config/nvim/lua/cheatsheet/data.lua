@@ -285,6 +285,7 @@ return {
       { keys = ":G log / :G show", desc = "新しいタブで全画面表示", tags = "fugitive log 全画面" },
       { keys = ":G diff", desc = "diffview で2カラム表示(GitHub の PR 風・シンタックスハイライトあり)", tags = "diffview diff 差分 github pr ハイライト" },
       { keys = ":G diff main...HEAD", desc = "PR と同じ3点リーチの差分(:G diff HEAD~1 なども可)", tags = "diffview diff 差分 pr base ブランチ" },
+      { keys = ":G diffmain", desc = "現在ブランチと origin/main の差分(base は自動判定・未コミット分は含まない)", tags = "diffview diff 差分 pr base ブランチ main master origin" },
       { keys = ":G! diff", desc = "従来の fugitive 版 diff(1カラム)", tags = "fugitive diff 差分" },
       { keys = "<CR> (diffview のファイルパネル)", desc = "差分を開いて右ペインへカーソルを移す(そこで j / <C-d> でスクロール)", tags = "diffview 開く フォーカス スクロール 移動 右" },
       { keys = "o / l (diffview のファイルパネル)", desc = "差分を開くがカーソルはパネルに残す(一覧を眺める用)", tags = "diffview 開く パネル" },

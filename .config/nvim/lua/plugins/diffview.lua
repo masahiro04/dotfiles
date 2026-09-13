@@ -8,6 +8,7 @@
 --   :G diff                 作業ツリー vs index/HEAD
 --   :G diff HEAD~1          特定のコミットとの差分
 --   :G diff main...HEAD     PR の diff と同じ3点リーチ
+--   :G diffmain             上と同じ範囲を base 自動判定(origin/main 等)で開く
 --   :DiffviewFileHistory %  現在ファイルの履歴を同じ UI で追う
 --
 -- :G のルーティングは lua/plugins/editor.lua の fugitive 側にある。

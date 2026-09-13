@@ -83,6 +83,24 @@ return {
       --   fugitive 版が欲しいときは :G! diff で従来どおり。
       -- :G blame などそれ以外の引数ありは従来どおり fugitive の :Git に流す
       local fullscreen_subcommands = { log = true, show = true }
+
+      -- :G diffmain 用の base ブランチ解決。
+      -- origin/main → origin/master → origin/HEAD(リモートの既定ブランチ)の順で
+      -- 最初に存在したものを返す。repo によって base が main とは限らないため。
+      local function resolve_base_branch()
+        for _, ref in ipairs({ "origin/main", "origin/master" }) do
+          vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", ref })
+          if vim.v.shell_error == 0 then
+            return ref
+          end
+        end
+        local head = vim.fn.system({ "git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD" })
+        if vim.v.shell_error == 0 then
+          return vim.trim(head)
+        end
+        return nil
+      end
+
       vim.api.nvim_create_user_command("G", function(cmd)
         local sub, rest = cmd.args:match("^(%S+)%s*(.*)$")
         if cmd.args == "" then
@@ -90,6 +108,23 @@ return {
         elseif sub == "diff" and not cmd.bang then
           -- 引数はそのまま渡す (:G diff HEAD~1 / :G diff main...HEAD)
           vim.cmd("DiffviewOpen " .. rest)
+        elseif sub == "diffmain" then
+          -- 現在ブランチと base ブランチの3点リーチ差分(= GitHub の PR と同じ範囲)。
+          -- リモート基準なので、手元が古いときは先に git fetch しておくこと
+          -- (待ち時間を嫌ってコマンド側では fetch しない)。
+          -- 作業ツリーの未コミット分は含まない(HEAD までの比較)。
+          local base = resolve_base_branch()
+          if not base then
+            vim.notify("base ブランチ(origin/main など)が見つかりません", vim.log.levels.ERROR)
+            return
+          end
+          local range = base .. "...HEAD"
+          if cmd.bang then
+            -- :G! diff と同じく、bang は従来の fugitive 版 diff に流す
+            vim.cmd("Git! diff " .. range)
+          else
+            vim.cmd("DiffviewOpen " .. range)
+          end
         elseif fullscreen_subcommands[sub] then
           vim.cmd("tab Git " .. cmd.args)
         else
