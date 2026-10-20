@@ -101,6 +101,46 @@ return {
         return nil
       end
 
+      -- :G diffparent 用の親ブランチ解決。
+      -- stacked PR では base が main ではなく親 PR のブランチになるので、
+      -- GitHub 上の PR の base(gh pr view の baseRefName)を親とみなす。
+      -- 引数でブランチ名が渡されたときはそれを優先する(PR 未作成のとき用)。
+      -- 戻り値は origin/<branch> を優先し、無ければローカルの <branch>。
+      local function resolve_parent_branch(explicit)
+        local name = explicit
+        if not name or name == "" then
+          if vim.fn.executable("gh") ~= 1 then
+            return nil, "gh コマンドが見つかりません(:G diffparent <branch> で親を指定してください)"
+          end
+          local out = vim.fn.system({ "gh", "pr", "view", "--json", "baseRefName", "-q", ".baseRefName" })
+          if vim.v.shell_error ~= 0 then
+            return nil, "現在ブランチの PR が見つかりません(:G diffparent <branch> で親を指定してください)"
+          end
+          name = vim.trim(out)
+          if name == "" then
+            return nil, "PR の base ブランチを取得できませんでした"
+          end
+        end
+        for _, ref in ipairs({ "origin/" .. name, name }) do
+          vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", ref })
+          if vim.v.shell_error == 0 then
+            return ref
+          end
+        end
+        return nil, "ブランチ " .. name .. " が手元にありません(git fetch してください)"
+      end
+
+      -- base...HEAD の3点リーチ差分を開く(diffmain / diffparent 共通)。
+      -- bang は :G! diff と同じく従来の fugitive 版 diff に流す。
+      local function open_range_diff(base, bang)
+        local range = base .. "...HEAD"
+        if bang then
+          vim.cmd("Git! diff " .. range)
+        else
+          vim.cmd("DiffviewOpen " .. range)
+        end
+      end
+
       vim.api.nvim_create_user_command("G", function(cmd)
         local sub, rest = cmd.args:match("^(%S+)%s*(.*)$")
         if cmd.args == "" then
@@ -118,13 +158,17 @@ return {
             vim.notify("base ブランチ(origin/main など)が見つかりません", vim.log.levels.ERROR)
             return
           end
-          local range = base .. "...HEAD"
-          if cmd.bang then
-            -- :G! diff と同じく、bang は従来の fugitive 版 diff に流す
-            vim.cmd("Git! diff " .. range)
-          else
-            vim.cmd("DiffviewOpen " .. range)
+          open_range_diff(base, cmd.bang)
+        elseif sub == "diffparent" then
+          -- stacked PR 用。diffmain だと親 PR の変更まで含まれてしまうので、
+          -- 親 PR のブランチ(= GitHub 上の PR の base)との差分だけを開く。
+          -- :G diffparent <branch> で親を明示することもできる。
+          local parent, err = resolve_parent_branch(rest)
+          if not parent then
+            vim.notify(err, vim.log.levels.ERROR)
+            return
           end
+          open_range_diff(parent, cmd.bang)
         elseif fullscreen_subcommands[sub] then
           vim.cmd("tab Git " .. cmd.args)
         else

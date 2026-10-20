@@ -9,6 +9,7 @@
 --   :G diff HEAD~1          特定のコミットとの差分
 --   :G diff main...HEAD     PR の diff と同じ3点リーチ
 --   :G diffmain             上と同じ範囲を base 自動判定(origin/main 等)で開く
+--   :G diffparent           stacked PR 用。親 PR のブランチ(PR の base)との差分だけを開く
 --   :DiffviewFileHistory %  現在ファイルの履歴を同じ UI で追う
 --
 -- :G のルーティングは lua/plugins/editor.lua の fugitive 側にある。
