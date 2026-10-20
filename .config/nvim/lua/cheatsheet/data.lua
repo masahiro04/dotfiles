@@ -58,6 +58,8 @@ return {
       { keys = "<leader>ay", desc = "レビュー: 全コメントをコード断片つき Markdown でヤンク", help = "review", tags = "review レビュー コメント yank ヤンク コピー markdown" },
       { keys = "<leader>aY", desc = "レビュー: 現在ファイルのコメントだけヤンク", help = "review", tags = "review レビュー コメント yank ヤンク コピー ファイル" },
       { keys = "<leader>ao", desc = "レビュー: .review/REVIEW.md を開く", help = "review", tags = "review レビュー コメント open 出力 markdown" },
+      { keys = "<leader>ap", desc = "レビュー: 未投稿コメントを gh で PR のドラフトレビューに投稿(:Review publish --dry-run で確認)", help = "review-publish", tags = "review レビュー コメント github pr gh publish 投稿 draft pending" },
+      { keys = "<leader>aP", desc = "レビュー: 投稿せずに送る内容だけ確認(dry-run。diff 外でスキップされる分も見える)", help = "review-publish", tags = "review レビュー コメント github pr gh publish dry-run 確認" },
       { keys = "<leader>at", desc = "レビュー: コメント表示のトグル", help = "review", tags = "review レビュー コメント toggle 表示" },
       { keys = "<leader>ax", desc = "レビュー: プロジェクトのコメントを全削除(確認あり)", help = "review", tags = "review レビュー コメント clear 全削除" },
       { keys = "]a / [a", desc = "レビュー: 次 / 前のコメントへ移動", help = "review", tags = "review レビュー コメント 移動 next prev" },

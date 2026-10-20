@@ -12,10 +12,13 @@
 --   <leader>ay  全コメントを Markdown でヤンク (+ レジスタ)
 --   <leader>aY  現在ファイルのコメントだけヤンク
 --   <leader>ao  .review/REVIEW.md を開く
+--   <leader>ap  未投稿のコメントを gh で PR のドラフト (Pending) レビューとして投稿
+--   <leader>aP  投稿せずに送る内容だけ確認 (dry-run)
 --   <leader>at  表示のトグル
 --   <leader>ax  全コメントを削除 (確認あり)
 --   ]a / [a     次 / 前のコメントへ
---   :Review {add|edit|delete|list|yank|yankfile|open|toggle|clear}
+--   :Review {add|edit|delete|list|yank|yankfile|open|publish|toggle|clear}
+--   :Review publish --dry-run  送る内容だけ確認 / :Review! publish  投稿済みも含めて再投稿
 --
 -- 入力フロートでは ノーマルの <CR> / <C-s> / :w で確定、q でキャンセル。
 -- インサートの <CR> は普通の改行なので複数行のコメントが書ける。
@@ -42,6 +45,7 @@ local augroup = api.nvim_create_augroup("review_comments", { clear = true })
 ---@field line_end integer 1-origin
 ---@field text string
 ---@field created_at string
+---@field posted? { pr: integer, review_id: integer, url: string, at: string } GitHub に投稿済みなら入る
 
 ---@class ReviewStore
 ---@field comments ReviewComment[]
@@ -241,6 +245,9 @@ local function set_highlights()
   api.nvim_set_hl(0, "ReviewCommentBorder", { link = "Comment", default = true })
   local info = api.nvim_get_hl(0, { name = "DiagnosticInfo", link = false })
   api.nvim_set_hl(0, "ReviewCommentText", { fg = info.fg, italic = true, default = true })
+  -- GitHub に投稿済みのものは薄く
+  api.nvim_set_hl(0, "ReviewCommentPostedSign", { link = "Comment", default = true })
+  api.nvim_set_hl(0, "ReviewCommentPosted", { link = "Comment", default = true })
 end
 
 ---@param bufnr integer
@@ -258,18 +265,24 @@ local function place(bufnr, c)
   local last_line = api.nvim_buf_line_count(bufnr)
   local s = math.max(1, math.min(c.line_start, last_line))
   local e = math.max(s, math.min(c.line_end, last_line))
+  local sign_hl = c.posted and "ReviewCommentPostedSign" or "ReviewCommentSign"
+  local text_hl = c.posted and "ReviewCommentPosted" or "ReviewCommentText"
   local first_id
   for l = s, e do
     local id = api.nvim_buf_set_extmark(bufnr, ns, l - 1, 0, {
       sign_text = M.config.sign,
-      sign_hl_group = "ReviewCommentSign",
+      sign_hl_group = sign_hl,
       priority = 20,
     })
     first_id = first_id or id
   end
+  local text_lines = vim.split(c.text, "\n", { plain = true })
+  if c.posted then
+    text_lines[1] = string.format("[PR #%d 投稿済み] ", c.posted.pr) .. text_lines[1]
+  end
   local virt = {}
-  for _, t in ipairs(vim.split(c.text, "\n", { plain = true })) do
-    virt[#virt + 1] = { { "  " .. M.config.prefix, "ReviewCommentBorder" }, { t, "ReviewCommentText" } }
+  for _, t in ipairs(text_lines) do
+    virt[#virt + 1] = { { "  " .. M.config.prefix, "ReviewCommentBorder" }, { t, text_hl } }
   end
   local last_id = api.nvim_buf_set_extmark(bufnr, ns, e - 1, 0, { virt_lines = virt })
   marks[bufnr] = marks[bufnr] or {}
@@ -793,6 +806,219 @@ end
 -- setup
 -- ---------------------------------------------------------------------------
 
+-- ---------------------------------------------------------------------------
+-- GitHub PR へ投稿 (gh)
+-- ---------------------------------------------------------------------------
+
+---コマンドを root で同期実行する。失敗したら nil と stderr
+---@param cmd string[]
+---@param root string
+---@param stdin? string
+---@return string|nil out, string|nil err
+local function run(cmd, root, stdin)
+  if vim.fn.executable(cmd[1]) == 0 then
+    return nil, cmd[1] .. " コマンドが見つかりません"
+  end
+  local res = vim.system(cmd, { cwd = root, text = true, stdin = stdin }):wait()
+  if res.code ~= 0 then
+    return nil, vim.trim((res.stderr or "") .. (res.stdout or ""))
+  end
+  return res.stdout or "", nil
+end
+
+---unified diff から、ファイルごとに「変更後 (RIGHT) 側でコメントを付けられる行」の集合を作る。
+---GitHub の review comment は diff のハンク内 (追加行かコンテキスト行) にしか付けられない。
+---@param diff string
+---@return table<string, table<integer, boolean>>  path -> { [line] = true }
+function M._parse_diff(diff)
+  local files = {}
+  local current, new_line
+  for line in (diff .. "\n"):gmatch("(.-)\r?\n") do
+    local path = line:match("^%+%+%+ b/(.+)$")
+    if path then
+      current = {}
+      files[path] = current
+      new_line = nil
+    elseif line:match("^%+%+%+ /dev/null") then
+      current = nil
+      new_line = nil
+    else
+      local start = line:match("^@@ %-%d+,?%d* %+(%d+),?%d* @@")
+      if start then
+        new_line = current and tonumber(start) or nil
+      elseif new_line then
+        local head = line:sub(1, 1)
+        if head == "+" or head == " " or head == "" then
+          current[new_line] = true
+          new_line = new_line + 1
+        elseif head == "-" or head == "\\" then
+          -- 削除行 / "\ No newline at end of file" は右側の行番号を進めない
+        else
+          new_line = nil -- ハンクの外 (次の diff --git など)
+        end
+      end
+    end
+  end
+  return files
+end
+
+---投稿内容を確認用のスクラッチバッファに出す
+---@param payload table
+local function show_payload(payload)
+  vim.cmd("botright new")
+  local buf = api.nvim_get_current_buf()
+  vim.bo[buf].buftype = "nofile"
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].swapfile = false
+  vim.bo[buf].filetype = "lua"
+  api.nvim_buf_set_name(buf, "review://publish-dry-run")
+  api.nvim_buf_set_lines(buf, 0, -1, false, vim.split("-- :Review publish --dry-run\n" .. vim.inspect(payload), "\n"))
+  vim.bo[buf].modifiable = false
+end
+
+---未投稿のコメントを、現在ブランチの PR にドラフト (Pending) レビューとしてまとめて投稿する。
+---投稿後は GitHub 上で見直してから自分で Submit する。
+---@param opts? { dry_run?: boolean, include_posted?: boolean }
+function M.publish(opts)
+  opts = opts or {}
+  local root = root_of(api.nvim_get_current_buf())
+  local st = store(root)
+  local targets = vim.tbl_filter(function(c)
+    return opts.include_posted or not c.posted
+  end, st.comments)
+  if #targets == 0 then
+    vim.notify("Review: 投稿するコメントがありません (投稿済みも含めるなら :Review! publish)", vim.log.levels.WARN)
+    return
+  end
+
+  vim.notify("Review: PR の情報を取得しています…")
+  vim.cmd.redraw()
+  local out, err = run({ "gh", "pr", "view", "--json", "number,url,headRefOid,headRefName" }, root)
+  if not out then
+    vim.notify("Review: 現在ブランチの PR が見つかりません\n" .. (err or ""), vim.log.levels.ERROR)
+    return
+  end
+  local pr = vim.json.decode(out)
+
+  -- 行番号は手元のファイルのものなので、PR の head と手元がずれていると位置が合わない
+  local warns = {}
+  local head = run({ "git", "rev-parse", "HEAD" }, root)
+  head = head and vim.trim(head) or ""
+  if head ~= pr.headRefOid then
+    warns[#warns + 1] = string.format("ローカル HEAD (%s) と PR の head (%s) が違います (push 忘れ?)", head:sub(1, 7), pr.headRefOid:sub(1, 7))
+  end
+  local files = {}
+  for _, c in ipairs(targets) do
+    if not vim.tbl_contains(files, c.file) then
+      files[#files + 1] = c.file
+    end
+  end
+  local dirty = run(vim.list_extend({ "git", "status", "--porcelain", "--" }, files), root)
+  if dirty and vim.trim(dirty) ~= "" then
+    warns[#warns + 1] = "未コミットの変更があります:\n" .. vim.trim(dirty)
+  end
+  if #warns > 0 and not opts.dry_run then
+    local answer = vim.fn.confirm(
+      "Review: 行番号がずれる可能性があります。\n\n" .. table.concat(warns, "\n") .. "\n\n続けますか？",
+      "&Yes\n&No",
+      2
+    )
+    if answer ~= 1 then
+      return
+    end
+  end
+
+  -- diff の外にある行は GitHub 側で 422 になるので先に除外する
+  local diff, derr = run({ "gh", "pr", "diff", tostring(pr.number) }, root)
+  if not diff then
+    vim.notify("Review: PR の diff を取得できませんでした\n" .. (derr or ""), vim.log.levels.ERROR)
+    return
+  end
+  local hunks = M._parse_diff(diff)
+  local comments, posted, skipped = {}, {}, {}
+  for _, c in ipairs(targets) do
+    local lines = hunks[c.file]
+    if lines and lines[c.line_start] and lines[c.line_end] then
+      local entry = { path = c.file, line = c.line_end, side = "RIGHT", body = c.text }
+      if c.line_start ~= c.line_end then
+        entry.start_line = c.line_start
+        entry.start_side = "RIGHT"
+      end
+      comments[#comments + 1] = entry
+      posted[#posted + 1] = c
+    else
+      skipped[#skipped + 1] = c
+    end
+  end
+  local skipped_msg = ""
+  if #skipped > 0 then
+    skipped_msg = "\ndiff に含まれない行のためスキップ:\n  " .. table.concat(vim.tbl_map(location, skipped), "\n  ")
+  end
+  if #comments == 0 then
+    vim.notify("Review: PR の diff に含まれる行のコメントがありません" .. skipped_msg, vim.log.levels.WARN)
+    return
+  end
+
+  -- event を付けないと PENDING (ドラフト) になる
+  local payload = { commit_id = pr.headRefOid, comments = comments }
+  if opts.dry_run then
+    show_payload({ pr = pr.number, url = pr.url, payload = payload, skipped = vim.tbl_map(location, skipped), warnings = warns })
+    return
+  end
+
+  -- 未送信のレビューは 1 つしか持てないので先に確認
+  local reviews_json = run({ "gh", "api", string.format("repos/{owner}/{repo}/pulls/%d/reviews", pr.number) }, root)
+  if reviews_json then
+    local ok, reviews = pcall(vim.json.decode, reviews_json)
+    if ok and type(reviews) == "table" then
+      for _, r in ipairs(reviews) do
+        if r.state == "PENDING" then
+          vim.notify(
+            "Review: この PR には既に未送信のレビューがあります。GitHub で送信か破棄をしてから再実行してください\n" .. (r.html_url or pr.url),
+            vim.log.levels.ERROR
+          )
+          return
+        end
+      end
+    end
+  end
+
+  vim.notify(string.format("Review: PR #%d に %d 件を投稿しています…", pr.number, #comments))
+  vim.cmd.redraw()
+  local res, perr = run({
+    "gh",
+    "api",
+    "-X",
+    "POST",
+    string.format("repos/{owner}/{repo}/pulls/%d/reviews", pr.number),
+    "--input",
+    "-",
+  }, root, vim.json.encode(payload))
+  if not res then
+    vim.notify("Review: 投稿に失敗しました\n" .. (perr or ""), vim.log.levels.ERROR)
+    return
+  end
+  local review = vim.json.decode(res)
+  local now = os.date("%Y-%m-%dT%H:%M:%S")
+  for _, c in ipairs(posted) do
+    c.posted = { pr = pr.number, review_id = review.id, url = review.html_url or pr.url, at = now }
+  end
+  save(root)
+  M.render_all()
+  local url = review.html_url or pr.url
+  vim.fn.setreg("+", url)
+  vim.notify(
+    string.format(
+      "Review: %d 件を PR #%d のドラフトレビューに追加しました。GitHub で確認して Submit してください (URL をコピー済み)\n%s%s",
+      #posted,
+      pr.number,
+      url,
+      skipped_msg
+    ),
+    #skipped > 0 and vim.log.levels.WARN or vim.log.levels.INFO
+  )
+end
+
 local subcommands = {
   add = function(cmd)
     M.add(cmd.range > 0 and { cmd.line1, cmd.line2 } or nil)
@@ -807,6 +1033,9 @@ local subcommands = {
     M.yank("file")
   end,
   open = M.open_output,
+  publish = function(cmd)
+    M.publish({ dry_run = cmd.fargs[2] == "--dry-run", include_posted = cmd.bang })
+  end,
   toggle = M.toggle,
   clear = M.clear,
 }
@@ -856,10 +1085,14 @@ function M.setup(opts)
     end
     fn(cmd)
   end, {
-    nargs = "?",
+    nargs = "*",
     range = true,
+    bang = true,
     desc = "Review comments",
-    complete = function(arg)
+    complete = function(arg, line)
+      if line:match("^%s*%S+!?%s+%S+%s") then
+        return { "--dry-run" }
+      end
       return vim.tbl_filter(function(k)
         return k:find(arg, 1, true) == 1
       end, vim.tbl_keys(subcommands))
@@ -880,6 +1113,12 @@ function M.setup(opts)
     M.yank("file")
   end, { desc = "Review: このファイルのコメントをヤンク" })
   map("n", "<leader>ao", M.open_output, { desc = "Review: REVIEW.md を開く" })
+  map("n", "<leader>ap", function()
+    M.publish()
+  end, { desc = "Review: PR にドラフトレビューとして投稿 (gh)" })
+  map("n", "<leader>aP", function()
+    M.publish({ dry_run = true })
+  end, { desc = "Review: 投稿内容を確認 (dry-run)" })
   map("n", "<leader>at", M.toggle, { desc = "Review: 表示トグル" })
   map("n", "<leader>ax", M.clear, { desc = "Review: 全コメントを削除" })
   map("n", "]a", M.next, { desc = "Review: 次のコメント" })
