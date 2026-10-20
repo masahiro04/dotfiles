@@ -77,6 +77,9 @@ require("cheatsheet").setup()
 require("browser_preview").setup()
 
 -- Copy current file path to clipboard
+-- レビューコメント (<leader>a* / ]a [a / :Review)。.review/ に外付け保存
+require("review").setup()
+
 keymap.set("n", "<leader>y", function()
   local path = vim.fn.expand("%:.")
   vim.fn.setreg("+", path)
