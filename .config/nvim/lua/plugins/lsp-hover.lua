@@ -1,17 +1,3 @@
--- LSP hover (K) / signature help (gK) のフロートの見た目を整える。
---
--- nvim 0.12 の vim.lsp.buf.hover() は vim.lsp.handlers["textDocument/hover"] を
--- 経由せず、buf_request_all + vim.lsp.util.open_floating_preview を直接呼ぶ
--- (runtime/lua/vim/lsp/buf.lua)。そのため noice の presets.lsp_doc_border は
--- 効かず、vim.o.winborder も未設定なので枠なし・背景なしのフロートになっていた。
---
--- 中身の描画自体は 0.12 が filetype=markdown + treesitter でやってくれるので、
--- ここでは「器」(枠・余白・タイトル・サイズ・専用ハイライト) だけを与える。
--- open_floating_preview は hover と signature help の共通経路なので、
--- ここ1点のラップで両方に効く。
--- noice が上書きするのは convert_input_to_markdown_lines だけなので競合しない。
--- LazyVim/noice を新しい版に更新できたら見直し可。
-
 -- rounded な上下枠 + 左右は空白1桁 (= 内側パディング)。
 -- FloatBorder の bg をフロート本体と同色にすることで余白として見える。
 local BORDER = {

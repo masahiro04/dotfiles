@@ -1,11 +1,5 @@
 -- markdown を装飾表示する。通常の .md バッファに加えて、
 -- LSP hover (K) のフロートにも効く。
---
--- nvim 0.12 の open_floating_preview は hover のバッファに filetype=markdown を
--- 立てるので (runtime/lua/vim/lsp/util.lua)、render-markdown がそのまま attach する。
--- hover フロートは buftype=nofile なので overrides.buftype.nofile で個別に詰める。
--- 器 (枠・背景・タイトル) 側は lua/plugins/lsp-hover.lua を参照。
---
 -- 色は lua/plugins/colorschema.lua の on_highlights で tokyonight に合わせている
 -- (既定は H1Bg=DiffText のように diff 色にリンクされていて浮くため)。
 

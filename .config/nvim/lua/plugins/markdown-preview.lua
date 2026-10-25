@@ -1,11 +1,6 @@
 return {
   -- LazyVim extras (lang.markdown) の build 上書き
   --
-  -- extras 側は build に mkdp#util#install() を指定しているが、これは
-  -- 非同期ターミナルで install.sh を走らせる実装のため lazy.nvim の
-  -- build コンテキストでは完走せず、しかも失敗が成功扱いになる。
-  -- 結果 app/bin (プリビルドバイナリ) も app/node_modules も無い状態になり、
-  -- :MarkdownPreview が `Cannot find module 'tslib'` で落ちる。
   {
     "iamcco/markdown-preview.nvim",
     build = function(plugin)
