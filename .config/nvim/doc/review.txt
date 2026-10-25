@@ -1,0 +1,241 @@
+*review.txt*  コードレビュー用コメントを外付けで残すローカルプラグイン
+
+==============================================================================
+概要                                                                  *review*
+
+レビュー中のコードに、ソースを書き換えずにコメントを付けるための自作モジュール
+(`lua/review/init.lua`)。行(範囲)を選んでコメントを書くと、git root 直下の
+`.review/` に保存され、エディタ上にはサインと仮想行で表示される。
+まとめて Markdown としてヤンクして PR や Slack に貼ることを想定している。
+
+保存先 (git root が無ければ cwd) ~
+>
+    .review/comments.json   データ本体 (パス・行番号・本文)
+    .review/REVIEW.md       貼り付け用 Markdown (保存のたびに再生成)
+<
+`.review/` を commit したくなければ .gitignore に追加する。
+コメントが 0 件になると両ファイルとも削除される。
+
+行番号は extmark で追従するので、コメントより上の行を増減しても `:w` した
+時点でデータ側の行番号が更新される。
+
+==============================================================================
+diffview で使う                                              *review-diffview*
+
+`:G diff` / `:G diffmain` / `:G diffparent` で開いた diffview の右ペインでも
+<leader>aa や ]a、<leader>aY がそのまま使える。右ペインは作業ツリー
+(`:G diff`) か HEAD (`:G diffmain` など) なので、実ファイルのパスと行番号に
+読み替えて `.review/` に保存し、実ファイルを開いたときにも同じ場所に出る。
+取得済みの PR スレッド (|review-threads|) も右ペインに出る。
+
+左ペイン (base や index 側) は行番号が作業ツリーと合わないため付けられず、
+右側で付けるように案内が出る。右ペインが HEAD のときに、そのファイルに
+未コミットの変更があると行番号がずれる可能性があるので確認ダイアログが出る。
+
+==============================================================================
+キーマップ                                                   *review-mappings*
+
+                                                                  *<leader>aa*
+<leader>aa              カーソル行にコメントを付ける。
+                        ビジュアルモードなら選択範囲に付ける。
+
+                                                                  *<leader>ae*
+<leader>ae              カーソル位置のコメントを編集する。
+                        複数あれば |vim.ui.select()| で選ぶ。
+
+                                                                  *<leader>ad*
+<leader>ad              カーソル位置のコメントを削除する。
+
+                                                                  *<leader>al*
+<leader>al              コメント一覧を Telescope で開く。<CR> でジャンプ、
+                        <C-d> で削除。Telescope が無ければ quickfix。
+
+                                                                  *<leader>ay*
+<leader>ay              プロジェクトの全コメントを Markdown にして
+                        + レジスタ(クリップボード)と無名レジスタに入れる。
+
+                                                                  *<leader>aY*
+<leader>aY              現在ファイルのコメントだけをヤンクする。
+
+                                                                  *<leader>ao*
+<leader>ao              `.review/REVIEW.md` を開く。
+
+                                                                  *<leader>ap*
+<leader>ap              未投稿のコメントを gh で PR に投稿する。
+                        |review-publish| を参照。
+
+                                                                  *<leader>aP*
+<leader>aP              ドラフトにせず、その場でレビューコメントとして
+                        投稿する (`:Review submit`)。確認ダイアログあり。
+
+                                                                  *<leader>af*
+<leader>af              PR のレビュースレッドを取得して表示する。
+                        |review-threads| を参照。
+
+                                                                  *<leader>aL*
+<leader>aL              PR スレッドの一覧を Telescope で開く。
+
+                                                                  *<leader>av*
+<leader>av              カーソル行のスレッド全文をフロートで読む。
+
+                                                                  *<leader>ar*
+<leader>ar              カーソル行のスレッドに返信する (即時公開)。
+
+                                                                  *<leader>aR*
+<leader>aR              カーソル行のスレッドを resolved / unresolved にする。
+
+                                                                  *<leader>at*
+<leader>at              コメント表示の ON/OFF (ローカルコメントと PR スレッドの両方)。
+
+                                                                  *<leader>ax*
+<leader>ax              プロジェクトのコメントを全削除する (確認あり)。
+
+                                                                      *]a* *[a*
+]a / [a                 現在ファイル内の次 / 前のコメントへ移動する。
+
+==============================================================================
+入力フロート                                                   *review-editor*
+
+<leader>aa / <leader>ae で開くフローティングウィンドウは markdown の
+スクラッチバッファ。インサートモードの <CR> は普通の改行なので複数行書ける。
+
+    <CR> (ノーマル)     確定
+    <C-s> (n/i)         確定
+    :w                  確定
+    q (ノーマル)        キャンセル
+    :q                  キャンセル
+
+本文が空のまま確定するとキャンセル扱いになる。
+
+==============================================================================
+コマンド                                                     *review-commands*
+
+                                                                     *:Review*
+:[range]Review [sub]    サブコマンド (省略時は add):
+                        add       コメントを付ける。[range] があればその範囲
+                        edit      編集
+                        delete    削除
+                        list      一覧
+                        yank      全コメントをヤンク
+                        yankfile  現在ファイルのコメントをヤンク
+                        open      REVIEW.md を開く
+                        publish   PR にドラフトレビューとして投稿
+                                  (`--dry-run` で内容確認のみ、
+                                  `:Review! publish` で投稿済みも含める)
+                        submit    ドラフトにせず即時投稿 (event=COMMENT)
+                        toggle    表示トグル
+                        clear     全削除 (確認あり)
+                        fetch     PR スレッドを取得
+                        threads   PR スレッド一覧
+                        view      カーソル行のスレッド全文
+                        reply     カーソル行のスレッドに返信
+                        resolve   カーソル行のスレッドを resolve/unresolve
+
+==============================================================================
+GitHub PR への投稿                                            *review-publish*
+
+<leader>ap / `:Review publish` は、未投稿のコメントをまとめて 1 つの
+ドラフト (Pending) レビューとして現在ブランチの PR に投稿する。
+PENDING なので GitHub 上では自分にしか見えず、内容を見直してから自分で
+Submit する。Submit 時に Comment / Approve / Request changes を選べる。
+
+手順 ~
+1. `gh pr view` で現在ブランチの PR を探す (無ければエラー)
+2. ローカル HEAD と PR の head が違う、または対象ファイルに未コミットの変更が
+   あると、行番号がずれる可能性があるので確認ダイアログを出す
+3. `gh pr diff` を読み、diff のハンクに含まれない行のコメントは除外する
+   (GitHub は diff 外の行にコメントを付けられない)。除外分は通知に出る
+4. 既に未送信のレビューがあれば中断する (1 PR に 1 つしか持てない)
+5. `gh api POST /pulls/{n}/reviews` で投稿。URL を + レジスタにコピーする
+
+投稿できたコメントには `posted` (PR 番号・URL・日時) が記録され、表示が
+薄くなって `[PR #12 投稿済み]` が付く。次回の publish からは外れるが、
+ヤンクや REVIEW.md には引き続き含まれる。
+
+<leader>aP / `:Review submit` はドラフトを経由せず、その場で
+レビューコメント (event=COMMENT) として投稿する。相手にすぐ見えるので、
+送信前に件数と除外分を確認するダイアログが出る。
+
+`:Review publish --dry-run` は投稿せずに送る内容を
+スクラッチバッファに出す。diff 外で除外されるコメントは `skipped` に並ぶ。
+`:Review! publish` は投稿済みのコメントも含めてもう一度送る。
+
+必要なもの: `gh` (ログイン済み) と、PR の head が push 済みであること。
+
+==============================================================================
+PR のレビュースレッド                                          *review-threads*
+
+publish した指摘への返信など、GitHub 側のレビューコメントをエディタに
+出す機能。<leader>af で現在ブランチの PR のスレッドを GraphQL
+(`reviewThreads`) で取得し、該当行の下に仮想行で表示する。
+ローカルのコメント (DiagnosticInfo 色) とは別の色 (DiagnosticHint 色) で、
+`💬 @author · 日付` に続けて本文、返信は `↳ @author` で並ぶ。
+本文は |review-config| の `thread_max_lines` 行で切り、全文は <leader>av。
+
+表示は手動更新。GitHub 側が変わっても <leader>af を押すまで変わらない。
+
+状態 ~
+  [resolved]   解決済み。薄く表示される。<leader>aR で戻せる
+  [outdated]   その後の push で行がずれた。元の行 (originalLine) に出す
+  LEFT 側      削除行に付いたスレッドはローカルファイルに置けないので
+               一覧 (<leader>aL) にだけ出る
+
+返信 ~
+<leader>ar で入力フロートが開く (操作は |review-editor| と同じ)。確定すると
+確認ダイアログの後に `POST /pulls/{n}/comments/{id}/replies` で送る。
+publish と違い Pending にはならず、すぐ相手に見える。
+
+一覧 ~
+<leader>aL の Telescope では `path:Lnn  [★ resolved outdated]  @author: 本文`
+の形で並ぶ。★ は自分が publish した指摘から始まるスレッド (publish 時に
+控えた comment id で判定)。<CR> でジャンプ、<C-v> で全文。
+
+制約 ~
+- 表示位置はローカルが PR の head と一致している前提
+- スレッド・コメントとも先頭 100 件まで (ページングは未対応)
+- 自分の Pending レビューは Submit するまで相手に見えないので返信も付かない
+
+==============================================================================
+出力形式                                                       *review-format*
+
+ヤンク / REVIEW.md はコメントごとに次のブロックになる (ファイル順→行順)。
+>
+    ### app/models/user.rb:L10-L15
+
+    ```ruby
+    (10〜15 行目のコード)
+    ```
+
+    コメント本文
+<
+1 行だけなら `:L10`。コードは開いているバッファがあればバッファの内容、
+無ければディスクから読む。言語名は |vim.filetype.match()| で決める。
+
+==============================================================================
+ハイライト                                                 *review-highlights*
+
+ReviewCommentSign       サイン `▎` (既定: DiagnosticInfo にリンク)
+ReviewCommentText       仮想行の本文 (既定: DiagnosticInfo の色 + italic)
+ReviewCommentBorder     仮想行の `┃` (既定: Comment にリンク)
+ReviewCommentPostedSign 投稿済みコメントのサイン (既定: Comment にリンク)
+ReviewCommentPosted     投稿済みコメントの本文 (既定: Comment にリンク)
+ReviewThreadSign        PR スレッドのサイン `◆` (既定: DiagnosticHint にリンク)
+ReviewThreadText        PR スレッドの本文 (既定: DiagnosticHint の色)
+ReviewThreadAuthor      PR スレッドの `@author` 行 (既定: DiagnosticHint の色 + bold)
+ReviewThreadResolved    resolved なスレッド (既定: Comment にリンク)
+
+==============================================================================
+設定                                                           *review-config*
+
+`require("review").setup({ ... })` で上書きできる既定値:
+>
+    dir = ".review"           保存ディレクトリ (git root 相対)
+    sign = "▎"                ローカルコメントのサイン
+    thread_sign = "◆"         PR スレッドのサイン
+    prefix = "┃ "             仮想行の行頭
+    thread_max_lines = 4      仮想行に出すスレッド本文の行数
+    editor = { width = 80, height = 10 }   入力フロートの大きさ
+<
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

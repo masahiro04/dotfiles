@@ -2,8 +2,8 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
+local keymap = vim.keymap
 
 --- Do not yank with x
 keymap.set("n", "x", '"_x')
@@ -30,7 +30,8 @@ keymap.set("n", "bn", ":bnext<CR>", { silent = true })
 keymap.set("n", "bd", ":bdelete<CR>", { silent = true })
 
 -- Move window
-keymap.set("n", "<Space>", "<C-w>w")
+-- <Space> 単体には割り当てない (<leader> と衝突し which-key が無効化されるため)
+keymap.set("n", "sw", "<C-w>w")
 keymap.set("", "s<left>", "<C-w>h")
 keymap.set("", "s<up>", "<C-w>k")
 keymap.set("", "s<down>", "<C-w>j")
@@ -69,6 +70,15 @@ keymap.set("", "dr", '<cmd>lua require("renamer").rename()<cr>', { noremap = tru
 keymap.set("n", "<C-j>", function()
   vim.diagnostic.goto_next()
 end, opts)
+
+-- 自作チートシート (;? で検索 / ;k で一覧 / :Cheat :CheatList)
+require("cheatsheet").setup()
+
+-- ファイルをブラウザで開く (<leader>ob / :BrowserPreview / neo-tree・file-browserの O)
+require("browser_preview").setup()
+
+-- レビューコメント (<leader>a* / ]a [a / :Review)。.review/ に外付け保存
+require("review").setup()
 
 -- Copy current file path to clipboard
 keymap.set("n", "<leader>y", function()
