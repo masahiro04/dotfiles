@@ -76,8 +76,8 @@ diffview で使う                                              *review-diffview
                         |review-threads| を参照。
 
                                                                   *<leader>aL*
-<leader>aL              PR スレッドの一覧を Telescope で開く。操作は
-                        <leader>al と同じで、<C-v> で全文を別フロートに出す。
+<leader>aL              レビューパネルを開く / 閉じる。|review-panel| を参照。
+                        (Telescope 版のスレッド一覧は `:Review threads`)
 
                                                                   *<leader>av*
 <leader>av              カーソル行のスレッド全文をフロートで読む。
@@ -201,6 +201,51 @@ Markdown で出る (<C-o> でコード表示に切替)。<CR> でジャンプ、
 - 自分の Pending レビューは Submit するまで相手に見えないので返信も付かない
 
 ==============================================================================
+レビューパネル                                                  *review-panel*
+
+<leader>aL (`:Review panel`) で右側に開くサイドパネル。ローカルコメントと
+PR のレビュースレッドをファイル → 行の順に並べ、Telescope のように
+「選んで閉じて開き直す」ことなく、その場で読んで操作できる。
+
+  # Review · PR #42
+  open 2 · resolved 1 · local 3   ? でキー一覧
+
+  ## app/models/user.rb
+  ◆ L8-9    @alice この行いる？ (+1)
+  ▎ L12     ここは分かりにくい
+  ◆ L20     ★ @me typo  resolved
+
+◆ が PR スレッド、▎ がローカルコメント (投稿済みは薄い色)。★ は自分が
+publish した指摘から始まるスレッド。<Tab> で項目を展開すると、直下に
+スレッド全体 (引用ブロック) と対象行の前後 3 行のコードが出る。
+
+パネル内のキー ~
+  <CR>          対象行へジャンプ (パネルは開いたまま)
+  o             対象行を表示するがカーソルはパネルに残す
+  <Tab> / za    展開 / 折りたたみ      <S-Tab>  全部まとめて
+  <C-n> <C-p>   次 / 前の項目 (]] [[ でも可)
+  r             スレッドに返信 (即時公開・確認あり)
+  x             スレッドを resolved / unresolved
+  a             この行にローカルコメントを付ける (ファイル側へ移動して入力)
+  e / d         ローカルコメントを編集 / 削除 (削除は確認あり)
+  y             本文を Markdown でヤンク (+ レジスタ)
+  gx            GitHub でスレッドを開く
+  P             ローカルコメントを PR にドラフト投稿 (|review-publish|)
+  R             PR スレッドを再取得
+  f             resolved なスレッドを隠す / 出す
+  ?             キー一覧
+  q             閉じる
+
+コメントの追加・編集・削除・publish やスレッドの再取得が起きると、
+パネルは自動で描き直される (カーソルの項目は維持)。展開状態と
+resolved の表示/非表示は、閉じて開き直しても引き継ぐ。
+
+パネルのバッファは filetype "review" で、treesitter の markdown パーサで
+色付けする。render-markdown.nvim を使っていれば `file_types` に "review"
+を足すとその装飾も効く (lua/plugins/render-markdown.lua で設定済み)。
+幅は |review-config| の `panel.width` (既定 64)。
+
+==============================================================================
 出力形式                                                       *review-format*
 
 ヤンク / REVIEW.md はコメントごとに次のブロックになる (ファイル順→行順)。
@@ -240,6 +285,7 @@ ReviewThreadResolved    resolved なスレッド (既定: Comment にリンク)
     prefix = "┃ "             仮想行の行頭
     thread_max_lines = 4      仮想行に出すスレッド本文の行数
     editor = { width = 80, height = 10 }   入力フロートの大きさ
+    panel = { width = 64 }                 レビューパネル (|review-panel|) の幅
 <
 
 ==============================================================================

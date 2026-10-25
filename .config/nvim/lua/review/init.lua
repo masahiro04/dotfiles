@@ -15,14 +15,14 @@
 --   <leader>ap  未投稿のコメントを gh で PR のドラフト (Pending) レビューとして投稿
 --   <leader>aP  ドラフトにせず、その場でレビューコメントとして投稿 (確認あり)
 --   <leader>af  PR のレビュースレッド (相手の返信など) を取得して表示
---   <leader>aL  スレッド一覧 (Telescope)。上に本文+コード、<C-o> でコード表示に切替
+--   <leader>aL  レビューパネル: ローカルコメント + PR スレッドを一覧し、その場で返信/resolve/編集 (review/panel.lua)
 --   <leader>av  カーソル行のスレッド全文をフロートで読む
 --   <leader>ar  カーソル行のスレッドに返信 (即時公開・確認あり)
 --   <leader>aR  カーソル行のスレッドを resolved / unresolved に切り替え
 --   <leader>at  表示のトグル
 --   <leader>ax  全コメントを削除 (確認あり)
 --   ]a / [a     次 / 前のコメントへ
---   :Review {add|edit|delete|list|yank|yankfile|open|publish|toggle|clear}
+--   :Review {add|edit|delete|list|yank|yankfile|open|publish|toggle|clear|panel|threads|...}
 --   :Review {fetch|threads|view|reply|resolve}
 --   :Review submit  即時投稿 / :Review publish --dry-run  送る内容だけ確認 / :Review! publish  投稿済みも含めて再投稿
 --
@@ -44,6 +44,7 @@ M.config = {
   thread_sign = "◆", -- PR スレッドのサイン
   thread_max_lines = 4, -- 仮想行に出すスレッド本文の行数上限 (全文は <leader>av)
   editor = { width = 80, height = 10 },
+  panel = { width = 64 }, -- <leader>aL のサイドパネル (review/panel.lua)
 }
 
 local api = vim.api
@@ -341,7 +342,15 @@ end
 
 ---ストアを comments.json と REVIEW.md に書き出す。0 件なら両方消す
 ---@param root string
-local function save(root)
+---保存やスレッド再取得のあとに呼ばれる関数 (review/panel.lua が登録する)
+M._listeners = {} ---@type fun(root: string)[]
+local function notify_change(root)
+  for _, fn in ipairs(M._listeners) do
+    pcall(fn, root)
+  end
+end
+
+local function save_files(root)
   local s = store(root)
   local dir, json, md = paths(root)
   if #s.comments == 0 then
@@ -363,6 +372,11 @@ local function save(root)
   vim.fn.writefile(vim.split(M.render_markdown(s.comments, root, true), "\n", { plain = true }), md)
 end
 
+local function save(root)
+  save_files(root)
+  notify_change(root)
+end
+
 -- ---------------------------------------------------------------------------
 -- 表示 (extmark)
 -- ---------------------------------------------------------------------------
@@ -381,6 +395,10 @@ local function set_highlights()
   api.nvim_set_hl(0, "ReviewThreadText", { fg = hint.fg, default = true })
   api.nvim_set_hl(0, "ReviewThreadAuthor", { fg = hint.fg, bold = true, default = true })
   api.nvim_set_hl(0, "ReviewThreadResolved", { link = "Comment", default = true })
+  -- サイドパネル (review/panel.lua)
+  api.nvim_set_hl(0, "ReviewPanelLocation", { link = "Number", default = true })
+  api.nvim_set_hl(0, "ReviewPanelMine", { link = "DiagnosticWarn", default = true })
+  api.nvim_set_hl(0, "ReviewPanelMuted", { link = "Comment", default = true })
 end
 
 ---@param bufnr integer
@@ -715,22 +733,45 @@ function M.add(range)
   })
 end
 
+---コメントを入力フロートで編集する
+---@param root string
+---@param c ReviewComment
+function M.edit_comment(root, c)
+  open_editor({
+    title = "review: " .. location(c),
+    text = c.text,
+    on_submit = function(text)
+      c.text = text
+      save(root)
+      M.render_all()
+      vim.notify("Review: コメントを更新しました " .. location(c))
+    end,
+  })
+end
+
 ---カーソル位置のコメントを編集する
 function M.edit()
   local bufnr = api.nvim_get_current_buf()
   local root = root_of(bufnr)
   pick(comments_at_cursor(bufnr), "編集するコメント", function(c)
-    open_editor({
-      title = "review: " .. location(c),
-      text = c.text,
-      on_submit = function(text)
-        c.text = text
-        save(root)
-        M.render_all()
-        vim.notify("Review: コメントを更新しました " .. location(c))
-      end,
-    })
+    M.edit_comment(root, c)
   end)
+end
+
+---コメントを削除する
+---@param root string
+---@param c ReviewComment
+function M.delete_comment(root, c)
+  local st = store(root)
+  for i, x in ipairs(st.comments) do
+    if x.id == c.id then
+      table.remove(st.comments, i)
+      break
+    end
+  end
+  save(root)
+  M.render_all()
+  vim.notify("Review: コメントを削除しました " .. location(c))
 end
 
 ---カーソル位置のコメントを削除する
@@ -738,16 +779,7 @@ function M.delete()
   local bufnr = api.nvim_get_current_buf()
   local root = root_of(bufnr)
   pick(comments_at_cursor(bufnr), "削除するコメント", function(c)
-    local st = store(root)
-    for i, x in ipairs(st.comments) do
-      if x.id == c.id then
-        table.remove(st.comments, i)
-        break
-      end
-    end
-    save(root)
-    M.render_all()
-    vim.notify("Review: コメントを削除しました " .. location(c))
+    M.delete_comment(root, c)
   end)
 end
 
@@ -858,7 +890,7 @@ end
 
 ---@class ReviewPreview
 ---@field lines string[]
----@field code? { row: integer, from: integer, s: integer, e: integer } row = 最初のコード行 (0-origin)、from = その行のファイル上の行番号、s..e = コメント範囲
+---@field code? { row: integer, from: integer, n: integer, s: integer, e: integer } row = 最初のコード行 (0-origin)、from = その行のファイル上の行番号、n = 行数、s..e = コメント範囲
 
 ---lines の末尾に、ファイル rel の s..e 行を前後 ctx 行の文脈つきでコードブロックとして足す。
 ---行番号と範囲の強調は Markdown を壊さないよう extmark で後付けする (markdown_previewer 側)。
@@ -896,7 +928,24 @@ local function append_code(lines, root, rel, s, e, ctx)
     lines[#lines + 1] = text[i]
   end
   lines[#lines + 1] = "```"
-  return { lines = lines, code = { row = row, from = from, s = s, e = e } }
+  return { lines = lines, code = { row = row, from = from, n = to - from + 1, s = s, e = e } }
+end
+
+---append_code が返した code に、行番号 (inline の仮想テキスト) とコメント範囲の背景を付ける
+---@param buf integer
+---@param nsid integer
+---@param code { row: integer, from: integer, n: integer, s: integer, e: integer }
+local function mark_code(buf, nsid, code)
+  local width = #tostring(code.from + code.n - 1)
+  for i = 0, code.n - 1 do
+    local lnum = code.from + i
+    local in_range = lnum >= code.s and lnum <= code.e
+    api.nvim_buf_set_extmark(buf, nsid, code.row + i, 0, {
+      virt_text = { { string.format("%" .. width .. "d ", lnum), in_range and "ReviewCommentSign" or "LineNr" } },
+      virt_text_pos = "inline",
+      line_hl_group = in_range and "CursorLine" or nil,
+    })
+  end
 end
 
 local preview_ns = api.nvim_create_namespace("review_preview")
@@ -916,18 +965,7 @@ local function markdown_previewer(build)
       vim.bo[buf].modifiable = false
       api.nvim_buf_clear_namespace(buf, preview_ns, 0, -1)
       if p.code then
-        local last = p.code.from + (#p.lines - 1 - p.code.row) - 1
-        local width = #tostring(last)
-        local lnum = p.code.from
-        for row = p.code.row, #p.lines - 2 do
-          local in_range = lnum >= p.code.s and lnum <= p.code.e
-          api.nvim_buf_set_extmark(buf, preview_ns, row, 0, {
-            virt_text = { { string.format("%" .. width .. "d ", lnum), in_range and "ReviewCommentSign" or "LineNr" } },
-            virt_text_pos = "inline",
-            line_hl_group = in_range and "CursorLine" or nil,
-          })
-          lnum = lnum + 1
-        end
+        mark_code(buf, preview_ns, p.code)
       end
       vim.bo[buf].filetype = "markdown"
       local win = self.state.winid
@@ -1435,6 +1473,7 @@ function M._set_threads(root, data)
       M.render(bufnr)
     end
   end
+  notify_change(root)
 end
 
 ---スレッド 1 件分の仮想行
@@ -1548,7 +1587,7 @@ end
 ---@return boolean ok
 function M.fetch_threads(opts)
   opts = opts or {}
-  local root = root_of(api.nvim_get_current_buf())
+  local root = opts.root or root_of(api.nvim_get_current_buf())
   if not opts.silent then
     vim.notify("Review: PR のスレッドを取得しています…")
     vim.cmd.redraw()
@@ -1597,6 +1636,7 @@ function M.fetch_threads(opts)
     end
     vim.notify(string.format("Review: PR #%d のスレッド %d 件 (未解決 %d 件) を取得しました", pr.number, #items, open))
   end
+  notify_change(root)
   return true
 end
 
@@ -1668,42 +1708,54 @@ function M.reply()
     return
   end
   pick_thread(threads_at_cursor(bufnr), "返信するスレッド", function(t)
-    local first = t.comments[1]
-    open_editor({
-      title = string.format("reply: @%s %s", first.author, thread_location(t)),
-      text = "",
-      on_submit = function(text)
-        local answer = vim.fn.confirm(
-          string.format("Review: PR #%d のスレッド (@%s) に返信します。すぐに公開されますが送信しますか？", data.pr, first.author),
-          "&Yes\n&No",
-          2
-        )
-        if answer ~= 1 then
-          return
-        end
-        local repo, rerr = repo_info(root)
-        if not repo then
-          vim.notify("Review: " .. rerr, vim.log.levels.ERROR)
-          return
-        end
-        local _, err = run({
-          "gh",
-          "api",
-          "-X",
-          "POST",
-          string.format("repos/%s/%s/pulls/%d/comments/%d/replies", repo.owner, repo.name, data.pr, first.id),
-          "--input",
-          "-",
-        }, root, vim.json.encode({ body = text }))
-        if err then
-          vim.notify("Review: 返信に失敗しました\n" .. err, vim.log.levels.ERROR)
-          return
-        end
-        vim.notify("Review: 返信しました " .. thread_location(t))
-        M.fetch_threads({ silent = true })
-      end,
-    })
+    M.reply_thread(root, t)
   end)
+end
+
+---スレッドに返信する (入力フロート → 確認 → gh で POST → 再取得)
+---@param root string
+---@param t ReviewThread
+function M.reply_thread(root, t)
+  local data = threads[root]
+  if not data then
+    vim.notify("Review: 先に PR のスレッドを取得してください", vim.log.levels.WARN)
+    return
+  end
+  local first = t.comments[1]
+  open_editor({
+    title = string.format("reply: @%s %s", first.author, thread_location(t)),
+    text = "",
+    on_submit = function(text)
+      local answer = vim.fn.confirm(
+        string.format("Review: PR #%d のスレッド (@%s) に返信します。すぐに公開されますが送信しますか？", data.pr, first.author),
+        "&Yes\n&No",
+        2
+      )
+      if answer ~= 1 then
+        return
+      end
+      local repo, rerr = repo_info(root)
+      if not repo then
+        vim.notify("Review: " .. rerr, vim.log.levels.ERROR)
+        return
+      end
+      local _, err = run({
+        "gh",
+        "api",
+        "-X",
+        "POST",
+        string.format("repos/%s/%s/pulls/%d/comments/%d/replies", repo.owner, repo.name, data.pr, first.id),
+        "--input",
+        "-",
+      }, root, vim.json.encode({ body = text }))
+      if err then
+        vim.notify("Review: 返信に失敗しました\n" .. err, vim.log.levels.ERROR)
+        return
+      end
+      vim.notify("Review: 返信しました " .. thread_location(t))
+      M.fetch_threads({ silent = true, root = root })
+    end,
+  })
 end
 
 ---カーソル行のスレッドを resolved / unresolved に切り替える
@@ -1711,16 +1763,23 @@ function M.resolve()
   local bufnr = api.nvim_get_current_buf()
   local root = root_of(bufnr)
   pick_thread(threads_at_cursor(bufnr), "切り替えるスレッド", function(t)
-    local mutation = t.resolved and "unresolveReviewThread" or "resolveReviewThread"
-    local query = string.format("mutation($id: ID!) { %s(input: { threadId: $id }) { thread { isResolved } } }", mutation)
-    local _, err = run({ "gh", "api", "graphql", "-f", "query=" .. query, "-F", "id=" .. t.id }, root)
-    if err then
-      vim.notify("Review: 切り替えに失敗しました\n" .. err, vim.log.levels.ERROR)
-      return
-    end
-    vim.notify(string.format("Review: %s を %s にしました", thread_location(t), t.resolved and "unresolved" or "resolved"))
-    M.fetch_threads({ silent = true })
+    M.resolve_thread(root, t)
   end)
+end
+
+---スレッドの resolved / unresolved を切り替えて再取得する
+---@param root string
+---@param t ReviewThread
+function M.resolve_thread(root, t)
+  local mutation = t.resolved and "unresolveReviewThread" or "resolveReviewThread"
+  local query = string.format("mutation($id: ID!) { %s(input: { threadId: $id }) { thread { isResolved } } }", mutation)
+  local _, err = run({ "gh", "api", "graphql", "-f", "query=" .. query, "-F", "id=" .. t.id }, root)
+  if err then
+    vim.notify("Review: 切り替えに失敗しました\n" .. err, vim.log.levels.ERROR)
+    return
+  end
+  vim.notify(string.format("Review: %s を %s にしました", thread_location(t), t.resolved and "unresolved" or "resolved"))
+  M.fetch_threads({ silent = true, root = root })
 end
 
 ---PR スレッドの一覧 (Telescope、無ければ quickfix)。未取得なら取得してから開く
@@ -1872,6 +1931,26 @@ function M.list_threads()
     :find()
 end
 
+---review/panel.lua など同梱モジュール向けの内部 API。外部からの利用は想定していない
+M._api = {
+  root_of = root_of,
+  store = store,
+  save = save,
+  location = location,
+  first_line = first_line,
+  current_range = current_range,
+  thread_anchor = thread_anchor,
+  thread_location = thread_location,
+  thread_markdown = thread_markdown,
+  append_code = append_code,
+  mark_code = mark_code,
+  open_reader = open_reader,
+  ---@param root string
+  threads = function(root)
+    return threads[root]
+  end,
+}
+
 local subcommands = {
   add = function(cmd)
     M.add(cmd.range > 0 and { cmd.line1, cmd.line2 } or nil)
@@ -1898,6 +1977,9 @@ local subcommands = {
     M.fetch_threads()
   end,
   threads = M.list_threads,
+  panel = function()
+    require("review.panel").toggle()
+  end,
   view = M.view_thread,
   reply = M.reply,
   resolve = M.resolve,
@@ -1908,6 +1990,7 @@ function M.setup(opts)
   M.config = vim.tbl_deep_extend("force", M.config, opts or {})
 
   set_highlights()
+  require("review.panel").setup()
 
   api.nvim_clear_autocmds({ group = augroup })
   api.nvim_create_autocmd("ColorScheme", { group = augroup, callback = set_highlights })
@@ -1997,7 +2080,9 @@ function M.setup(opts)
   map("n", "<leader>af", function()
     M.fetch_threads()
   end, { desc = "Review: PR のスレッドを取得して表示" })
-  map("n", "<leader>aL", M.list_threads, { desc = "Review: PR スレッド一覧" })
+  map("n", "<leader>aL", function()
+    require("review.panel").toggle()
+  end, { desc = "Review: レビューパネル" })
   map("n", "<leader>av", M.view_thread, { desc = "Review: スレッド全文を読む" })
   map("n", "<leader>ar", M.reply, { desc = "Review: スレッドに返信" })
   map("n", "<leader>aR", M.resolve, { desc = "Review: スレッドを resolve/unresolve" })
