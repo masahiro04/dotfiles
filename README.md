@@ -55,6 +55,7 @@ Also: Copilot, mini-hipatterns.
 | `diffview.lua`         | diffview, plus `:G diff` / `:G diffmain` / `:G diffparent` wrappers   |
 | `markdown-preview.lua` | markdown-preview.nvim                                                 |
 | `render-markdown.lua`  | in-buffer Markdown rendering                                          |
+| `hlchunk.lua`          | hlchunk.nvim: outlines the current code block, replaces indent-blankline |
 
 ### Custom modules (`lua/`)
 
