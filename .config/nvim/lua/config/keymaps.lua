@@ -30,7 +30,8 @@ keymap.set("n", "bn", ":bnext<CR>", { silent = true })
 keymap.set("n", "bd", ":bdelete<CR>", { silent = true })
 
 -- Move window
-keymap.set("n", "<Space>", "<C-w>w")
+-- <Space> 単体には割り当てない (<leader> と衝突し which-key が無効化されるため)
+keymap.set("n", "sw", "<C-w>w")
 keymap.set("", "s<left>", "<C-w>h")
 keymap.set("", "s<up>", "<C-w>k")
 keymap.set("", "s<down>", "<C-w>j")

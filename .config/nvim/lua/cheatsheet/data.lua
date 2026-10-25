@@ -37,7 +37,7 @@ return {
       { keys = "bp", desc = "前のバッファへ", tags = "buffer 前 previous" },
       { keys = "bn", desc = "次のバッファへ", tags = "buffer 次 next" },
       { keys = "bd", desc = "バッファを閉じる", tags = "buffer delete 閉じる" },
-      { keys = "<Space>", desc = "次のウィンドウへ移動(<C-w>w)", tags = "window 移動" },
+      { keys = "sw", desc = "次のウィンドウへ移動(<C-w>w)", tags = "window 移動" },
       { keys = "sh / sj / sk / sl", desc = "左/下/上/右のウィンドウへ移動", tags = "window 移動 左右上下" },
       { keys = "s<left> …", desc = "矢印でもウィンドウ移動できる", tags = "window 移動 矢印" },
       { keys = "<C-w><left/right/up/down>", desc = "ウィンドウをリサイズ", tags = "resize サイズ 幅 高さ" },

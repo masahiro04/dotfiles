@@ -171,8 +171,7 @@ function M.list(category)
     table.insert(lines, "# Vim チートシート  (`/` で検索、`q` で閉じる)")
   end
   table.insert(lines, "")
-  table.insert(lines, "※ <leader> は Space。`<Space>` 単体にウィンドウ移動が割り当ててあるので、")
-  table.insert(lines, "  leader 系は timeoutlen(300ms) 以内に続けて押すこと。")
+  table.insert(lines, "※ <leader> は Space。Space を押して少し待つと which-key が候補を表示する。")
   table.insert(lines, "")
 
   for _, item in ipairs(M.items(category)) do
