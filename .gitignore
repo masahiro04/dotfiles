@@ -20,9 +20,6 @@
 # nvim helptags (自動生成)
 .config/nvim/doc/tags
 
-# nvim設定のローカルバックアップ
-nvim_back/
-
 # 1Password CLI (accountKeyを含む)
 .config/op/
 
