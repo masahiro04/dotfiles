@@ -8,14 +8,14 @@
 --   <leader>aa  カーソル行 / 選択範囲(v)にコメントを付ける
 --   <leader>ae  カーソル位置のコメントを編集
 --   <leader>ad  カーソル位置のコメントを削除
---   <leader>al  コメント一覧 (Telescope / 無ければ quickfix)
+--   <leader>al  コメント一覧 (Telescope / 無ければ quickfix)。上に本文+コード、<C-o> でコード表示に切替
 --   <leader>ay  全コメントを Markdown でヤンク (+ レジスタ)
 --   <leader>aY  現在ファイルのコメントだけヤンク
 --   <leader>ao  .review/REVIEW.md を開く
 --   <leader>ap  未投稿のコメントを gh で PR のドラフト (Pending) レビューとして投稿
 --   <leader>aP  ドラフトにせず、その場でレビューコメントとして投稿 (確認あり)
 --   <leader>af  PR のレビュースレッド (相手の返信など) を取得して表示
---   <leader>aL  スレッド一覧 (Telescope)
+--   <leader>aL  スレッド一覧 (Telescope)。上に本文+コード、<C-o> でコード表示に切替
 --   <leader>av  カーソル行のスレッド全文をフロートで読む
 --   <leader>ar  カーソル行のスレッドに返信 (即時公開・確認あり)
 --   <leader>aR  カーソル行のスレッドを resolved / unresolved に切り替え
@@ -852,6 +852,120 @@ function M.prev()
   jump(-1)
 end
 
+-- ---------------------------------------------------------------------------
+-- Telescope 一覧の共通部品
+-- ---------------------------------------------------------------------------
+
+---@class ReviewPreview
+---@field lines string[]
+---@field code? { row: integer, from: integer, s: integer, e: integer } row = 最初のコード行 (0-origin)、from = その行のファイル上の行番号、s..e = コメント範囲
+
+---lines の末尾に、ファイル rel の s..e 行を前後 ctx 行の文脈つきでコードブロックとして足す。
+---行番号と範囲の強調は Markdown を壊さないよう extmark で後付けする (markdown_previewer 側)。
+---@param lines string[]
+---@param root string
+---@param rel string
+---@param s integer
+---@param e integer
+---@param ctx? integer
+---@return ReviewPreview
+local function append_code(lines, root, rel, s, e, ctx)
+  ctx = ctx or 3
+  local abs = root .. "/" .. rel
+  local bufnr = vim.fn.bufnr(abs)
+  local text
+  if bufnr ~= -1 and api.nvim_buf_is_loaded(bufnr) then
+    text = api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  elseif vim.fn.filereadable(abs) == 1 then
+    text = vim.fn.readfile(abs)
+  else
+    lines[#lines + 1] = "_(ファイルが見つかりません: " .. rel .. ")_"
+    return { lines = lines }
+  end
+  if s > #text then
+    lines[#lines + 1] =
+      string.format("_(L%d はファイルの範囲外です。行がずれているかもしれません)_", s)
+    return { lines = lines }
+  end
+  local from = math.max(1, s - ctx)
+  local to = math.min(#text, e + ctx)
+  local lang = vim.filetype.match({ filename = abs }) or ""
+  lines[#lines + 1] = "```" .. lang
+  local row = #lines -- 次に足す行の 0-origin 行番号
+  for i = from, to do
+    lines[#lines + 1] = text[i]
+  end
+  lines[#lines + 1] = "```"
+  return { lines = lines, code = { row = row, from = from, s = s, e = e } }
+end
+
+local preview_ns = api.nvim_create_namespace("review_preview")
+
+---選択中のエントリをコメント本文 (Markdown) として表示する Telescope の previewer。
+---build(value) は ReviewPreview を返す。
+---@param build fun(value: any): ReviewPreview
+local function markdown_previewer(build)
+  local previewers = require("telescope.previewers")
+  return previewers.new_buffer_previewer({
+    title = "コメント (<C-o> でコード表示に切替)",
+    define_preview = function(self, entry)
+      local p = build(entry.value)
+      local buf = self.state.bufnr
+      vim.bo[buf].modifiable = true
+      api.nvim_buf_set_lines(buf, 0, -1, false, p.lines)
+      vim.bo[buf].modifiable = false
+      api.nvim_buf_clear_namespace(buf, preview_ns, 0, -1)
+      if p.code then
+        local last = p.code.from + (#p.lines - 1 - p.code.row) - 1
+        local width = #tostring(last)
+        local lnum = p.code.from
+        for row = p.code.row, #p.lines - 2 do
+          local in_range = lnum >= p.code.s and lnum <= p.code.e
+          api.nvim_buf_set_extmark(buf, preview_ns, row, 0, {
+            virt_text = { { string.format("%" .. width .. "d ", lnum), in_range and "ReviewCommentSign" or "LineNr" } },
+            virt_text_pos = "inline",
+            line_hl_group = in_range and "CursorLine" or nil,
+          })
+          lnum = lnum + 1
+        end
+      end
+      vim.bo[buf].filetype = "markdown"
+      local win = self.state.winid
+      if win and api.nvim_win_is_valid(win) then
+        vim.wo[win].wrap = true
+        vim.wo[win].linebreak = true
+        vim.wo[win].number = false
+        vim.wo[win].relativenumber = false
+      end
+    end,
+  })
+end
+
+---initial_mode = "normal" が効かない経路 (which-key 経由など) への保険。
+---開いた直後にまだ挿入モードならノーマルモードに戻す。
+---@param prompt_bufnr integer
+local function ensure_normal_mode(prompt_bufnr)
+  vim.defer_fn(function()
+    if
+      api.nvim_buf_is_valid(prompt_bufnr)
+      and api.nvim_get_current_buf() == prompt_bufnr
+      and api.nvim_get_mode().mode:sub(1, 1) == "i"
+    then
+      vim.cmd.stopinsert()
+    end
+  end, 50)
+end
+
+---本文を上、一覧を下に置く縦レイアウト。一覧は 1 行ずつなので本文に場所を割く
+local function list_layout()
+  return {
+    layout_strategy = "vertical",
+    layout_config = {
+      vertical = { width = 0.9, height = 0.9, preview_height = 0.55, preview_cutoff = 0 },
+    },
+  }
+end
+
 ---一覧 (Telescope、無ければ quickfix)
 function M.list()
   local root = root_of(api.nvim_get_current_buf())
@@ -896,9 +1010,33 @@ function M.list()
     items = { { width = math.min(loc_width, 50) }, { remaining = true } },
   })
 
+  ---@param c ReviewComment
+  ---@return ReviewPreview
+  local function preview_of(c)
+    local head = location(c)
+    if c.posted then
+      head = head .. string.format("  [posted PR #%d]", c.posted.pr)
+    end
+    local lines = { "## " .. head, "" }
+    if c.created_at then
+      lines[#lines + 1] = string.format("_%s_", (c.created_at:gsub("T", " "):gsub("Z$", "")))
+      lines[#lines + 1] = ""
+    end
+    vim.list_extend(lines, vim.split(c.text, "\n", { plain = true }))
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = "---"
+    lines[#lines + 1] = ""
+    local s, e = c.line_start, c.line_end
+    local bufnr = vim.fn.bufnr(root .. "/" .. c.file)
+    if bufnr ~= -1 and api.nvim_buf_is_loaded(bufnr) then
+      s, e = current_range(bufnr, c)
+    end
+    return append_code(lines, root, c.file, s, e)
+  end
+
   pickers
-    .new({}, {
-      prompt_title = "Review comments (i で絞り込み)",
+    .new(list_layout(), {
+      prompt_title = "Review comments (<C-o> コード表示, <C-d> 削除, i で絞り込み)",
       initial_mode = "normal",
       finder = finders.new_table({
         results = st.comments,
@@ -918,8 +1056,9 @@ function M.list()
         end,
       }),
       sorter = conf.generic_sorter({}),
-      previewer = conf.grep_previewer({}),
+      previewer = { markdown_previewer(preview_of), conf.grep_previewer({}) },
       attach_mappings = function(prompt_bufnr, map)
+        ensure_normal_mode(prompt_bufnr)
         actions.select_default:replace(function()
           local entry = action_state.get_selected_entry()
           actions.close(prompt_bufnr)
@@ -928,6 +1067,7 @@ function M.list()
           end
         end)
         for _, mode in ipairs({ "i", "n" }) do
+          map(mode, "<C-o>", actions.cycle_previewers_next)
           map(mode, "<C-d>", function()
             local entry = action_state.get_selected_entry()
             if not entry then
@@ -1659,9 +1799,26 @@ function M.list_threads()
     items = { { width = math.min(loc_width, 45) }, { width = 12 }, { remaining = true } },
   })
 
+  ---@param t ReviewThread
+  ---@return ReviewPreview
+  local function preview_of(t)
+    local lines = thread_markdown(t)
+    local anchor = thread_anchor(t) or t.original_line
+    if not anchor then
+      return { lines = lines }
+    end
+    lines[#lines + 1] = "---"
+    lines[#lines + 1] = ""
+    local s = anchor
+    if t.start_line and t.line and t.start_line < t.line then
+      s = math.max(1, anchor - (t.line - t.start_line))
+    end
+    return append_code(lines, root, t.path, s, anchor)
+  end
+
   pickers
-    .new({}, {
-      prompt_title = string.format("PR #%d threads (<C-v> 全文, / で絞り込み)", data.pr),
+    .new(list_layout(), {
+      prompt_title = string.format("PR #%d threads (<C-o> コード表示, <C-v> 全文, i で絞り込み)", data.pr),
       -- j/k で選びたいのでノーマルモードで開く。絞り込みたいときは i で入力へ
       initial_mode = "normal",
       finder = finders.new_table({
@@ -1688,8 +1845,9 @@ function M.list_threads()
         end,
       }),
       sorter = conf.generic_sorter({}),
-      previewer = conf.grep_previewer({}),
+      previewer = { markdown_previewer(preview_of), conf.grep_previewer({}) },
       attach_mappings = function(prompt_bufnr, map)
+        ensure_normal_mode(prompt_bufnr)
         actions.select_default:replace(function()
           local entry = action_state.get_selected_entry()
           actions.close(prompt_bufnr)
@@ -1698,6 +1856,7 @@ function M.list_threads()
           end
         end)
         for _, mode in ipairs({ "i", "n" }) do
+          map(mode, "<C-o>", actions.cycle_previewers_next)
           map(mode, "<C-v>", function()
             local entry = action_state.get_selected_entry()
             if not entry then

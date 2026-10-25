@@ -47,8 +47,11 @@ diffview で使う                                              *review-diffview
 <leader>ad              カーソル位置のコメントを削除する。
 
                                                                   *<leader>al*
-<leader>al              コメント一覧を Telescope で開く。<CR> でジャンプ、
-                        <C-d> で削除。Telescope が無ければ quickfix。
+<leader>al              コメント一覧を Telescope で開く。ノーマルモードで
+                        開くので j / k で選び、上のプレビューに本文と対象
+                        コード (前後 3 行) が出る。<C-o> で通常のコード表示
+                        に切り替え、<CR> でジャンプ、<C-d> で削除、i で絞り
+                        込み。Telescope が無ければ quickfix。
 
                                                                   *<leader>ay*
 <leader>ay              プロジェクトの全コメントを Markdown にして
@@ -73,7 +76,8 @@ diffview で使う                                              *review-diffview
                         |review-threads| を参照。
 
                                                                   *<leader>aL*
-<leader>aL              PR スレッドの一覧を Telescope で開く。
+<leader>aL              PR スレッドの一覧を Telescope で開く。操作は
+                        <leader>al と同じで、<C-v> で全文を別フロートに出す。
 
                                                                   *<leader>av*
 <leader>av              カーソル行のスレッド全文をフロートで読む。
@@ -188,7 +192,8 @@ publish と違い Pending にはならず、すぐ相手に見える。
 一覧 ~
 <leader>aL の Telescope では `path:Lnn  [★ resolved outdated]  @author: 本文`
 の形で並ぶ。★ は自分が publish した指摘から始まるスレッド (publish 時に
-控えた comment id で判定)。<CR> でジャンプ、<C-v> で全文。
+控えた comment id で判定)。上のプレビューにスレッド全体と対象コードが
+Markdown で出る (<C-o> でコード表示に切替)。<CR> でジャンプ、<C-v> で全文。
 
 制約 ~
 - 表示位置はローカルが PR の head と一致している前提
