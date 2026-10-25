@@ -21,6 +21,8 @@ return {
     "rcarriga/nvim-notify",
     opts = {
       timeout = 10000,
+      -- 通知を右上ではなく右下に出す(上端だとコードが隠れて読みにくいため)
+      top_down = false,
     },
   },
   {
@@ -29,7 +31,7 @@ return {
     opts = {
       options = {
         -- globalstatus = false,
-        theme = "solarized_dark",
+        theme = "nightfly",
       },
     },
   },
@@ -66,7 +68,39 @@ return {
     event = "BufReadPre",
     priority = 1200,
     config = function()
-      require("incline").setup({})
+      local helpers = require("incline.helpers")
+      -- LazyVim は mini.icons を nvim-web-devicons として package.preload 済みなので、
+      -- nvim-tree/nvim-web-devicons を別途入れる必要はない
+      local devicons = require("nvim-web-devicons")
+
+      require("incline").setup({
+        window = {
+          padding = 0,
+          margin = { horizontal = 0 },
+        },
+        render = function(props)
+          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+          if filename == "" then
+            filename = "[No Name]"
+          end
+          local ft_icon, ft_color = devicons.get_icon_color(filename)
+          local modified = vim.bo[props.buf].modified
+
+          -- tokyonight は transparent なので、incline だけ不透明な帯にして浮かせる
+          local bg = "#292e42" -- tokyonight bg_highlight
+
+          return {
+            -- devicons はアイコンだけ返して色が nil のことがあるので、両方揃った時だけ色付きにする
+            (ft_icon and ft_color)
+                and { " ", ft_icon, " ", guibg = ft_color, guifg = helpers.contrast_color(ft_color) }
+              or "",
+            " ",
+            { filename, gui = modified and "bold,italic" or "bold" },
+            " ",
+            guibg = bg,
+          }
+        end,
+      })
     end,
   },
   {
