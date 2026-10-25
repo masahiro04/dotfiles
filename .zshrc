@@ -58,6 +58,9 @@ zstyle ':vcs_info:*' actionformats '[%b|%a]'
 # NeoVim
 alias vi='nvim'
 
+# herdr: カレントディレクトリで新しい workspace を作成
+alias hw='herdr workspace create --cwd "$PWD" --focus'
+
 # M1の場合はこちららしい
 export PATH="/opt/homebrew/bin:$PATH"
 
@@ -100,12 +103,12 @@ export PATH="/Users/masahirookubo/google-cloud-sdk/bin:$PATH"
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 # llvm
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+# export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
 # export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm/lib/:$DYLD_LIBRARY_PATH"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
 
