@@ -2,7 +2,6 @@ return {
   {
     enabled = false,
     "folke/flash.nvim",
-    ---@type Flash.Config
     opts = {
       search = {
         forward = true,
@@ -101,33 +100,63 @@ return {
         return nil
       end
 
-      -- :G diffparent 用の親ブランチ解決。
-      -- stacked PR では base が main ではなく親 PR のブランチになるので、
-      -- GitHub 上の PR の base(gh pr view の baseRefName)を親とみなす。
-      -- 引数でブランチ名が渡されたときはそれを優先する(PR 未作成のとき用)。
+      -- :G diffparent 用の親ブランチ解決(git だけで判定、PR は見ない)。
+      -- 「親」= HEAD との分岐点が最も新しいブランチ。
+      --   git for-each-ref の %(ahead-behind:HEAD) で各ブランチの
+      --   「HEAD に無いコミット数 / HEAD にしか無いコミット数」を1回で取り、
+      --   HEAD にしか無いコミット数(= 分岐してからの自分の積み上げ)が最小の
+      --   ブランチを親とみなす。stacked なら親ブランチ、そうでなければ main になる。
+      -- 候補はローカルブランチと origin/* 。自分自身・origin/自分・origin/HEAD は除外。
+      -- HEAD を含む(= 自分の上に積まれた子)ブランチも除外。
+      -- 引数でブランチ名が渡されたときはそれを優先する。
       -- 戻り値は origin/<branch> を優先し、無ければローカルの <branch>。
       local function resolve_parent_branch(explicit)
-        local name = explicit
-        if not name or name == "" then
-          if vim.fn.executable("gh") ~= 1 then
-            return nil, "gh コマンドが見つかりません(:G diffparent <branch> で親を指定してください)"
+        if explicit and explicit ~= "" then
+          for _, ref in ipairs({ "origin/" .. explicit, explicit }) do
+            vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", ref })
+            if vim.v.shell_error == 0 then
+              return ref
+            end
           end
-          local out = vim.fn.system({ "gh", "pr", "view", "--json", "baseRefName", "-q", ".baseRefName" })
-          if vim.v.shell_error ~= 0 then
-            return nil, "現在ブランチの PR が見つかりません(:G diffparent <branch> で親を指定してください)"
-          end
-          name = vim.trim(out)
-          if name == "" then
-            return nil, "PR の base ブランチを取得できませんでした"
+          return nil, "ブランチ " .. explicit .. " が手元にありません(git fetch してください)"
+        end
+
+        local current = vim.trim(vim.fn.system({ "git", "branch", "--show-current" }))
+        local out = vim.fn.system({
+          "git", "for-each-ref",
+          "--format=%(refname:short) %(ahead-behind:HEAD)",
+          "refs/heads", "refs/remotes/origin",
+        })
+        if vim.v.shell_error ~= 0 then
+          return nil, "親ブランチを判定できません(git 2.41+ が必要。:G diffparent <branch> で親を指定してください)"
+        end
+
+        local best
+        for line in out:gmatch("[^\n]+") do
+          local ref, ahead, behind = line:match("^(%S+) (%d+) (%d+)$")
+          if ref then
+            ahead, behind = tonumber(ahead), tonumber(behind)
+            local skip = ref == "origin/HEAD"
+              or (current ~= "" and (ref == current or ref == "origin/" .. current))
+              or (behind == 0 and ahead > 0) -- HEAD より先にある = 子ブランチ
+            if not skip then
+              -- 分岐してからの自分のコミット数が少ないほど近い親。
+              -- 同点なら HEAD の祖先になっているもの(ahead == 0)、次に origin/ を優先。
+              local better = not best
+                or behind < best.behind
+                or (behind == best.behind and ahead < best.ahead)
+                or (behind == best.behind and ahead == best.ahead
+                  and ref:sub(1, 7) == "origin/" and best.ref:sub(1, 7) ~= "origin/")
+              if better then
+                best = { ref = ref, ahead = ahead, behind = behind }
+              end
+            end
           end
         end
-        for _, ref in ipairs({ "origin/" .. name, name }) do
-          vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", ref })
-          if vim.v.shell_error == 0 then
-            return ref
-          end
+        if not best then
+          return nil, "親ブランチが見つかりません(:G diffparent <branch> で親を指定してください)"
         end
-        return nil, "ブランチ " .. name .. " が手元にありません(git fetch してください)"
+        return best.ref
       end
 
       -- base...HEAD の3点リーチ差分を開く(diffmain / diffparent 共通)。
@@ -160,8 +189,8 @@ return {
           end
           open_range_diff(base, cmd.bang)
         elseif sub == "diffparent" then
-          -- stacked PR 用。diffmain だと親 PR の変更まで含まれてしまうので、
-          -- 親 PR のブランチ(= GitHub 上の PR の base)との差分だけを開く。
+          -- stacked ブランチ用。diffmain だと親ブランチの変更まで含まれてしまうので、
+          -- 分岐元の親ブランチ(git の履歴から自動判定)との差分だけを開く。
           -- :G diffparent <branch> で親を明示することもできる。
           local parent, err = resolve_parent_branch(rest)
           if not parent then
@@ -187,12 +216,6 @@ return {
       })
     end,
   },
-  -- {
-  --   "smjonas/inc-rename.nvim",
-  --   config = function()
-  --     require("inc_rename").setup()
-  --   end,
-  -- },
   {
     "filipdutescu/renamer.nvim",
     config = function()
