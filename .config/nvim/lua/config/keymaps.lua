@@ -76,10 +76,10 @@ require("cheatsheet").setup()
 -- ファイルをブラウザで開く (<leader>ob / :BrowserPreview / neo-tree・file-browserの O)
 require("browser_preview").setup()
 
--- Copy current file path to clipboard
 -- レビューコメント (<leader>a* / ]a [a / :Review)。.review/ に外付け保存
 require("review").setup()
 
+-- Copy current file path to clipboard
 keymap.set("n", "<leader>y", function()
   local path = vim.fn.expand("%:.")
   vim.fn.setreg("+", path)

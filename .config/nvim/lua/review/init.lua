@@ -13,12 +13,22 @@
 --   <leader>aY  現在ファイルのコメントだけヤンク
 --   <leader>ao  .review/REVIEW.md を開く
 --   <leader>ap  未投稿のコメントを gh で PR のドラフト (Pending) レビューとして投稿
---   <leader>aP  投稿せずに送る内容だけ確認 (dry-run)
+--   <leader>aP  ドラフトにせず、その場でレビューコメントとして投稿 (確認あり)
+--   <leader>af  PR のレビュースレッド (相手の返信など) を取得して表示
+--   <leader>aL  スレッド一覧 (Telescope)
+--   <leader>av  カーソル行のスレッド全文をフロートで読む
+--   <leader>ar  カーソル行のスレッドに返信 (即時公開・確認あり)
+--   <leader>aR  カーソル行のスレッドを resolved / unresolved に切り替え
 --   <leader>at  表示のトグル
 --   <leader>ax  全コメントを削除 (確認あり)
 --   ]a / [a     次 / 前のコメントへ
 --   :Review {add|edit|delete|list|yank|yankfile|open|publish|toggle|clear}
---   :Review publish --dry-run  送る内容だけ確認 / :Review! publish  投稿済みも含めて再投稿
+--   :Review {fetch|threads|view|reply|resolve}
+--   :Review submit  即時投稿 / :Review publish --dry-run  送る内容だけ確認 / :Review! publish  投稿済みも含めて再投稿
+--
+-- diffview (:G diff / :G diffmain / :G diffparent) の右ペインでも使える。
+-- 右側は作業ツリーか HEAD なので実ファイルに読み替えて保存・表示する。
+-- 左側 (base / index) は行番号が合わないので付けられない。
 --
 -- 入力フロートでは ノーマルの <CR> / <C-s> / :w で確定、q でキャンセル。
 -- インサートの <CR> は普通の改行なので複数行のコメントが書ける。
@@ -31,6 +41,8 @@ M.config = {
   md_name = "REVIEW.md",
   sign = "▎",
   prefix = "┃ ", -- 仮想行の各行頭
+  thread_sign = "◆", -- PR スレッドのサイン
+  thread_max_lines = 4, -- 仮想行に出すスレッド本文の行数上限 (全文は <leader>av)
   editor = { width = 80, height = 10 },
 }
 
@@ -55,15 +67,95 @@ local stores = {} ---@type table<string, ReviewStore>  root -> store
 local marks = {} ---@type table<integer, table<integer, {first: integer, last: integer}>> bufnr -> id -> extmark
 local enabled = true
 
+-- PR のレビュースレッド (GitHub 側のデータ)
+---@class ReviewThreadComment
+---@field id integer REST の comment id
+---@field author string
+---@field body string
+---@field created_at string
+---@field url string
+
+---@class ReviewThread
+---@field id string GraphQL node id (resolve 用)
+---@field path string
+---@field line integer|nil 変更後ファイルでの現在の行 (outdated なら nil)
+---@field start_line integer|nil
+---@field original_line integer|nil
+---@field side string "RIGHT" | "LEFT"
+---@field resolved boolean
+---@field outdated boolean
+---@field comments ReviewThreadComment[]
+
+local tns = api.nvim_create_namespace("review_threads")
+local threads = {} ---@type table<string, { pr: integer, url: string, fetched_at: string, items: ReviewThread[] }> root -> data
+local tmarks = {} ---@type table<integer, table<string, integer>> bufnr -> thread id -> extmark
+local render_threads -- 後で定義 (M.render から呼ぶ)
+
 -- ---------------------------------------------------------------------------
 -- パス
 -- ---------------------------------------------------------------------------
+
+---@class ReviewDiffviewFile
+---@field root string リポジトリの toplevel
+---@field rel string 相対パス
+---@field kind "local"|"head"|"other" local = 作業ツリー、head = HEAD コミット、other = base や index 側
+
+local dv_cache = {} ---@type table<integer, ReviewDiffviewFile|false>
+
+---diffview の仮想バッファなら、対応するファイルと「右側かどうか」を返す
+---@param bufnr integer
+---@return ReviewDiffviewFile|nil
+local function diffview_file(bufnr)
+  local name = api.nvim_buf_get_name(bufnr)
+  if not name:match("^diffview://") then
+    return nil
+  end
+  local cached = dv_cache[bufnr]
+  if cached ~= nil then
+    return cached or nil
+  end
+  local ok, lib = pcall(require, "diffview.lib")
+  local ok2, revmod = pcall(require, "diffview.vcs.rev")
+  if not ok or not ok2 then
+    return nil
+  end
+  local found
+  for _, view in ipairs(lib.views or {}) do
+    local entry = view.cur_entry
+    if entry and entry.layout then
+      for _, file in ipairs(entry.layout:files()) do
+        if file.bufnr == bufnr and file.adapter and file.adapter.ctx and file.rev then
+          local kind = "other"
+          if file.rev.type == revmod.RevType.LOCAL then
+            kind = "local"
+          elseif file.rev.is_head and file.rev:is_head(file.adapter) then
+            kind = "head"
+          end
+          found = { root = file.adapter.ctx.toplevel, rel = file.path, kind = kind }
+          break
+        end
+      end
+    end
+    if found then
+      break
+    end
+  end
+  -- バッファがまだ view に登録されていない場合もあるので、見つからなかったときはキャッシュしない
+  if found then
+    dv_cache[bufnr] = found
+  end
+  return found
+end
 
 ---バッファが属するプロジェクトの root (git root、無ければ cwd)
 ---@param bufnr? integer
 ---@return string
 local function root_of(bufnr)
   bufnr = bufnr or 0
+  local dv = diffview_file(bufnr)
+  if dv then
+    return dv.root
+  end
   local name = api.nvim_buf_get_name(bufnr)
   local root
   if name ~= "" and not name:match("^%w+://") then
@@ -86,6 +178,41 @@ local function relpath(root, abs)
     return abs:sub(#prefix + 1)
   end
   return nil
+end
+
+---コマンドを root で同期実行する。失敗したら nil と stderr
+---@param cmd string[]
+---@param root string
+---@param stdin? string
+---@return string|nil out, string|nil err
+local function run(cmd, root, stdin)
+  if vim.fn.executable(cmd[1]) == 0 then
+    return nil, cmd[1] .. " コマンドが見つかりません"
+  end
+  local res = vim.system(cmd, { cwd = root, text = true, stdin = stdin }):wait()
+  if res.code ~= 0 then
+    return nil, vim.trim((res.stderr or "") .. (res.stdout or ""))
+  end
+  return res.stdout or "", nil
+end
+
+---バッファをコメント対象の (root, 相対パス) に解決する。diffview の右ペインは実ファイルに読み替える
+---@param bufnr integer
+---@return string|nil root, string|nil rel, string|nil err
+local function buf_target(bufnr)
+  local dv = diffview_file(bufnr)
+  if dv then
+    if dv.kind == "other" then
+      return nil, nil, "diffview の左側 (base / index) にはコメントできません。右側のペインで付けてください"
+    end
+    return dv.root, dv.rel
+  end
+  local root = root_of(bufnr)
+  local rel = relpath(root, api.nvim_buf_get_name(bufnr))
+  if not rel then
+    return nil, nil, "プロジェクト内のファイルを開いた状態で実行してください"
+  end
+  return root, rel
 end
 
 ---@param root string
@@ -248,14 +375,22 @@ local function set_highlights()
   -- GitHub に投稿済みのものは薄く
   api.nvim_set_hl(0, "ReviewCommentPostedSign", { link = "Comment", default = true })
   api.nvim_set_hl(0, "ReviewCommentPosted", { link = "Comment", default = true })
+  -- PR 側のスレッドはローカルのコメントと色を変える
+  local hint = api.nvim_get_hl(0, { name = "DiagnosticHint", link = false })
+  api.nvim_set_hl(0, "ReviewThreadSign", { link = "DiagnosticHint", default = true })
+  api.nvim_set_hl(0, "ReviewThreadText", { fg = hint.fg, default = true })
+  api.nvim_set_hl(0, "ReviewThreadAuthor", { fg = hint.fg, bold = true, default = true })
+  api.nvim_set_hl(0, "ReviewThreadResolved", { link = "Comment", default = true })
 end
 
 ---@param bufnr integer
 local function clear_buf(bufnr)
   if api.nvim_buf_is_valid(bufnr) then
     api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+    api.nvim_buf_clear_namespace(bufnr, tns, 0, -1)
   end
   marks[bufnr] = nil
+  tmarks[bufnr] = nil
 end
 
 ---1 件分の extmark を置く
@@ -300,8 +435,7 @@ function M.render(bufnr)
   if not enabled then
     return
   end
-  local root = root_of(bufnr)
-  local rel = relpath(root, api.nvim_buf_get_name(bufnr))
+  local root, rel = buf_target(bufnr)
   if not rel then
     return
   end
@@ -311,6 +445,7 @@ function M.render(bufnr)
       place(bufnr, c)
     end
   end
+  render_threads(bufnr, root, rel)
 end
 
 ---開いている全バッファを描き直す
@@ -368,8 +503,7 @@ end
 ---@param bufnr integer
 ---@return { c: ReviewComment, s: integer, e: integer }[]
 local function buf_comments(bufnr)
-  local root = root_of(bufnr)
-  local rel = relpath(root, api.nvim_buf_get_name(bufnr))
+  local root, rel = buf_target(bufnr)
   local out = {}
   if not rel then
     return out
@@ -527,11 +661,25 @@ end
 ---@param range? { [1]: integer, [2]: integer }
 function M.add(range)
   local bufnr = api.nvim_get_current_buf()
-  local root = root_of(bufnr)
-  local rel = relpath(root, api.nvim_buf_get_name(bufnr))
+  local root, rel, err = buf_target(bufnr)
   if not rel then
-    vim.notify("Review: プロジェクト内のファイルを開いた状態で実行してください", vim.log.levels.WARN)
+    vim.notify("Review: " .. err, vim.log.levels.WARN)
     return
+  end
+  -- diffview で HEAD を見ているとき、そのファイルに未コミットの変更があると行番号が作業ツリーとずれる
+  local dv = diffview_file(bufnr)
+  if dv and dv.kind == "head" then
+    local dirty = run({ "git", "status", "--porcelain", "--", rel }, root)
+    if dirty and vim.trim(dirty) ~= "" then
+      local answer = vim.fn.confirm(
+        "Review: " .. rel .. " に未コミットの変更があります。diffview (HEAD) の行番号は作業ツリーとずれる可能性がありますが続けますか？",
+        "&Yes\n&No",
+        2
+      )
+      if answer ~= 1 then
+        return
+      end
+    end
   end
 
   local s, e
@@ -561,7 +709,7 @@ function M.add(range)
       st.next_id = st.next_id + 1
       table.insert(st.comments, draft)
       save(root)
-      M.render(bufnr)
+      M.render_all()
       vim.notify("Review: コメントを追加しました " .. location(draft))
     end,
   })
@@ -578,7 +726,7 @@ function M.edit()
       on_submit = function(text)
         c.text = text
         save(root)
-        M.render(bufnr)
+        M.render_all()
         vim.notify("Review: コメントを更新しました " .. location(c))
       end,
     })
@@ -598,7 +746,7 @@ function M.delete()
       end
     end
     save(root)
-    M.render(bufnr)
+    M.render_all()
     vim.notify("Review: コメントを削除しました " .. location(c))
   end)
 end
@@ -610,7 +758,7 @@ function M.yank(scope)
   local root = root_of(bufnr)
   local comments = store(root).comments
   if scope == "file" then
-    local rel = relpath(root, api.nvim_buf_get_name(bufnr))
+    local _, rel = buf_target(bufnr)
     comments = vim.tbl_filter(function(c)
       return c.file == rel
     end, comments)
@@ -750,7 +898,8 @@ function M.list()
 
   pickers
     .new({}, {
-      prompt_title = "Review comments",
+      prompt_title = "Review comments (i で絞り込み)",
+      initial_mode = "normal",
       finder = finders.new_table({
         results = st.comments,
         entry_maker = function(c)
@@ -810,22 +959,6 @@ end
 -- GitHub PR へ投稿 (gh)
 -- ---------------------------------------------------------------------------
 
----コマンドを root で同期実行する。失敗したら nil と stderr
----@param cmd string[]
----@param root string
----@param stdin? string
----@return string|nil out, string|nil err
-local function run(cmd, root, stdin)
-  if vim.fn.executable(cmd[1]) == 0 then
-    return nil, cmd[1] .. " コマンドが見つかりません"
-  end
-  local res = vim.system(cmd, { cwd = root, text = true, stdin = stdin }):wait()
-  if res.code ~= 0 then
-    return nil, vim.trim((res.stderr or "") .. (res.stdout or ""))
-  end
-  return res.stdout or "", nil
-end
-
 ---unified diff から、ファイルごとに「変更後 (RIGHT) 側でコメントを付けられる行」の集合を作る。
 ---GitHub の review comment は diff のハンク内 (追加行かコンテキスト行) にしか付けられない。
 ---@param diff string
@@ -878,7 +1011,7 @@ end
 
 ---未投稿のコメントを、現在ブランチの PR にドラフト (Pending) レビューとしてまとめて投稿する。
 ---投稿後は GitHub 上で見直してから自分で Submit する。
----@param opts? { dry_run?: boolean, include_posted?: boolean }
+---@param opts? { dry_run?: boolean, include_posted?: boolean, event?: "COMMENT" }  event を付けると Pending にせず即時投稿
 function M.publish(opts)
   opts = opts or {}
   local root = root_of(api.nvim_get_current_buf())
@@ -959,11 +1092,21 @@ function M.publish(opts)
     return
   end
 
-  -- event を付けないと PENDING (ドラフト) になる
-  local payload = { commit_id = pr.headRefOid, comments = comments }
+  -- event を付けないと PENDING (ドラフト) になる。COMMENT ならその場で公開される
+  local payload = { commit_id = pr.headRefOid, comments = comments, event = opts.event }
   if opts.dry_run then
     show_payload({ pr = pr.number, url = pr.url, payload = payload, skipped = vim.tbl_map(location, skipped), warnings = warns })
     return
+  end
+  if opts.event then
+    local answer = vim.fn.confirm(
+      string.format("Review: %d 件のコメントを PR #%d にその場で投稿します (ドラフトにはなりません)。送信しますか？%s", #comments, pr.number, skipped_msg),
+      "&Yes\n&No",
+      2
+    )
+    if answer ~= 1 then
+      return
+    end
   end
 
   -- 未送信のレビューは 1 つしか持てないので先に確認
@@ -1003,20 +1146,571 @@ function M.publish(opts)
   for _, c in ipairs(posted) do
     c.posted = { pr = pr.number, review_id = review.id, url = review.html_url or pr.url, at = now }
   end
+  -- 投稿された個々の comment id を控えておくと、あとでスレッド一覧で「自分の指摘」が分かる
+  local rc = run({ "gh", "api", string.format("repos/{owner}/{repo}/pulls/%d/reviews/%d/comments", pr.number, review.id) }, root)
+  if rc then
+    local ok, list = pcall(vim.json.decode, rc, { luanil = { object = true, array = true } })
+    if ok and type(list) == "table" then
+      for _, remote in ipairs(list) do
+        for _, c in ipairs(posted) do
+          if c.file == remote.path and c.line_end == remote.line and c.text == (remote.body or ""):gsub("\r\n", "\n") then
+            c.posted.comment_id = remote.id
+          end
+        end
+      end
+    end
+  end
   save(root)
   M.render_all()
   local url = review.html_url or pr.url
   vim.fn.setreg("+", url)
-  vim.notify(
-    string.format(
+  local msg
+  if opts.event then
+    msg = string.format("Review: %d 件を PR #%d にレビューコメントとして投稿しました (URL をコピー済み)\n%s%s", #posted, pr.number, url, skipped_msg)
+  else
+    msg = string.format(
       "Review: %d 件を PR #%d のドラフトレビューに追加しました。GitHub で確認して Submit してください (URL をコピー済み)\n%s%s",
       #posted,
       pr.number,
       url,
       skipped_msg
-    ),
-    #skipped > 0 and vim.log.levels.WARN or vim.log.levels.INFO
-  )
+    )
+  end
+  vim.notify(msg, #skipped > 0 and vim.log.levels.WARN or vim.log.levels.INFO)
+end
+
+-- ---------------------------------------------------------------------------
+-- PR のレビュースレッド (相手の返信など) を表示・返信・解決する
+-- ---------------------------------------------------------------------------
+
+local repo_cache = {} ---@type table<string, { owner: string, name: string }>
+
+---owner / repo 名
+---@param root string
+---@return { owner: string, name: string }|nil, string|nil
+local function repo_info(root)
+  if repo_cache[root] then
+    return repo_cache[root]
+  end
+  local out, err = run({ "gh", "repo", "view", "--json", "nameWithOwner" }, root)
+  if not out then
+    return nil, err
+  end
+  local ok, data = pcall(vim.json.decode, out)
+  local owner, name
+  if ok and type(data) == "table" and type(data.nameWithOwner) == "string" then
+    -- `a and s:match()` と書くと match の 2 つ目の戻り値 (name) が捨てられるので分けて書く
+    owner, name = data.nameWithOwner:match("^([^/]+)/(.+)$")
+  end
+  if not owner or not name then
+    return nil, "リポジトリ名を取得できませんでした"
+  end
+  repo_cache[root] = { owner = owner, name = name }
+  return repo_cache[root]
+end
+
+local THREADS_QUERY = [[
+query($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      reviewThreads(first: 100) {
+        nodes {
+          id isResolved isOutdated path line startLine originalLine diffSide
+          comments(first: 100) {
+            nodes { databaseId author { login } body createdAt url }
+          }
+        }
+      }
+    }
+  }
+}
+]]
+
+---GraphQL の応答 (decode 済み) をスレッド配列にする
+---@param data table
+---@return ReviewThread[]
+function M._threads_from_graphql(data)
+  local pr = data and data.data and data.data.repository and data.data.repository.pullRequest
+  local nodes = pr and pr.reviewThreads and pr.reviewThreads.nodes or {}
+  local items = {}
+  for _, n in ipairs(nodes) do
+    local comments = {}
+    for _, c in ipairs(n.comments and n.comments.nodes or {}) do
+      comments[#comments + 1] = {
+        id = c.databaseId,
+        author = c.author and c.author.login or "ghost",
+        body = (c.body or ""):gsub("\r\n", "\n"), -- GitHub の本文は CRLF で返る
+        created_at = c.createdAt or "",
+        url = c.url or "",
+      }
+    end
+    if #comments > 0 then
+      items[#items + 1] = {
+        id = n.id,
+        path = n.path,
+        line = n.line,
+        start_line = n.startLine,
+        original_line = n.originalLine,
+        side = n.diffSide or "RIGHT",
+        resolved = n.isResolved == true,
+        outdated = n.isOutdated == true,
+        comments = comments,
+      }
+    end
+  end
+  return items
+end
+
+---ローカルファイル上でスレッドを置く行。LEFT 側 (削除行) は置けないので nil
+---@param t ReviewThread
+---@return integer|nil
+local function thread_anchor(t)
+  if t.side == "LEFT" then
+    return nil
+  end
+  return t.line or t.original_line
+end
+
+---@param t ReviewThread
+---@return string
+local function thread_location(t)
+  local anchor = thread_anchor(t) or t.original_line
+  if not anchor then
+    return t.path
+  end
+  if t.start_line and t.line and t.start_line ~= t.line then
+    return string.format("%s:L%d-L%d", t.path, t.start_line, t.line)
+  end
+  return string.format("%s:L%d", t.path, anchor)
+end
+
+---テスト・内部用: 取得結果を差し替えて描画し直す
+---@param root string
+---@param data { pr: integer, url: string, items: ReviewThread[] }
+function M._set_threads(root, data)
+  data.fetched_at = data.fetched_at or os.date("%Y-%m-%dT%H:%M:%S")
+  threads[root] = data
+  for _, bufnr in ipairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_is_loaded(bufnr) and api.nvim_buf_get_name(bufnr) ~= "" and root_of(bufnr) == root then
+      M.render(bufnr)
+    end
+  end
+end
+
+---スレッド 1 件分の仮想行
+---@param t ReviewThread
+---@return table
+local function thread_virt_lines(t)
+  local text_hl = t.resolved and "ReviewThreadResolved" or "ReviewThreadText"
+  local author_hl = t.resolved and "ReviewThreadResolved" or "ReviewThreadAuthor"
+  local virt = {}
+  local function add(text, hl)
+    virt[#virt + 1] = { { "  " .. M.config.prefix, "ReviewCommentBorder" }, { text, hl } }
+  end
+  for i, c in ipairs(t.comments) do
+    local flags = ""
+    if i == 1 then
+      flags = (t.resolved and " [resolved]" or "") .. (t.outdated and " [outdated]" or "")
+    end
+    add(string.format("%s@%s · %s%s", i == 1 and "💬 " or "↳ ", c.author, c.created_at:sub(1, 10), flags), author_hl)
+    local body = vim.split(c.body, "\n", { plain = true })
+    for j = 1, math.min(#body, M.config.thread_max_lines) do
+      add("   " .. body[j], text_hl)
+    end
+    if #body > M.config.thread_max_lines then
+      add("   … (<leader>av で全文)", "ReviewThreadResolved")
+    end
+  end
+  return virt
+end
+
+---バッファに PR スレッドを描く (M.render から呼ばれる。namespace は clear_buf で消えている前提)
+---@param bufnr integer
+---@param root string
+---@param rel string
+render_threads = function(bufnr, root, rel)
+  local data = threads[root]
+  if not data then
+    return
+  end
+  tmarks[bufnr] = {}
+  local last_line = api.nvim_buf_line_count(bufnr)
+  for _, t in ipairs(data.items) do
+    if t.path == rel then
+      local anchor = thread_anchor(t)
+      if anchor then
+        anchor = math.max(1, math.min(anchor, last_line))
+        local id = api.nvim_buf_set_extmark(bufnr, tns, anchor - 1, 0, {
+          sign_text = M.config.thread_sign,
+          sign_hl_group = t.resolved and "ReviewThreadResolved" or "ReviewThreadSign",
+          priority = 19,
+          virt_lines = thread_virt_lines(t),
+        })
+        tmarks[bufnr][t.id] = id
+      end
+    end
+  end
+end
+
+---カーソル行を含むスレッド
+---@param bufnr integer
+---@return ReviewThread[]
+local function threads_at_cursor(bufnr)
+  local tm = tmarks[bufnr]
+  local data = threads[root_of(bufnr)]
+  if not tm or not data then
+    return {}
+  end
+  local line = api.nvim_win_get_cursor(0)[1]
+  local out = {}
+  for _, t in ipairs(data.items) do
+    local id = tm[t.id]
+    if id then
+      local pos = api.nvim_buf_get_extmark_by_id(bufnr, tns, id, {})
+      if pos[1] then
+        local e = pos[1] + 1
+        local s = e - ((t.line and t.start_line) and (t.line - t.start_line) or 0)
+        if s <= line and line <= e then
+          out[#out + 1] = t
+        end
+      end
+    end
+  end
+  return out
+end
+
+---@param cands ReviewThread[]
+---@param prompt string
+---@param cb fun(t: ReviewThread)
+local function pick_thread(cands, prompt, cb)
+  if #cands == 0 then
+    vim.notify("Review: カーソル位置に PR スレッドはありません (<leader>af で取得)", vim.log.levels.WARN)
+    return
+  end
+  if #cands == 1 then
+    cb(cands[1])
+    return
+  end
+  vim.ui.select(cands, {
+    prompt = prompt,
+    format_item = function(t)
+      return string.format("@%s: %s", t.comments[1].author, first_line(t.comments[1].body))
+    end,
+  }, function(t)
+    if t then
+      cb(t)
+    end
+  end)
+end
+
+---現在ブランチの PR のレビュースレッドを取得して表示する
+---@param opts? { silent?: boolean }
+---@return boolean ok
+function M.fetch_threads(opts)
+  opts = opts or {}
+  local root = root_of(api.nvim_get_current_buf())
+  if not opts.silent then
+    vim.notify("Review: PR のスレッドを取得しています…")
+    vim.cmd.redraw()
+  end
+  local out, err = run({ "gh", "pr", "view", "--json", "number,url" }, root)
+  if not out then
+    vim.notify("Review: 現在ブランチの PR が見つかりません\n" .. (err or ""), vim.log.levels.ERROR)
+    return false
+  end
+  local pr = vim.json.decode(out)
+  local repo, rerr = repo_info(root)
+  if not repo then
+    vim.notify("Review: " .. rerr, vim.log.levels.ERROR)
+    return false
+  end
+  local res, gerr = run({
+    "gh",
+    "api",
+    "graphql",
+    "-f",
+    "query=" .. THREADS_QUERY,
+    "-F",
+    "owner=" .. repo.owner,
+    "-F",
+    "repo=" .. repo.name,
+    "-F",
+    "number=" .. pr.number,
+  }, root)
+  if not res then
+    vim.notify("Review: スレッドを取得できませんでした\n" .. (gerr or ""), vim.log.levels.ERROR)
+    return false
+  end
+  local ok, data = pcall(vim.json.decode, res, { luanil = { object = true, array = true } })
+  if not ok then
+    vim.notify("Review: GraphQL の応答を読めませんでした", vim.log.levels.ERROR)
+    return false
+  end
+  local items = M._threads_from_graphql(data)
+  M._set_threads(root, { pr = pr.number, url = pr.url, items = items })
+  if not opts.silent then
+    local open = 0
+    for _, t in ipairs(items) do
+      if not t.resolved then
+        open = open + 1
+      end
+    end
+    vim.notify(string.format("Review: PR #%d のスレッド %d 件 (未解決 %d 件) を取得しました", pr.number, #items, open))
+  end
+  return true
+end
+
+---読み取り専用のフロート
+---@param lines string[]
+---@param title string
+local function open_reader(lines, title)
+  local buf = api.nvim_create_buf(false, true)
+  api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.bo[buf].filetype = "markdown"
+  vim.bo[buf].modifiable = false
+  vim.bo[buf].bufhidden = "wipe"
+  local width = math.max(40, math.min(100, math.floor(vim.o.columns * 0.8)))
+  local height = math.max(5, math.min(#lines + 1, math.floor(vim.o.lines * 0.8)))
+  local win = api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.max(0, math.floor((vim.o.lines - height) / 2) - 1),
+    col = math.floor((vim.o.columns - width) / 2),
+    style = "minimal",
+    border = "rounded",
+    title = " " .. title .. " ",
+    title_pos = "left",
+    footer = " q 閉じる ",
+    footer_pos = "right",
+  })
+  vim.wo[win].wrap = true
+  vim.wo[win].linebreak = true
+  vim.keymap.set("n", "q", function()
+    if api.nvim_win_is_valid(win) then
+      api.nvim_win_close(win, true)
+    end
+  end, { buffer = buf, nowait = true, silent = true })
+end
+
+---スレッドを Markdown 行にする
+---@param t ReviewThread
+---@return string[]
+local function thread_markdown(t)
+  local lines = {
+    string.format("## %s%s%s", thread_location(t), t.resolved and "  [resolved]" or "", t.outdated and "  [outdated]" or ""),
+    "",
+  }
+  for _, c in ipairs(t.comments) do
+    lines[#lines + 1] = string.format("### @%s  %s", c.author, c.created_at:gsub("T", " "):gsub("Z$", ""))
+    lines[#lines + 1] = ""
+    vim.list_extend(lines, vim.split(c.body, "\n", { plain = true }))
+    lines[#lines + 1] = ""
+  end
+  return lines
+end
+
+---カーソル行のスレッド全文をフロートで読む
+function M.view_thread()
+  local bufnr = api.nvim_get_current_buf()
+  pick_thread(threads_at_cursor(bufnr), "表示するスレッド", function(t)
+    open_reader(thread_markdown(t), "thread: " .. thread_location(t))
+  end)
+end
+
+---カーソル行のスレッドに返信する (即時公開)
+function M.reply()
+  local bufnr = api.nvim_get_current_buf()
+  local root = root_of(bufnr)
+  local data = threads[root]
+  if not data then
+    vim.notify("Review: 先に <leader>af で PR のスレッドを取得してください", vim.log.levels.WARN)
+    return
+  end
+  pick_thread(threads_at_cursor(bufnr), "返信するスレッド", function(t)
+    local first = t.comments[1]
+    open_editor({
+      title = string.format("reply: @%s %s", first.author, thread_location(t)),
+      text = "",
+      on_submit = function(text)
+        local answer = vim.fn.confirm(
+          string.format("Review: PR #%d のスレッド (@%s) に返信します。すぐに公開されますが送信しますか？", data.pr, first.author),
+          "&Yes\n&No",
+          2
+        )
+        if answer ~= 1 then
+          return
+        end
+        local repo, rerr = repo_info(root)
+        if not repo then
+          vim.notify("Review: " .. rerr, vim.log.levels.ERROR)
+          return
+        end
+        local _, err = run({
+          "gh",
+          "api",
+          "-X",
+          "POST",
+          string.format("repos/%s/%s/pulls/%d/comments/%d/replies", repo.owner, repo.name, data.pr, first.id),
+          "--input",
+          "-",
+        }, root, vim.json.encode({ body = text }))
+        if err then
+          vim.notify("Review: 返信に失敗しました\n" .. err, vim.log.levels.ERROR)
+          return
+        end
+        vim.notify("Review: 返信しました " .. thread_location(t))
+        M.fetch_threads({ silent = true })
+      end,
+    })
+  end)
+end
+
+---カーソル行のスレッドを resolved / unresolved に切り替える
+function M.resolve()
+  local bufnr = api.nvim_get_current_buf()
+  local root = root_of(bufnr)
+  pick_thread(threads_at_cursor(bufnr), "切り替えるスレッド", function(t)
+    local mutation = t.resolved and "unresolveReviewThread" or "resolveReviewThread"
+    local query = string.format("mutation($id: ID!) { %s(input: { threadId: $id }) { thread { isResolved } } }", mutation)
+    local _, err = run({ "gh", "api", "graphql", "-f", "query=" .. query, "-F", "id=" .. t.id }, root)
+    if err then
+      vim.notify("Review: 切り替えに失敗しました\n" .. err, vim.log.levels.ERROR)
+      return
+    end
+    vim.notify(string.format("Review: %s を %s にしました", thread_location(t), t.resolved and "unresolved" or "resolved"))
+    M.fetch_threads({ silent = true })
+  end)
+end
+
+---PR スレッドの一覧 (Telescope、無ければ quickfix)。未取得なら取得してから開く
+function M.list_threads()
+  local root = root_of(api.nvim_get_current_buf())
+  if not threads[root] and not M.fetch_threads() then
+    return
+  end
+  local data = threads[root]
+  if #data.items == 0 then
+    vim.notify("Review: PR にスレッドはありません")
+    return
+  end
+
+  -- 自分が publish した指摘から始まるスレッドには印を付ける
+  local mine = {}
+  for _, c in ipairs(store(root).comments) do
+    if c.posted and c.posted.comment_id then
+      mine[c.posted.comment_id] = true
+    end
+  end
+  local function status(t)
+    local parts = {}
+    if mine[t.comments[1].id] then
+      parts[#parts + 1] = "★"
+    end
+    if t.resolved then
+      parts[#parts + 1] = "resolved"
+    end
+    if t.outdated then
+      parts[#parts + 1] = "outdated"
+    end
+    return table.concat(parts, " ")
+  end
+  local function summary(t)
+    local first = t.comments[1]
+    local extra = #t.comments > 1 and string.format(" (+%d)", #t.comments - 1) or ""
+    return string.format("@%s: %s%s", first.author, first_line(first.body), extra)
+  end
+  local function jump_to(t)
+    vim.cmd.edit(vim.fn.fnameescape(root .. "/" .. t.path))
+    local anchor = thread_anchor(t) or t.original_line
+    if anchor then
+      api.nvim_win_set_cursor(0, { math.min(anchor, api.nvim_buf_line_count(0)), 0 })
+    end
+  end
+
+  local ok, pickers = pcall(require, "telescope.pickers")
+  if not ok then
+    vim.fn.setqflist({}, " ", {
+      title = string.format("PR #%d threads", data.pr),
+      items = vim.tbl_map(function(t)
+        return {
+          filename = root .. "/" .. t.path,
+          lnum = thread_anchor(t) or t.original_line or 1,
+          text = (status(t) ~= "" and ("[" .. status(t) .. "] ") or "") .. summary(t),
+        }
+      end, data.items),
+    })
+    vim.cmd("copen")
+    return
+  end
+
+  local finders = require("telescope.finders")
+  local conf = require("telescope.config").values
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  local entry_display = require("telescope.pickers.entry_display")
+
+  local loc_width = 0
+  for _, t in ipairs(data.items) do
+    loc_width = math.max(loc_width, vim.fn.strdisplaywidth(thread_location(t)))
+  end
+  local displayer = entry_display.create({
+    separator = "  ",
+    items = { { width = math.min(loc_width, 45) }, { width = 12 }, { remaining = true } },
+  })
+
+  pickers
+    .new({}, {
+      prompt_title = string.format("PR #%d threads (<C-v> 全文, / で絞り込み)", data.pr),
+      -- j/k で選びたいのでノーマルモードで開く。絞り込みたいときは i で入力へ
+      initial_mode = "normal",
+      finder = finders.new_table({
+        results = data.items,
+        entry_maker = function(t)
+          local bodies = {}
+          for _, c in ipairs(t.comments) do
+            bodies[#bodies + 1] = c.author .. " " .. c.body
+          end
+          return {
+            value = t,
+            ordinal = thread_location(t) .. " " .. status(t) .. " " .. table.concat(bodies, " "),
+            display = function(entry)
+              local v = entry.value
+              return displayer({
+                { thread_location(v), v.resolved and "Comment" or "TelescopeResultsIdentifier" },
+                { status(v), "TelescopeResultsComment" },
+                { summary(v), v.resolved and "Comment" or "" },
+              })
+            end,
+            filename = root .. "/" .. t.path,
+            lnum = thread_anchor(t) or t.original_line or 1,
+          }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      previewer = conf.grep_previewer({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          local entry = action_state.get_selected_entry()
+          actions.close(prompt_bufnr)
+          if entry then
+            jump_to(entry.value)
+          end
+        end)
+        for _, mode in ipairs({ "i", "n" }) do
+          map(mode, "<C-v>", function()
+            local entry = action_state.get_selected_entry()
+            if not entry then
+              return
+            end
+            actions.close(prompt_bufnr)
+            open_reader(thread_markdown(entry.value), "thread: " .. thread_location(entry.value))
+          end)
+        end
+        return true
+      end,
+    })
+    :find()
 end
 
 local subcommands = {
@@ -1036,8 +1730,18 @@ local subcommands = {
   publish = function(cmd)
     M.publish({ dry_run = cmd.fargs[2] == "--dry-run", include_posted = cmd.bang })
   end,
+  submit = function(cmd)
+    M.publish({ event = "COMMENT", include_posted = cmd.bang })
+  end,
   toggle = M.toggle,
   clear = M.clear,
+  fetch = function()
+    M.fetch_threads()
+  end,
+  threads = M.list_threads,
+  view = M.view_thread,
+  reply = M.reply,
+  resolve = M.resolve,
 }
 
 ---@param opts? { dir?: string, sign?: string, prefix?: string, editor?: { width?: integer, height?: integer } }
@@ -1073,6 +1777,18 @@ function M.setup(opts)
     group = augroup,
     callback = function(ev)
       marks[ev.buf] = nil
+      tmarks[ev.buf] = nil
+      dv_cache[ev.buf] = nil
+    end,
+  })
+  -- diffview の差分バッファは中身が後から入るので、読み込み完了のイベントで描き直す
+  api.nvim_create_autocmd("User", {
+    group = augroup,
+    pattern = "DiffviewDiffBufRead",
+    callback = function()
+      local bufnr = api.nvim_get_current_buf()
+      dv_cache[bufnr] = nil
+      M.render(bufnr)
     end,
   })
 
@@ -1117,8 +1833,15 @@ function M.setup(opts)
     M.publish()
   end, { desc = "Review: PR にドラフトレビューとして投稿 (gh)" })
   map("n", "<leader>aP", function()
-    M.publish({ dry_run = true })
-  end, { desc = "Review: 投稿内容を確認 (dry-run)" })
+    M.publish({ event = "COMMENT" })
+  end, { desc = "Review: PR にその場で投稿 (ドラフトなし)" })
+  map("n", "<leader>af", function()
+    M.fetch_threads()
+  end, { desc = "Review: PR のスレッドを取得して表示" })
+  map("n", "<leader>aL", M.list_threads, { desc = "Review: PR スレッド一覧" })
+  map("n", "<leader>av", M.view_thread, { desc = "Review: スレッド全文を読む" })
+  map("n", "<leader>ar", M.reply, { desc = "Review: スレッドに返信" })
+  map("n", "<leader>aR", M.resolve, { desc = "Review: スレッドを resolve/unresolve" })
   map("n", "<leader>at", M.toggle, { desc = "Review: 表示トグル" })
   map("n", "<leader>ax", M.clear, { desc = "Review: 全コメントを削除" })
   map("n", "]a", M.next, { desc = "Review: 次のコメント" })

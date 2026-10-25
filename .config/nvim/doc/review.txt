@@ -20,6 +20,19 @@
 時点でデータ側の行番号が更新される。
 
 ==============================================================================
+diffview で使う                                              *review-diffview*
+
+`:G diff` / `:G diffmain` / `:G diffparent` で開いた diffview の右ペインでも
+<leader>aa や ]a、<leader>aY がそのまま使える。右ペインは作業ツリー
+(`:G diff`) か HEAD (`:G diffmain` など) なので、実ファイルのパスと行番号に
+読み替えて `.review/` に保存し、実ファイルを開いたときにも同じ場所に出る。
+取得済みの PR スレッド (|review-threads|) も右ペインに出る。
+
+左ペイン (base や index 側) は行番号が作業ツリーと合わないため付けられず、
+右側で付けるように案内が出る。右ペインが HEAD のときに、そのファイルに
+未コミットの変更があると行番号がずれる可能性があるので確認ダイアログが出る。
+
+==============================================================================
 キーマップ                                                   *review-mappings*
 
                                                                   *<leader>aa*
@@ -52,10 +65,27 @@
                         |review-publish| を参照。
 
                                                                   *<leader>aP*
-<leader>aP              投稿せずに送る内容を確認する (`:Review publish --dry-run`)。
+<leader>aP              ドラフトにせず、その場でレビューコメントとして
+                        投稿する (`:Review submit`)。確認ダイアログあり。
+
+                                                                  *<leader>af*
+<leader>af              PR のレビュースレッドを取得して表示する。
+                        |review-threads| を参照。
+
+                                                                  *<leader>aL*
+<leader>aL              PR スレッドの一覧を Telescope で開く。
+
+                                                                  *<leader>av*
+<leader>av              カーソル行のスレッド全文をフロートで読む。
+
+                                                                  *<leader>ar*
+<leader>ar              カーソル行のスレッドに返信する (即時公開)。
+
+                                                                  *<leader>aR*
+<leader>aR              カーソル行のスレッドを resolved / unresolved にする。
 
                                                                   *<leader>at*
-<leader>at              コメント表示の ON/OFF。
+<leader>at              コメント表示の ON/OFF (ローカルコメントと PR スレッドの両方)。
 
                                                                   *<leader>ax*
 <leader>ax              プロジェクトのコメントを全削除する (確認あり)。
@@ -92,8 +122,14 @@
                         publish   PR にドラフトレビューとして投稿
                                   (`--dry-run` で内容確認のみ、
                                   `:Review! publish` で投稿済みも含める)
+                        submit    ドラフトにせず即時投稿 (event=COMMENT)
                         toggle    表示トグル
                         clear     全削除 (確認あり)
+                        fetch     PR スレッドを取得
+                        threads   PR スレッド一覧
+                        view      カーソル行のスレッド全文
+                        reply     カーソル行のスレッドに返信
+                        resolve   カーソル行のスレッドを resolve/unresolve
 
 ==============================================================================
 GitHub PR への投稿                                            *review-publish*
@@ -116,11 +152,48 @@ Submit する。Submit 時に Comment / Approve / Request changes を選べる�
 薄くなって `[PR #12 投稿済み]` が付く。次回の publish からは外れるが、
 ヤンクや REVIEW.md には引き続き含まれる。
 
-<leader>aP / `:Review publish --dry-run` は投稿せずに送る内容を
+<leader>aP / `:Review submit` はドラフトを経由せず、その場で
+レビューコメント (event=COMMENT) として投稿する。相手にすぐ見えるので、
+送信前に件数と除外分を確認するダイアログが出る。
+
+`:Review publish --dry-run` は投稿せずに送る内容を
 スクラッチバッファに出す。diff 外で除外されるコメントは `skipped` に並ぶ。
 `:Review! publish` は投稿済みのコメントも含めてもう一度送る。
 
 必要なもの: `gh` (ログイン済み) と、PR の head が push 済みであること。
+
+==============================================================================
+PR のレビュースレッド                                          *review-threads*
+
+publish した指摘への返信など、GitHub 側のレビューコメントをエディタに
+出す機能。<leader>af で現在ブランチの PR のスレッドを GraphQL
+(`reviewThreads`) で取得し、該当行の下に仮想行で表示する。
+ローカルのコメント (DiagnosticInfo 色) とは別の色 (DiagnosticHint 色) で、
+`💬 @author · 日付` に続けて本文、返信は `↳ @author` で並ぶ。
+本文は |review-config| の `thread_max_lines` 行で切り、全文は <leader>av。
+
+表示は手動更新。GitHub 側が変わっても <leader>af を押すまで変わらない。
+
+状態 ~
+  [resolved]   解決済み。薄く表示される。<leader>aR で戻せる
+  [outdated]   その後の push で行がずれた。元の行 (originalLine) に出す
+  LEFT 側      削除行に付いたスレッドはローカルファイルに置けないので
+               一覧 (<leader>aL) にだけ出る
+
+返信 ~
+<leader>ar で入力フロートが開く (操作は |review-editor| と同じ)。確定すると
+確認ダイアログの後に `POST /pulls/{n}/comments/{id}/replies` で送る。
+publish と違い Pending にはならず、すぐ相手に見える。
+
+一覧 ~
+<leader>aL の Telescope では `path:Lnn  [★ resolved outdated]  @author: 本文`
+の形で並ぶ。★ は自分が publish した指摘から始まるスレッド (publish 時に
+控えた comment id で判定)。<CR> でジャンプ、<C-v> で全文。
+
+制約 ~
+- 表示位置はローカルが PR の head と一致している前提
+- スレッド・コメントとも先頭 100 件まで (ページングは未対応)
+- 自分の Pending レビューは Submit するまで相手に見えないので返信も付かない
 
 ==============================================================================
 出力形式                                                       *review-format*
@@ -146,6 +219,23 @@ ReviewCommentText       仮想行の本文 (既定: DiagnosticInfo の色 + ital
 ReviewCommentBorder     仮想行の `┃` (既定: Comment にリンク)
 ReviewCommentPostedSign 投稿済みコメントのサイン (既定: Comment にリンク)
 ReviewCommentPosted     投稿済みコメントの本文 (既定: Comment にリンク)
+ReviewThreadSign        PR スレッドのサイン `◆` (既定: DiagnosticHint にリンク)
+ReviewThreadText        PR スレッドの本文 (既定: DiagnosticHint の色)
+ReviewThreadAuthor      PR スレッドの `@author` 行 (既定: DiagnosticHint の色 + bold)
+ReviewThreadResolved    resolved なスレッド (既定: Comment にリンク)
+
+==============================================================================
+設定                                                           *review-config*
+
+`require("review").setup({ ... })` で上書きできる既定値:
+>
+    dir = ".review"           保存ディレクトリ (git root 相対)
+    sign = "▎"                ローカルコメントのサイン
+    thread_sign = "◆"         PR スレッドのサイン
+    prefix = "┃ "             仮想行の行頭
+    thread_max_lines = 4      仮想行に出すスレッド本文の行数
+    editor = { width = 80, height = 10 }   入力フロートの大きさ
+<
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:
