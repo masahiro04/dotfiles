@@ -4,10 +4,6 @@
 ### 使い方
 ```
 git pull
-cd dotfiles
-# deinをinstall
-# https://github.com/Shougo/dein.vim
-# deinをinstallしていなくて正常に機能しなかったこともあるので、これ重要
 source install.sh
 ```
 
