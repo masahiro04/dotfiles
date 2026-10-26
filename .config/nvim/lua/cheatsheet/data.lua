@@ -57,6 +57,7 @@ return {
       { keys = "<leader>ao", desc = "レビュー: .review/REVIEW.md を開く", help = "review", tags = "review レビュー コメント open 出力 markdown" },
       { keys = "<leader>ap", desc = "レビュー: 未投稿コメントを gh で PR のドラフトレビューに投稿(:Review publish --dry-run で確認)", help = "review-publish", tags = "review レビュー コメント github pr gh publish 投稿 draft pending" },
       { keys = "<leader>aP", desc = "レビュー: 未投稿コメントをドラフトにせず PR にその場で投稿(確認あり。:Review submit)", help = "review-publish", tags = "review レビュー コメント github pr gh publish submit 即時 投稿" },
+      { keys = "<leader>aA", desc = "レビュー: 現在ブランチの PR を Approve(メッセージ任意・確認あり。未送信ドラフトがあれば一緒に送信。:Review approve)", help = "review-approve", tags = "review レビュー github pr gh approve 承認 lgtm" },
       { keys = ":Review publish --dry-run", desc = "レビュー: 投稿せずに送る内容だけ確認(diff 外でスキップされる分も見える)", help = "review-publish", tags = "review レビュー コメント github pr gh publish dry-run 確認" },
       { keys = "<leader>af", desc = "レビュー: PR のレビュースレッド(相手の返信)を取得してエディタに表示", help = "review-threads", tags = "review レビュー github pr thread スレッド 返信 fetch 取得" },
       { keys = "<leader>aL", desc = "レビュー: サイドパネルを開閉。ローカルコメント + PR スレッドを一覧し、その場で返信(r)・resolve(x)・編集(e)・削除(d)・展開(<Tab>)。? でキー一覧", help = "review-panel", tags = "review レビュー github pr thread スレッド 一覧 list panel パネル sidebar" },

@@ -71,6 +71,11 @@ diffview で使う                                              *review-diffview
 <leader>aP              ドラフトにせず、その場でレビューコメントとして
                         投稿する (`:Review submit`)。確認ダイアログあり。
 
+                                                                  *<leader>aA*
+<leader>aA              現在ブランチの PR を Approve する (`:Review approve`)。
+                        メッセージは入力フロートで聞く (空でも可)。
+                        確認ダイアログあり。|review-approve| を参照。
+
                                                                   *<leader>af*
 <leader>af              PR のレビュースレッドを取得して表示する。
                         |review-threads| を参照。
@@ -127,6 +132,7 @@ diffview で使う                                              *review-diffview
                                   (`--dry-run` で内容確認のみ、
                                   `:Review! publish` で投稿済みも含める)
                         submit    ドラフトにせず即時投稿 (event=COMMENT)
+                        approve   PR を Approve (|review-approve|)
                         toggle    表示トグル
                         clear     全削除 (確認あり)
                         fetch     PR スレッドを取得
@@ -165,6 +171,22 @@ Submit する。Submit 時に Comment / Approve / Request changes を選べる�
 `:Review! publish` は投稿済みのコメントも含めてもう一度送る。
 
 必要なもの: `gh` (ログイン済み) と、PR の head が push 済みであること。
+
+Approve ~
+                                                              *review-approve*
+<leader>aA / `:Review approve` は現在ブランチの PR を Approve する。
+
+1. `gh pr view` で PR を探す。ドラフト PR は Approve できないので中断する
+2. 入力フロートで Approve のメッセージを聞く。空のまま <CR> で本文なし
+3. 確認ダイアログを出す。未投稿のローカルコメントがあればその件数を、
+   <leader>ap で作った未送信のドラフトレビューがあればそれも一緒に公開
+   されることを表示する
+4. 未送信のドラフトがあれば、新しいレビューは作らずそのドラフトを
+   APPROVE として送信する (`POST /pulls/{n}/reviews/{id}/events`)。
+   無ければ `gh pr review --approve` で送信する
+5. PR の URL を + レジスタにコピーする
+
+自分の PR は GitHub 側で Approve できないのでエラーになる。
 
 ==============================================================================
 PR のレビュースレッド                                          *review-threads*

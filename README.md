@@ -60,7 +60,7 @@ Also: Copilot, mini-hipatterns.
 ### Custom modules (`lua/`)
 
 - **`cheatsheet/`**: a searchable cheatsheet of every keymap and command in this config. Open it with `;?` (fuzzy search) or `;k` (floating list). `<C-h>` on an entry jumps to the related `:help`. The data lives in `lua/cheatsheet/data.lua`; add a line there whenever you add a keymap.
-- **`review/`**: code review comments stored outside the source tree in `.review/` at the git root. Add comments with `<leader>aa`, list them with `<leader>al`, yank them as Markdown with `<leader>ay`, and publish them to the current PR as a draft review with `<leader>ap` (uses `gh`). Also fetches and replies to existing PR threads. See `:help review`.
+- **`review/`**: code review comments stored outside the source tree in `.review/` at the git root. Add comments with `<leader>aa`, list them with `<leader>al`, yank them as Markdown with `<leader>ay`, publish them to the current PR as a draft review with `<leader>ap`, and approve the PR with `<leader>aA` (both use `gh`). Also fetches and replies to existing PR threads. See `:help review`.
 - **`browser_preview/`**: open the current file (for example a PNG) in a browser with `<leader>ob` or `:BrowserPreview [path]`. See `:help browser-preview`.
 
 ### Frequently used keymaps

@@ -14,6 +14,7 @@
 --   <leader>ao  .review/REVIEW.md を開く
 --   <leader>ap  未投稿のコメントを gh で PR のドラフト (Pending) レビューとして投稿
 --   <leader>aP  ドラフトにせず、その場でレビューコメントとして投稿 (確認あり)
+--   <leader>aA  PR を Approve する (未送信のドラフトがあれば一緒に送信。確認あり)
 --   <leader>af  PR のレビュースレッド (相手の返信など) を取得して表示
 --   <leader>aL  レビューパネル: ローカルコメント + PR スレッドを一覧し、その場で返信/resolve/編集 (review/panel.lua)
 --   <leader>av  カーソル行のスレッド全文をフロートで読む
@@ -25,6 +26,7 @@
 --   :Review {add|edit|delete|list|yank|yankfile|open|publish|toggle|clear|panel|threads|...}
 --   :Review {fetch|threads|view|reply|resolve}
 --   :Review submit  即時投稿 / :Review publish --dry-run  送る内容だけ確認 / :Review! publish  投稿済みも含めて再投稿
+--   :Review approve  PR を Approve
 --
 -- diffview (:G diff / :G diffmain / :G diffparent) の右ペインでも使える。
 -- 右側は作業ツリーか HEAD なので実ファイルに読み替えて保存・表示する。
@@ -584,7 +586,7 @@ end
 -- 入力フロート
 -- ---------------------------------------------------------------------------
 
----@param opts { title: string, text: string, on_submit: fun(text: string) }
+---@param opts { title: string, text: string, on_submit: fun(text: string), allow_empty?: boolean }
 local function open_editor(opts)
   local buf = api.nvim_create_buf(false, false)
   api.nvim_buf_set_name(buf, "review://comment/" .. buf)
@@ -627,7 +629,7 @@ local function open_editor(opts)
     local text = vim.trim(table.concat(api.nvim_buf_get_lines(buf, 0, -1, false), "\n"))
     vim.bo[buf].modified = false
     close()
-    if text == "" then
+    if text == "" and not opts.allow_empty then
       vim.notify("Review: 本文が空なのでキャンセルしました", vim.log.levels.WARN)
       return
     end
@@ -1187,6 +1189,27 @@ local function show_payload(payload)
   vim.bo[buf].modifiable = false
 end
 
+---自分の未送信 (PENDING) レビューを探す。1 PR に 1 つしか持てない
+---@param root string
+---@param number integer PR 番号
+---@return table|nil review
+local function find_pending_review(root, number)
+  local out = run({ "gh", "api", string.format("repos/{owner}/{repo}/pulls/%d/reviews", number) }, root)
+  if not out then
+    return nil
+  end
+  local ok, reviews = pcall(vim.json.decode, out)
+  if not ok or type(reviews) ~= "table" then
+    return nil
+  end
+  for _, r in ipairs(reviews) do
+    if r.state == "PENDING" then
+      return r
+    end
+  end
+  return nil
+end
+
 ---未投稿のコメントを、現在ブランチの PR にドラフト (Pending) レビューとしてまとめて投稿する。
 ---投稿後は GitHub 上で見直してから自分で Submit する。
 ---@param opts? { dry_run?: boolean, include_posted?: boolean, event?: "COMMENT" }  event を付けると Pending にせず即時投稿
@@ -1288,20 +1311,14 @@ function M.publish(opts)
   end
 
   -- 未送信のレビューは 1 つしか持てないので先に確認
-  local reviews_json = run({ "gh", "api", string.format("repos/{owner}/{repo}/pulls/%d/reviews", pr.number) }, root)
-  if reviews_json then
-    local ok, reviews = pcall(vim.json.decode, reviews_json)
-    if ok and type(reviews) == "table" then
-      for _, r in ipairs(reviews) do
-        if r.state == "PENDING" then
-          vim.notify(
-            "Review: この PR には既に未送信のレビューがあります。GitHub で送信か破棄をしてから再実行してください\n" .. (r.html_url or pr.url),
-            vim.log.levels.ERROR
-          )
-          return
-        end
-      end
-    end
+  local pending = find_pending_review(root, pr.number)
+  if pending then
+    vim.notify(
+      "Review: この PR には既に未送信のレビューがあります。GitHub で送信か破棄をしてから再実行してください\n"
+        .. (pending.html_url or pr.url),
+      vim.log.levels.ERROR
+    )
+    return
   end
 
   vim.notify(string.format("Review: PR #%d に %d 件を投稿しています…", pr.number, #comments))
@@ -1365,6 +1382,81 @@ local repo_cache = {} ---@type table<string, { owner: string, name: string }>
 
 ---owner / repo 名
 ---@param root string
+---現在ブランチの PR を Approve する。
+---メッセージを入力フロートで聞き (空でも可)、確認してから送信する。
+---<leader>ap で作った未送信のドラフトレビューがあれば、新しいレビューは作らず
+---そのドラフトを APPROVE として送信する (コメントも一緒に公開される)。
+function M.approve()
+  local root = root_of(api.nvim_get_current_buf())
+
+  vim.notify("Review: PR の情報を取得しています…")
+  vim.cmd.redraw()
+  local out, err = run({ "gh", "pr", "view", "--json", "number,url,title,isDraft" }, root)
+  if not out then
+    vim.notify("Review: 現在ブランチの PR が見つかりません\n" .. (err or ""), vim.log.levels.ERROR)
+    return
+  end
+  local pr = vim.json.decode(out)
+  if pr.isDraft then
+    vim.notify(string.format("Review: PR #%d はドラフト PR なので Approve できません", pr.number), vim.log.levels.ERROR)
+    return
+  end
+
+  local unposted = vim.tbl_filter(function(c)
+    return not c.posted
+  end, store(root).comments)
+  local pending = find_pending_review(root, pr.number)
+
+  local notes = {}
+  if #unposted > 0 then
+    notes[#notes + 1] = string.format("未投稿のローカルコメントが %d 件あります (<leader>ap で投稿できます)", #unposted)
+  end
+  if pending then
+    notes[#notes + 1] = "未送信のドラフトレビューがあるので、そのコメントも一緒に公開されます"
+  end
+
+  open_editor({
+    title = string.format("approve: PR #%d %s", pr.number, pr.title or ""),
+    text = "",
+    allow_empty = true,
+    on_submit = function(text)
+      local msg = string.format("Review: PR #%d「%s」を Approve します。", pr.number, pr.title or "")
+      if #notes > 0 then
+        msg = msg .. "\n\n" .. table.concat(notes, "\n")
+      end
+      local answer = vim.fn.confirm(msg .. "\n\n送信しますか？", "&Yes\n&No", 2)
+      if answer ~= 1 then
+        return
+      end
+
+      local _, perr
+      if pending then
+        _, perr = run({
+          "gh",
+          "api",
+          "-X",
+          "POST",
+          string.format("repos/{owner}/{repo}/pulls/%d/reviews/%d/events", pr.number, pending.id),
+          "--input",
+          "-",
+        }, root, vim.json.encode(text ~= "" and { event = "APPROVE", body = text } or { event = "APPROVE" }))
+      else
+        local cmd = { "gh", "pr", "review", tostring(pr.number), "--approve" }
+        if text ~= "" then
+          vim.list_extend(cmd, { "--body", text })
+        end
+        _, perr = run(cmd, root)
+      end
+      if perr then
+        vim.notify("Review: Approve に失敗しました\n" .. perr, vim.log.levels.ERROR)
+        return
+      end
+      vim.fn.setreg("+", pr.url)
+      vim.notify(string.format("Review: PR #%d を Approve しました (URL を + にコピー)\n%s", pr.number, pr.url))
+    end,
+  })
+end
+
 ---@return { owner: string, name: string }|nil, string|nil
 local function repo_info(root)
   if repo_cache[root] then
@@ -1971,6 +2063,7 @@ local subcommands = {
   submit = function(cmd)
     M.publish({ event = "COMMENT", include_posted = cmd.bang })
   end,
+  approve = M.approve,
   toggle = M.toggle,
   clear = M.clear,
   fetch = function()
@@ -2077,6 +2170,7 @@ function M.setup(opts)
   map("n", "<leader>aP", function()
     M.publish({ event = "COMMENT" })
   end, { desc = "Review: PR にその場で投稿 (ドラフトなし)" })
+  map("n", "<leader>aA", M.approve, { desc = "Review: PR を Approve (gh)" })
   map("n", "<leader>af", function()
     M.fetch_threads()
   end, { desc = "Review: PR のスレッドを取得して表示" })
