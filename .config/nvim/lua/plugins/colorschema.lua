@@ -27,13 +27,13 @@ return {
 
         -- diff 行の背景(:G diff = diffview, :Gdiffsplit などの diff mode)。
         -- 既定は各色を bg に 0.15 だけ溶かした色で、透過背景だと変更行が
-        -- ほとんど見分けられないので濃くする。
+        -- ほとんど見分けられないので濃くする(0.5 だと明るすぎたので 0.3 程度)。
         -- 左ペインの削除行 DiffviewDiffAddAsDelete は diffview が DiffDelete から作る。
         local util = require("tokyonight.util")
-        hl.DiffAdd = { bg = util.blend_bg(c.green2, 0.5) }
-        hl.DiffDelete = { bg = util.blend_bg(c.red1, 0.5) }
-        hl.DiffChange = { bg = util.blend_bg(c.blue, 0.3) }
-        hl.DiffText = { bg = util.blend_bg(c.blue, 0.6) }
+        hl.DiffAdd = { bg = util.blend_bg(c.green2, 0.3) }
+        hl.DiffDelete = { bg = util.blend_bg(c.red1, 0.3) }
+        hl.DiffChange = { bg = util.blend_bg(c.blue, 0.2) }
+        hl.DiffText = { bg = util.blend_bg(c.blue, 0.4) }
         -- diffview の折りたたみ行(変更なし区間)。Folded の既定 bg (#3b4261) は
         -- 上の DiffChange とほぼ同じ色で変更行と紛れるので、背景なしの薄い文字にする。
         -- 当てているのは lua/plugins/diffview.lua の winhighlight。
