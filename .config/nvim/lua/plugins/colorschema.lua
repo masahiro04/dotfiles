@@ -25,6 +25,12 @@ return {
         -- ハイライトする。tokyonight の 2024-07 pin は未定義なので補う。
         hl.LspReferenceTarget = { bg = c.bg_highlight }
 
+        -- カーソル行の行番号。既定の orange (#ff966c) は透過背景だと赤っぽく
+        -- 浮いて見えるので、テーマになじむ cyan にする
+        hl.CursorLineNr = { fg = c.cyan, bold = true }
+        -- カーソル本体も同じ cyan に揃える(guicursor は lua/config/options.lua)
+        hl.Cursor = { fg = c.bg, bg = c.cyan }
+
         -- diff 行の背景(:G diff = diffview, :Gdiffsplit などの diff mode)。
         -- 既定は各色を bg に 0.15 だけ溶かした色で、透過背景だと変更行が
         -- ほとんど見分けられないので濃くする(0.5 だと明るすぎたので 0.3 程度)。
