@@ -47,8 +47,11 @@ diffview で使う                                              *review-diffview
 <leader>ad              カーソル位置のコメントを削除する。
 
                                                                   *<leader>al*
-<leader>al              コメント一覧を Telescope で開く。<CR> でジャンプ、
-                        <C-d> で削除。Telescope が無ければ quickfix。
+<leader>al              コメント一覧を Telescope で開く。ノーマルモードで
+                        開くので j / k で選び、上のプレビューに本文と対象
+                        コード (前後 3 行) が出る。<C-o> で通常のコード表示
+                        に切り替え、<CR> でジャンプ、<C-d> で削除、i で絞り
+                        込み。Telescope が無ければ quickfix。
 
                                                                   *<leader>ay*
 <leader>ay              プロジェクトの全コメントを Markdown にして
@@ -68,12 +71,18 @@ diffview で使う                                              *review-diffview
 <leader>aP              ドラフトにせず、その場でレビューコメントとして
                         投稿する (`:Review submit`)。確認ダイアログあり。
 
+                                                                  *<leader>aA*
+<leader>aA              現在ブランチの PR を Approve する (`:Review approve`)。
+                        メッセージは入力フロートで聞く (空でも可)。
+                        確認ダイアログあり。|review-approve| を参照。
+
                                                                   *<leader>af*
 <leader>af              PR のレビュースレッドを取得して表示する。
                         |review-threads| を参照。
 
                                                                   *<leader>aL*
-<leader>aL              PR スレッドの一覧を Telescope で開く。
+<leader>aL              レビューパネルを開く / 閉じる。|review-panel| を参照。
+                        (Telescope 版のスレッド一覧は `:Review threads`)
 
                                                                   *<leader>av*
 <leader>av              カーソル行のスレッド全文をフロートで読む。
@@ -123,6 +132,7 @@ diffview で使う                                              *review-diffview
                                   (`--dry-run` で内容確認のみ、
                                   `:Review! publish` で投稿済みも含める)
                         submit    ドラフトにせず即時投稿 (event=COMMENT)
+                        approve   PR を Approve (|review-approve|)
                         toggle    表示トグル
                         clear     全削除 (確認あり)
                         fetch     PR スレッドを取得
@@ -162,6 +172,22 @@ Submit する。Submit 時に Comment / Approve / Request changes を選べる�
 
 必要なもの: `gh` (ログイン済み) と、PR の head が push 済みであること。
 
+Approve ~
+                                                              *review-approve*
+<leader>aA / `:Review approve` は現在ブランチの PR を Approve する。
+
+1. `gh pr view` で PR を探す。ドラフト PR は Approve できないので中断する
+2. 入力フロートで Approve のメッセージを聞く。空のまま <CR> で本文なし
+3. 確認ダイアログを出す。未投稿のローカルコメントがあればその件数を、
+   <leader>ap で作った未送信のドラフトレビューがあればそれも一緒に公開
+   されることを表示する
+4. 未送信のドラフトがあれば、新しいレビューは作らずそのドラフトを
+   APPROVE として送信する (`POST /pulls/{n}/reviews/{id}/events`)。
+   無ければ `gh pr review --approve` で送信する
+5. PR の URL を + レジスタにコピーする
+
+自分の PR は GitHub 側で Approve できないのでエラーになる。
+
 ==============================================================================
 PR のレビュースレッド                                          *review-threads*
 
@@ -188,12 +214,58 @@ publish と違い Pending にはならず、すぐ相手に見える。
 一覧 ~
 <leader>aL の Telescope では `path:Lnn  [★ resolved outdated]  @author: 本文`
 の形で並ぶ。★ は自分が publish した指摘から始まるスレッド (publish 時に
-控えた comment id で判定)。<CR> でジャンプ、<C-v> で全文。
+控えた comment id で判定)。上のプレビューにスレッド全体と対象コードが
+Markdown で出る (<C-o> でコード表示に切替)。<CR> でジャンプ、<C-v> で全文。
 
 制約 ~
 - 表示位置はローカルが PR の head と一致している前提
 - スレッド・コメントとも先頭 100 件まで (ページングは未対応)
 - 自分の Pending レビューは Submit するまで相手に見えないので返信も付かない
+
+==============================================================================
+レビューパネル                                                  *review-panel*
+
+<leader>aL (`:Review panel`) で右側に開くサイドパネル。ローカルコメントと
+PR のレビュースレッドをファイル → 行の順に並べ、Telescope のように
+「選んで閉じて開き直す」ことなく、その場で読んで操作できる。
+
+  # Review · PR #42
+  open 2 · resolved 1 · local 3   ? でキー一覧
+
+  ## app/models/user.rb
+  ◆ L8-9    @alice この行いる？ (+1)
+  ▎ L12     ここは分かりにくい
+  ◆ L20     ★ @me typo  resolved
+
+◆ が PR スレッド、▎ がローカルコメント (投稿済みは薄い色)。★ は自分が
+publish した指摘から始まるスレッド。<Tab> で項目を展開すると、直下に
+スレッド全体 (引用ブロック) と対象行の前後 3 行のコードが出る。
+
+パネル内のキー ~
+  <CR>          対象行へジャンプ (パネルは開いたまま)
+  o             対象行を表示するがカーソルはパネルに残す
+  <Tab> / za    展開 / 折りたたみ      <S-Tab>  全部まとめて
+  <C-n> <C-p>   次 / 前の項目 (]] [[ でも可)
+  r             スレッドに返信 (即時公開・確認あり)
+  x             スレッドを resolved / unresolved
+  a             この行にローカルコメントを付ける (ファイル側へ移動して入力)
+  e / d         ローカルコメントを編集 / 削除 (削除は確認あり)
+  y             本文を Markdown でヤンク (+ レジスタ)
+  gx            GitHub でスレッドを開く
+  P             ローカルコメントを PR にドラフト投稿 (|review-publish|)
+  R             PR スレッドを再取得
+  f             resolved なスレッドを隠す / 出す
+  ?             キー一覧
+  q             閉じる
+
+コメントの追加・編集・削除・publish やスレッドの再取得が起きると、
+パネルは自動で描き直される (カーソルの項目は維持)。展開状態と
+resolved の表示/非表示は、閉じて開き直しても引き継ぐ。
+
+パネルのバッファは filetype "review" で、treesitter の markdown パーサで
+色付けする。render-markdown.nvim を使っていれば `file_types` に "review"
+を足すとその装飾も効く (lua/plugins/render-markdown.lua で設定済み)。
+幅は |review-config| の `panel.width` (既定 64)。
 
 ==============================================================================
 出力形式                                                       *review-format*
@@ -235,6 +307,7 @@ ReviewThreadResolved    resolved なスレッド (既定: Comment にリンク)
     prefix = "┃ "             仮想行の行頭
     thread_max_lines = 4      仮想行に出すスレッド本文の行数
     editor = { width = 80, height = 10 }   入力フロートの大きさ
+    panel = { width = 64 }                 レビューパネル (|review-panel|) の幅
 <
 
 ==============================================================================

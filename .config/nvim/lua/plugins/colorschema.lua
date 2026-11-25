@@ -25,11 +25,30 @@ return {
         -- ハイライトする。tokyonight の 2024-07 pin は未定義なので補う。
         hl.LspReferenceTarget = { bg = c.bg_highlight }
 
+        -- カーソル行の行番号。既定の orange (#ff966c) は透過背景だと赤っぽく
+        -- 浮いて見えるので、テーマになじむ cyan にする
+        hl.CursorLineNr = { fg = c.cyan, bold = true }
+        -- カーソル本体も同じ cyan に揃える(guicursor は lua/config/options.lua)
+        hl.Cursor = { fg = c.bg, bg = c.cyan }
+
+        -- diff 行の背景(:G diff = diffview, :Gdiffsplit などの diff mode)。
+        -- 既定は各色を bg に 0.15 だけ溶かした色で、透過背景だと変更行が
+        -- ほとんど見分けられないので濃くする(0.5 だと明るすぎたので 0.3 程度)。
+        -- 左ペインの削除行 DiffviewDiffAddAsDelete は diffview が DiffDelete から作る。
+        local util = require("tokyonight.util")
+        hl.DiffAdd = { bg = util.blend_bg(c.green2, 0.3) }
+        hl.DiffDelete = { bg = util.blend_bg(c.red1, 0.3) }
+        hl.DiffChange = { bg = util.blend_bg(c.blue, 0.2) }
+        hl.DiffText = { bg = util.blend_bg(c.blue, 0.4) }
+        -- diffview の折りたたみ行(変更なし区間)。Folded の既定 bg (#3b4261) は
+        -- 上の DiffChange とほぼ同じ色で変更行と紛れるので、背景なしの薄い文字にする。
+        -- 当てているのは lua/plugins/diffview.lua の winhighlight。
+        hl.DiffviewFolded = { fg = c.dark3, italic = true }
+
         -- render-markdown.nvim
         -- 既定は H1Bg=DiffText / H2Bg=DiffAdd のように diff 色へのリンクなので、
         -- ドキュメント表示だと色が強すぎて浮く。tokyonight のアクセント色を
         -- フロート背景に薄く溶かした帯に差し替える。
-        local util = require("tokyonight.util")
         local function band(color)
           return util.blend_bg(color, 0.18, float_bg)
         end

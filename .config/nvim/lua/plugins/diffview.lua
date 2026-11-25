@@ -41,6 +41,19 @@ return {
       file_panel = {
         win_config = { width = 40 },
       },
+      hooks = {
+        -- 変更なし区間の折りたたみ行は、LazyVim の foldtext="" だと先頭行の
+        -- コードがそのまま出て変更行と見分けられない。diffview の窓だけ
+        -- 「⋯ N 行 変更なし ⋯」の要約にし、色も薄くする(色は colorschema.lua)。
+        -- winhighlight は diffview が enhanced_diff_hl 用に設定済みなので追記する。
+        diff_buf_win_enter = function(_, winid)
+          vim.wo[winid].foldtext = "printf('  ⋯ %d 行 変更なし ⋯', v:foldend - v:foldstart + 1)"
+          local winhl = vim.wo[winid].winhighlight
+          if not winhl:find("Folded:DiffviewFolded", 1, true) then
+            vim.wo[winid].winhighlight = (winhl == "" and "" or winhl .. ",") .. "Folded:DiffviewFolded"
+          end
+        end,
+      },
       keymaps = {
         view = {
           -- fugitive の status を gq で閉じている癖に合わせる。

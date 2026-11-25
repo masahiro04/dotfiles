@@ -10,6 +10,8 @@ return {
     -- hover フロートでも使うので ft 遅延ロードにはしない
     event = "VeryLazy",
     opts = {
+      -- review のサイドパネル (filetype=review、パーサは markdown) でも装飾する
+      file_types = { "markdown", "review" },
       -- LazyVim の markdown extra が入れる headlines.nvim と役割が被るので、
       -- そちらは下で無効化している
       code = {
